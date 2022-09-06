@@ -162,7 +162,7 @@ $(document).on('keyup','.product_qty',function(){
 		
 		
 		
-		
+		alert(total_discount);
 		console.log(total_discount);
         
 	}
