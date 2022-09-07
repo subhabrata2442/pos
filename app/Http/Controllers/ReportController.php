@@ -17,6 +17,8 @@ use DB;
 use PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use App\Helper\Media;
+
 
 class ReportController extends Controller
 {
@@ -494,8 +496,8 @@ class ReportController extends Controller
                     ->addColumn('tp_no', function ($row) {
                         return $row->tp_no;
                     })
-                    ->addColumn('created_at', function ($row) {
-                        return date('d-m-Y', strtotime($row->created_at));
+                    ->addColumn('purchase_date', function ($row) {
+                        return date('d-m-Y', strtotime($row->purchase_date));
                     })
                     ->addColumn('supplier_id', function ($row) {
                         return $row->supplier->company_name;
@@ -547,8 +549,17 @@ class ReportController extends Controller
                     ->addColumn('barcode', function ($row) {
                         return $row->product->product_barcode;
                     })
+                    ->addColumn('case_qty', function ($row) {
+                        return $row->case_qty;
+                    })
                     ->addColumn('bottle_case', function ($row) {
                         return $row->bottle_case;
+                    })
+                    ->addColumn('loose_qty', function ($row) {
+                        return $row->loose_qty;
+                    })
+                    ->addColumn('product_qty', function ($row) {
+                        return $row->product_qty;
                     })
                     ->addColumn('free_qty', function ($row) {
                         return $row->free_qty;
@@ -569,7 +580,7 @@ class ReportController extends Controller
                         return $row->batch_no;
                     })
                     ->addColumn('measure', function ($row) {
-                        return '';
+                        return $row->size->name;
                     })
                     ->addColumn('strength', function ($row) {
                         return $row->strength;
@@ -613,5 +624,64 @@ class ReportController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
+    }
+
+    public function invoicePdf(){
+        
+        $data=[];
+        $data['indulgence'] = [
+            'address1'=>'Padarpan Abasan, Block A , Beside Madhyamgram Municipality',
+            'address2' => 'Madhyamgram Kolkata - 700129',
+            'phone'=>'(+91)93301 41544',
+        ];
+        $data['customer_details'] = [
+            'name'=> 'Farhana Sultana',
+            'mobile'=> '7003923969',
+            'address'=> 'India',
+        ];
+        $data['invoice_details'] = [
+            'invoice_no'=> 'INV407/22-23',
+            'invoice_date'=> '16-08-2022',
+            'gstin'=> '19CTIPS9692B1ZZ',
+            'place'=> 'West Bengal',
+            'cashier_name'=> 'Mrs Roy Suchandra',
+        ];
+        $data['items'] = [
+            [
+                'particulars'=> 'MB LIQ MATTE 12 AS',
+                'qty'=> '1',
+                'mrp'=> '349',
+                'offer_price'=> '349',
+                'disc_price'=> '34.9',
+                'final_price'=> '314.1',
+            ],
+            [
+                'particulars'=> 'MB LIQ MATTE 15 AS',
+                'qty'=> '1',
+                'mrp'=> '349',
+                'offer_price'=> '349',
+                'disc_price'=> '34.9',
+                'final_price'=> '314.1',
+            ]
+        ];
+        $data['total'] =[
+            'total_qty'=> '2',
+            'total_disc'=> '849',
+            'total_price'=> '9880',
+        ]; 
+        
+        $data['gst'] =[
+            'gst_val' =>'18',
+            'taxable_amt'=> '8373.21',
+            'cgst_rate'=> '9',
+            'cgst_amt'=> '753.59',
+            'sgst_rate'=> '9',
+            'sgst_amt'=> '753.59',
+            'total_amt'=> '9880.39',
+        ]; 
+        $data['total_amt_in_word'] = ucwords(Media::getIndianCurrency($data['total']['total_price']));
+        $data['payment_method'] = 'Cash';
+        $pdf = PDF::loadView('admin.pdf.invoice', $data);
+        return $pdf->download('invoice.pdf');
     }
 }

@@ -903,9 +903,19 @@ class PurchaseOrderController extends Controller
 
 		//dd($request->all());
 		$purchase_inward_stock = PurchaseInwardStock::where('id',base64_decode($request->id))->first();
-		$return_data['tp_no']			= $purchase_inward_stock->tp_no;
+		/* $return_data['tp_no']			= $purchase_inward_stock->tp_no;
         $return_data['invoice_no']		= $purchase_inward_stock->invoice_no;
         $return_data['invoice_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+        $return_data['purchase_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+        $return_data['payment_method']	= $purchase_inward_stock->payment_method;
+        $return_data['payment_date']	= $purchase_inward_stock->payment_date;
+        $return_data['invoice_stock']	= $purchase_inward_stock->invoice_stock; */
+		$return_data['inward_date']	= date('Y-m-d',strtotime($purchase_inward_stock->inward_date));
+        $return_data['purchase_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+        $return_data['invoice_stock_type']	= $purchase_inward_stock->invoice_stock_type;
+
+        $return_data['purchase_inward_stock']	= $purchase_inward_stock;
+		
 		$return_data['warehouse']		= $purchase_inward_stock->warehouse;
 		//$return_data['stock_products']	= $invoice_product_result;
 		$invoice_product_result = [];

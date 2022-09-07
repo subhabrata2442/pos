@@ -120,7 +120,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 	});
 	
 	
-	
+	Route::get('/invoice',[ReportController::class,'invoicePdf'])->name('sale_pdf');
 	
 	
 });

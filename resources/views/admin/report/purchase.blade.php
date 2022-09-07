@@ -11,7 +11,7 @@
             <th>Invoice No.</th>
             <th>TP Pass.</th>
             <th>Inward date</th>
-            <th>Invoice date</th>
+            <th>Purchase date</th>
             <th>Supplier Name</th>
             <th>Total Qty</th>
             <th>Total Cost</th>
@@ -56,8 +56,8 @@ $(function() {
 				name: 'inward_date'
 			},
 			{
-				data: 'created_at',
-				name: 'created_at',
+				data: 'purchase_date',
+				name: 'purchase_date',
 			},
 			{
 				data: 'supplier_id',

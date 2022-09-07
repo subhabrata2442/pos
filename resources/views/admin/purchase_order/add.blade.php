@@ -128,7 +128,12 @@
   <input type="hidden" name="invoice_stock_type" id="input-invoice_stock_type" />
   <div class="col-12 mb-3">
     <div class="commonBox purcheseDetails">
-      <div class="arrowUpDown open_supplier_form"> <span class="arrowUp"><i class="fas fa-arrow-alt-circle-up"></i></span> </div>
+      @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
+      
+      @else
+        <div class="arrowUpDown open_supplier_form"> <span class="arrowUp"><i class="fas fa-arrow-alt-circle-up"></i></span> </div>
+      @endif
+     
       <div class="table-responsive">
         <table class="table table-bordered">
           <tbody>
@@ -216,13 +221,13 @@
     </div>
   </div>
   @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
-    <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+    {{-- <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
       <div class="commonBox">
         <div class="form-group relative formBox m-0">
           <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Update <i class="fas fa-paper-plane ml-2"></i></button>
         </div>
       </div>
-    </div>
+    </div> --}}
   @else
     <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
       <div class="commonBox">
@@ -374,14 +379,31 @@ $(document).on('change','#upload_invoice_pdf',function(){
           if (result.success == 1) {
             var html = '';
             var scan_time = moment().format("DD-MM-YYYY h:mm:ss a");
-            var tp_no = result.tp_no;
+            var tp_no = result.purchase_inward_stock.tp_no;
             $('#tp_no').val(tp_no);
 
-            var invoice_date = result.invoice_date;
-            $('#purchase_date').val(invoice_date);
+            
+            var purchase_date = result.purchase_date;
+            var inward_date = result.inward_date;
+            $('#purchase_date').val(purchase_date);
 
-            var invoice_no = result.invoice_no;
+            var invoice_no = result.purchase_inward_stock.invoice_no;
             $('#invoice_no').val(invoice_no);
+
+            $('#supplier_company_name').text($('#supplier').val());
+            $('#supplier_invoice_purchase_date').text(purchase_date);
+            $('#supplier_invoice_inward_date').text(inward_date);
+            $('#supplier_invoice_no').text(invoice_no);
+            $('#supplier_transport_pass_no').text(tp_no);
+
+            $('#payment_method').val(result.purchase_inward_stock.payment_method);
+            $('#payment_date').val(result.purchase_inward_stock.payment_date);
+            $('#invoice_stock').val(result.purchase_inward_stock.invoice_stock);
+            $('#invoice_stock_type').val(result.purchase_inward_stock.invoice_stock_type);
+            $('#payment_ref_no').val(result.purchase_inward_stock.payment_ref_no);
+            $('#shipping_note').val(result.purchase_inward_stock.shipping_note);
+            $('#additional_note').val(result.purchase_inward_stock.additional_note);
+            $('#inward_date').val(inward_date);
             // Start Warehouse Details :
             var supplier_detail = result.warehouse;
 
