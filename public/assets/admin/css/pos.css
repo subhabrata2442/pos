@@ -1086,7 +1086,7 @@ span .loader {
 .input-2 {
     height: 2.8vw;
     width: 100%;
-    font-size: 1.2vw;
+    font-size: .9vw;
     border: #e1e1e1 1px solid;
     padding: 0 1vw;
     border-radius: 4px;
@@ -1094,11 +1094,11 @@ span .loader {
 }
 
 .input-3 {
-    height: 2.6vw;
+    height: 2.2vw;
     width: 100%;
-    font-size: 1vw;
+    font-size: .9vw;
     border: #e1e1e1 1px solid;
-    padding: 0 1vw;
+    padding: 0 .9vw;
     border-radius: 4px;
     font-family: 'Open Sans', sans-serif !important;
 }
@@ -1224,7 +1224,7 @@ p {
 }
 
 .tableFixHead th {
-    font-size: 1.1vw;
+    font-size: 1vw;
     white-space: nowrap;
     text-align: center;
     padding: .5vw;
@@ -1239,13 +1239,16 @@ p {
 }
 
 .tableFixHead td {
-    font-size: 1vw;
+    font-size: .9vw;
     /* white-space: nowrap; */
     text-align: center;
     padding: .3vw .5vw;
     color: #3c3c3c;
 }
-
+.tableFixHead td.proName {
+    text-align: left;
+    font-size: .8vw;
+}
 .tableFixHead td a {
     color: #3b8ccf;
 }
@@ -1550,7 +1553,7 @@ p {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #f2f2f2;
+    background-color: #f9e1d6;
     -webkit-transition: .4s;
     transition: .4s;
     padding: 0 !important;
@@ -1642,4 +1645,19 @@ p {
 
 .cbName {
     margin-bottom: .8vw;
+}
+
+.product_unit_price {
+    width: 6vw;
+    height: 2.2vw;
+    font-size: .9vw;
+    border: #e1e1e1 1px solid;
+    border-radius: 4px;
+    font-family: 'Open Sans', sans-serif !important;
+    background: #fff;
+  }
+.product_unit_price_amount {
+	width: 5vw;
+	position: absolute;
+	left: 0;
 }

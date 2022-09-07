@@ -259,16 +259,12 @@ $(document).on('keyup','.p_extra_charge',function(){
     });
 });
 
-$(document).on('keyup','.p_product_qty',function(){
-});
+
 
 
 $(document).on('keyup','.p_product_qty',function(){
 	var product_id	= $(this).attr('id').split('product_qty_')[1];
 	var tbl_row		= $(this).closest('tr').data('id');
-	
-	//alert('ff');
-	
 	
 	setTimeout(function() {
 		$("#product_record_sec").find("tr[data-id='" + tbl_row + "']").each(function() {

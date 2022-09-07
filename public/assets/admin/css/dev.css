@@ -974,11 +974,23 @@ hr {
 .leftPannel {
 	width: 280px;
 	height: 100%;
-	background: #0c758d;
+	background: url("../images/right-pannel.jpg") center center no-repeat;
 	position: fixed;
 	padding: 80px 15px 20px 15px;
 	left: 0;
 	top: 0;
+	z-index: 1;
+}
+.leftPannel:after{
+	content: "";
+	background-size: cover;
+	background: rgba(0, 0, 0, .85);
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: 100%;
+	z-index: -1;
 }
 .rightPannel {
 	flex: 0 0 calc(100% - 280px);
@@ -992,47 +1004,58 @@ hr {
 	margin-bottom: 15px;
 }
 .leftPannel ul li a {
-	padding: 10px 20px;
+	padding: 0 20px 0 0;
 	display: block;
-	box-shadow: rgba(0,0,0,.3) 0 5px 10px -5px;
 	color: #fff;
-	border-radius: 8px;
-	background: rgba(255,255,255,.1);
+	border-radius: 25px 16px 16px 25px;
+	background: #3470a6;
 	text-transform: uppercase;
 	font-weight: bold;
 	transition: all ease-in-out .4s;
+	font-size: .96rem;
 }
 
 .leftPannel ul li a:hover {
-    background: #89c3d5;
-    color: #096074;
+    background: #e77272;
+    color: #ffd6d6;
 }
 
 
 .leftPannel ul li a img {
-    width: 26px;
-    display: inline-block;
-    vertical-align: middle;
+	width: 22px;
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50% , -50%);
 }
 
 .leftPannel ul li a span {
-    display: inline-block;
-    vertical-align: middle;
-    margin-right: 12px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 6px;
+	height: 48px;
+	width: 48px;
+	line-height: 40px;
+	text-align: center;
+	background: #e4a54d;
+	border-radius: 50%;
+	position: relative;
 }
 .rightPannel ul li {
 	flex: 0 0 16.6666667%;
 	max-width: 16.6666667%;
 }
 .rightPannel ul li a {
-	color: #333;
+	color: #fff;
 	text-align: center;
 	font-weight: bold;
-	border: #d7dcee 1px solid;
+	/* border: #d7dcee 1px solid; */
 	padding: 20px;
 	display: block;
 	border-radius: 10px;
-	background: #ebefff;
+	/* background: #ebefff; */
+	overflow: hidden;
 	position: relative;
 }
 .rightPannel ul li a span {
@@ -1051,7 +1074,7 @@ hr {
 	top: 0;
 	width: 100%;
 	height: 100%;
-	background: rgba(28, 221, 149, 0.3);
+	background: rgba(0, 0, 0, 0.7);
 }
 .rightPannel ul li a span.occupied {
 	display: none;

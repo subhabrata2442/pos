@@ -44,6 +44,14 @@ class PurchaseOrderController extends Controller
 		$data['heading'] 		= 'Purchase Order';
 		return view('admin.purchase_order.type', compact('data'));
 	}
+	public function pos_payment_method()
+    {
+		
+		$data['heading'] 		= 'Payment';
+        $data['breadcrumb'] 	= ['Payment'];
+            
+		return view('admin.purchase_order.payment_method', compact('data'));
+	}
 	
 	public function invoice_upload_test(Request $request){
 		$file = $request->file('upload_invoice_pdf');
