@@ -868,4 +868,74 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
+
+	//added by palash
+	public function updateInwardStock(Request $request,$inward_stock_id){
+		//echo $inward_stock_id;die;
+		DB::beginTransaction();
+        try {
+			$data = [];
+			$spplier_code='bevco-17';
+			
+            $data['heading'] 		= 'Purchase Order';
+            $data['breadcrumb'] 	= ['Purchase Order', 'Edit'];
+            $data['supplier'] 		= Supplier::where('sup_code',$spplier_code)->first();
+            $data['product'] 		= Product::all();
+            $data['inward_stock_id'] = $inward_stock_id;
+            $data['inward_stock_type'] = 'edit';
+			
+            return view('admin.purchase_order.add', compact('data'));
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+	}
+
+	public function ajaxPurchaseById(Request $request){
+
+		//dd($request->all());
+		$purchase_inward_stock = PurchaseInwardStock::where('id',base64_decode($request->id))->first();
+		$return_data['tp_no']			= $purchase_inward_stock->tp_no;
+        $return_data['invoice_no']		= $purchase_inward_stock->invoice_no;
+        $return_data['invoice_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+		$return_data['warehouse']		= $purchase_inward_stock->warehouse;
+		//$return_data['stock_products']	= $invoice_product_result;
+		$invoice_product_result = [];
+		if(count($purchase_inward_stock->inwardStockProducts)>0){
+			foreach($purchase_inward_stock->inwardStockProducts as $inwardStockProducts){
+				$invoice_product_result[]=[
+					'product_id'		=> $inwardStockProducts->product_id,
+					'product_barcode'	=> $inwardStockProducts->product->product_barcode,
+					'category'			=> $inwardStockProducts->product->category->name,
+					'category_id'		=> $inwardStockProducts->product->category->id,
+					'sub_category'		=> $inwardStockProducts->product->subcategory->name,
+					'subcategory_id'	=> $inwardStockProducts->product->subcategory->id,
+					'brand_name'		=> $inwardStockProducts->product->brand->name,
+					'brand_slug'		=> $inwardStockProducts->product->brand->slug,	 
+					'measure'			=> $inwardStockProducts->size->name,
+					'size_id'			=> $inwardStockProducts->size_id,
+					'batch_no'			=> $inwardStockProducts->batch_no,
+					'strength'			=> $inwardStockProducts->strength,
+					'retailer_margin'	=> $inwardStockProducts->retailer_margin,
+					'round_off'			=> $inwardStockProducts->round_off,
+					'sp_fee'			=> $inwardStockProducts->sp_fee,
+					'bottle_case'		=> $inwardStockProducts->bottle_case,
+					'total_cases'		=> $inwardStockProducts->case_qty,
+					'loose_qty'			=> $inwardStockProducts->loose_qty,
+					'in_cases'			=> '',
+					'qty'				=> $inwardStockProducts->product_qty,
+					'bl'				=> $inwardStockProducts->bl,
+					'lpl'				=> $inwardStockProducts->lpl,
+					'product_mrp'		=> $inwardStockProducts->product_mrp,
+					'unit_cost'			=> '',
+					'total_cost'		=> $inwardStockProducts->total_cost,
+				];
+			}
+		}
+
+		$return_data['stock_products']	= $invoice_product_result;
+        $return_data['success']	= 1;
+		//return response()->json(['status'=>true,'massage'=>'User details saved Successfully']);
+		echo json_encode($return_data);
+	}
 }

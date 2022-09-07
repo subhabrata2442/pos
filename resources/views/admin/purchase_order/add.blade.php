@@ -94,14 +94,18 @@
             </div>
             
             <!--<div class="noteAreaInner"><a href="javascript:;" class="downloadTemplate"><i class="fas fa-download"></i> Download Inward Template</a></div>-->
-            <div class="noteAreaInner">
-              <ul class="d-flex flex-wrap justify-content-between">
-                <li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>
-                <li>
-                  <button type="submit" class="btn btn-primary">Submit <i class="fas fa-paper-plane"></i></button>
-                </li>
-              </ul>
-            </div>
+            @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
+              
+            @else
+              <div class="noteAreaInner">
+                <ul class="d-flex flex-wrap justify-content-between">
+                  <li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>
+                  <li>
+                    <button type="submit" class="btn btn-primary">Submit <i class="fas fa-paper-plane"></i></button>
+                  </li>
+                </ul>
+              </div>
+            @endif
           </div>
         </div>
       </div>
@@ -211,13 +215,24 @@
       </div>
     </div>
   </div>
-  <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
-    <div class="commonBox">
-      <div class="form-group relative formBox m-0">
-        <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Save <i class="fas fa-paper-plane ml-2"></i></button>
+  @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
+    <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+      <div class="commonBox">
+        <div class="form-group relative formBox m-0">
+          <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Update <i class="fas fa-paper-plane ml-2"></i></button>
+        </div>
       </div>
     </div>
-  </div>
+  @else
+    <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+      <div class="commonBox">
+        <div class="form-group relative formBox m-0">
+          <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Save <i class="fas fa-paper-plane ml-2"></i></button>
+        </div>
+      </div>
+    </div>
+  @endif
+  
 </form>
 <div class="modal fade" id="paymentDetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -327,6 +342,178 @@ $(document).on('click', '#upload_invoice', function(e) {
 $(document).on('change','#upload_invoice_pdf',function(){
 	$("#invoice_upload-form").submit()
 });
-
 </script> 
+@if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
+  <script>
+    $(document).ready(function() {
+      
+      var id = "{{$data['inward_stock_id']}}";
+      var token = "{{ csrf_token() }}";
+      $.ajax({
+        url : "{{ route('admin.purchase.list.ajax') }}",
+        data : {'token' : token,'id':id},
+        type : 'GET',
+        dataType : 'json',
+        beforeSend: function() {
+          $('#ajax_loader').fadeIn();
+          $('#warehouse').val('');
+          $('#warehouse_id').val('');
+          $('#input-supplier_invoice_no').val('');
+          $('#input-supplier_invoice_purchase_date').val('');
+          $('#input-supplier_invoice_inward_date').val('');
+          var warehouse_details_html = '<h4>Warehouse Details :</h4><p> Contact : <br>Email : <br></p>';
+
+          $("#supplier_details_sec").html(warehouse_details_html);
+        },
+        complete: function() {
+          $('#ajax_loader').fadeOut();
+          //$('.loader-bg').fadeOut();
+          //$('#invoice_upload-form')[0].reset();
+        },
+        success : function(result){
+          if (result.success == 1) {
+            var html = '';
+            var scan_time = moment().format("DD-MM-YYYY h:mm:ss a");
+            var tp_no = result.tp_no;
+            $('#tp_no').val(tp_no);
+
+            var invoice_date = result.invoice_date;
+            $('#purchase_date').val(invoice_date);
+
+            var invoice_no = result.invoice_no;
+            $('#invoice_no').val(invoice_no);
+            // Start Warehouse Details :
+            var supplier_detail = result.warehouse;
+
+            var company_name = '';
+            if (supplier_detail.company_name != null || supplier_detail.company_name != undefined) {
+                company_name = supplier_detail.company_name;
+            }
+            var email = '';
+            if (supplier_detail.email != null || supplier_detail.email != undefined) {
+                email = supplier_detail.email;
+            }
+
+            var address = '';
+            if (supplier_detail.address != null || supplier_detail.address != undefined) {
+                address = supplier_detail.address;
+            }
+            var area = '';
+            if (supplier_detail.area != null || supplier_detail.area != undefined) {
+                area = supplier_detail.area;
+            }
+            var city = '';
+            if (supplier_detail.city != null || supplier_detail.city != undefined) {
+                city = supplier_detail.city;
+            }
+
+            var phone_no = '';
+            if (supplier_detail.phone_no != null || supplier_detail.phone_no != undefined) {
+                phone_no = supplier_detail.phone_no;
+            }
+
+            var pin = '';
+            if (supplier_detail.pin != null || supplier_detail.pin != undefined) {
+                pin = supplier_detail.pin;
+            }
+
+            $('#warehouse').val(company_name);
+            $('#warehouse_id').val(result.warehouse.id);
+
+            $('#input-supplier_invoice_no').val($('#invoice_no').val());
+            $('#input-supplier_invoice_purchase_date').val($('#purchase_date').val());
+            $('#input-supplier_invoice_inward_date').val($('#inward_date').val());
+
+            var warehouse_details_html = '<h4>Warehouse Details :</h4><p><strong>' + company_name + '</strong><br>' + address + ' ,<br>INDIA, WEST BENGAL, ' + pin + '<br>Contact : ' + phone_no + '<br>Email : ' + email + '</p>';
+
+            $("#supplier_details_sec").html(warehouse_details_html);
+            //End Warehouse Details :
+            //Product List
+            for (var i = 0; i < result.stock_products.length; i++) {
+              var item_detail = result.stock_products[i];
+
+              var product_barcode = item_detail.product_barcode;
+              var item_category = item_detail.category;
+              var item_sub_category = item_detail.sub_category;
+              var item_brand_name = item_detail.brand_name;
+              var item_bl = item_detail.bl;
+              var item_lpl = item_detail.lpl;
+              var item_measure = item_detail.measure;
+              var item_qty = item_detail.qty;
+              var total_cost = item_detail.total_cost;
+              var item_batch_no = item_detail.batch_no;
+
+              var strength = item_detail.strength;
+              var retailer_margin = item_detail.retailer_margin;
+              var round_off = item_detail.round_off;
+              var sp_fee = item_detail.sp_fee;
+              var product_mrp = item_detail.product_mrp;
+
+              var bottle_case 	= item_detail.total_cases;
+              var bottle_per_case = item_detail.bottle_case;
+              var loose_qty 		= item_detail.loose_qty;
+              var in_case = item_detail.in_cases;
+
+              var is_new = 'new_item';
+              if (item_detail.product_id > 0) {
+                  is_new = 'old_item';
+              }
+              var qty = 1;
+              if (item_qty > 0) {
+                  qty = item_qty;
+              }
+
+              var product_id = item_detail.product_id;
+              var item_row = i;
+              html += '<tr id="product_' + product_id + '" data-id="' + item_row + '" class="' + is_new + '">' +
+                  '<input type="hidden" name="item_scan_time_' + product_id + '" id="item_scan_time_' + product_id + '" value="' + scan_time + '">' +
+                  '<input type="hidden" name="inward_item_detail_id_' + product_id + '" id="inward_item_detail_id_' + product_id + '" value="">' +
+                  '<input type="hidden" name="stock_transfers_detail_id_' + product_id + '" id="stock_transfers_detail_id_' + product_id + '" value="">' +
+                  '<td><a href="javascript:;" onclick="remove(' + product_id + ');"><i class="fas fa-times"></i></a></td>' +
+                  '<td id="product_barcode_' + product_id + '">' + product_barcode + '</td>' +
+                  '<td id="product_case_qty_' + product_id + '">' + bottle_case + '</td>' +
+                  '<td id="product_bottle_case_' + product_id + '">' + bottle_per_case + '</td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="product_loose_qty_' + product_id + '">' + loose_qty + '</td>' +
+
+                  '<td onkeypress="return check_character(event);" class="number greenBg p_product_qty" contenteditable="true" id="product_qty_' + product_id + '">' + qty + '</td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg p_free_qty" contenteditable="true" style="color: black;" id="free_qty_' + product_id + '">0</td>' +
+                  '<td>' + item_category + '</td>' +
+                  '<td>' + item_sub_category + '</td>' +
+                  '<td><a id="inwardproduct_popup_' + product_id + '"><span class="informative" id="brand_name_' + product_id + '">' + item_brand_name + '</span></a></td>' +
+                  '<td contenteditable="true" id="batch_no_' + product_id + '">' + item_batch_no + '</td>' +
+                  '<td id="measure_' + product_id + '">' + item_measure + '</td>' +
+                  '<td class="number greenBg" contenteditable="true" id="strength_' + product_id + '">' + strength + '</td>' +
+                  '<td class="number greenBg" contenteditable="true" id="bl_' + product_id + '">' + item_bl + '</td>' +
+                  '<td class="number greenBg" contenteditable="true" id="lpl_' + product_id + '">' + item_lpl + '</td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="unit_cost_' + product_id + '"></td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="retailer_margin_' + product_id + '"></td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="round_off_' + product_id + '"></td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="sp_fee_' + product_id + '"></td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg p_offer_price" contenteditable="true" id="offer_price_' + product_id + '"></td>' +
+                  '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
+                  '<td id="total_cost_' + product_id + '">' + total_cost + '.00</td>' +
+                  '</tr>';
+          }
+
+          $("#product_record_sec").html(html);
+          final_calculation();
+            //End Product List
+            
+          }else {
+            toastr.error("No data found!");
+          }
+        },
+        error: function(xhr, ajaxOptions, thrownError) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Something went wrong!',
+            });
+            //toastr.error("No data found!");
+            //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
+        }
+      });
+    });
+  </script>
+@endif
 @endsection 

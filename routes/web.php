@@ -96,6 +96,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		
 		
 		Route::match(['GET'], '/purchase', [ReportController::class, 'purchase'])->name('purchase');
+        Route::match(['GET'], '/stock-product/list/{slug}', [ReportController::class, 'stockProductList'])->name('stock_product.list');
 		Route::match(['GET'], '/inventory', [ReportController::class, 'inventory'])->name('inventory');
 		Route::match(['GET'], '/reminders', [ReportController::class, 'reminders'])->name('reminders');
 		
@@ -111,6 +112,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET', 'POST'], '/material_inward', [PurchaseOrderController::class, 'material_inward'])->name('material_inward');
 		Route::match(['GET', 'POST'], '/supplier_bill', [PurchaseOrderController::class, 'supplier_bill'])->name('supplier_bill');
         Route::match(['GET', 'POST'], '/debitnote', [PurchaseOrderController::class, 'debitnote'])->name('debitnote');
+
+        Route::match(['GET', 'POST'], '/update-inward-stock/{id}', [PurchaseOrderController::class, 'updateInwardStock'])->name('inward_stock.update');
+        Route::match(['GET'], '/ajax-get', [PurchaseOrderController::class, 'ajaxPurchaseById'])->name('list.ajax');
 	});
 	
 	

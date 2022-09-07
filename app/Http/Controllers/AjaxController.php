@@ -701,7 +701,7 @@ class AjaxController extends Controller {
 						'selling_gst_percent'  		=> isset($inward_stock['product_detail'][$i]['selling_gst_percent'])?$inward_stock['product_detail'][$i]['selling_gst_percent']:0,
 						'selling_gst_amount'  		=> isset($inward_stock['product_detail'][$i]['selling_gst_amount'])?$inward_stock['product_detail'][$i]['selling_gst_amount']:0,
 						'offer_price'  				=> $inward_stock['product_detail'][$i]['offer_price'],
-						'product_mrp'  				=> $inward_stock['product_detail'][$i]['unit_cost'],
+						'product_mrp'  				=> $inward_stock['product_detail'][$i]['product_mrp'],
 						'wholesale_price'  			=> 0,
 						'mfg_date'  				=> '',
 						'expiry_date'  				=> '',
