@@ -1,5 +1,17 @@
 @extends('layouts.admin_pos')
 @section('admin-content')
+<style>
+.product_unit_price_amount {
+    width: 70px;
+    margin: -29px 0 0 0 !important;
+    padding: 5px 5px 6px 5px;
+    border: 1px solid #ced4da;
+    border-radius: 5px 0 0px 5px;
+    position: relative;
+    border-top: none;
+    border-bottom: none;
+}
+</style>
 <div class="row">
   <div class="col-lg-8 col-md-8">
     <div class="d-flex align-items-center justify-content-between cbName">
@@ -10,10 +22,20 @@
           </ul>
         </div>
         <span><i class="fas fa-barcode"></i></span> </div>
-      <div class="selectSale">
+      <div class="selectSale"> 
+        <!-- <ul class="d-flex">
+          <li>
+            <input type="radio" id="r1" name="radio" value="" >
+            <label for="r1">Sale</label>
+          </li>
+          <li>
+            <input type="radio" id="r2" name="radio" value="" >
+            <label for="r2">Sale Return</label>
+          </li>
+        </ul> -->
         <label class="switch">
           <input type="checkbox" id="sell_type">
-          <span class="slider round"></span> <span class="absolute-no">Return</span> </label>
+          <span class="slider round"></span> <span class="absolute-no">NO</span> </label>
       </div>
     </div>
     <div class="w-100">
@@ -34,8 +56,40 @@
             </tr>
           </thead>
           <tbody id="product_sell_record_sec">
-            
-            
+            <tr id="sell_product_2" data-id="2">
+              <input type="hidden" id="product_w_stock_2" value="96">
+              <input type="hidden" id="product_c_stock_2" value="48">
+              <td>00451</td>
+              <td>SEAGRAMS BLENDERS PRIDE SELECT PREMIUM WHISKY (750  ml)</td>
+              <td id="product_stock_2">W-96<br>
+                S-48</td>
+              <td id="product_mrp_2">920</td>
+              <td><input type="number" id="product_qty_2" class="input-3 product_qty" value="1"></td>
+              <td><input type="text" id="product_disc_percent_2" class="product_disc_percent input-3" value="0"></td>
+              <td><input type="text" id="product_disc_amount_2" class="input-3" value="0"></td>
+              <td><select id="product_unit_price_2" class="product_unit_price">
+                  <option value="920">920</option>
+                  <option value="900">900</option>
+                </select>
+                <input type="text" class="product_unit_price_amount" id="product_unit_price_amount_2" value="920" readonly="readonly"></td>
+              <td id="product_total_amount_2">920.00</td>
+              <td><a href="javascript:;" onclick="remove_sell_item(2);"><i class="fas fa-times"></i></a></td>
+            </tr>
+            <tr id="sell_product_1" data-id="1">
+              <input type="hidden" id="product_w_stock_1" value="48">
+              <input type="hidden" id="product_c_stock_1" value="24">
+              <td>00451</td>
+              <td>SEAGRAMS BLENDERS PRIDE SELECT PREMIUM WHISKY (375 ml)</td>
+              <td id="product_stock_1">W-48<br>
+                S-24</td>
+              <td id="product_mrp_1">490</td>
+              <td><input type="number" id="product_qty_1" class="input-3 product_qty" value="1"></td>
+              <td><input type="text" id="product_disc_percent_1" class="input-3" value="0"></td>
+              <td><input type="text" id="product_disc_amount_1" class="input-3" value="0"></td>
+              <td id="product_unit_price_1">490</td>
+              <td id="product_total_amount_1">665.00</td>
+              <td><a href="javascript:;" onclick="remove_sell_item(1);"><i class="fas fa-times"></i></a></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -105,43 +159,40 @@
         <div class="atpLeftInner">
           <ul class="d-flex w-100">
             <li class="atpVall">Total Item -</li>
-            <li class="atpinfo" id="total_quantity">0</li>
+            <li class="atpinfo">12</li>
           </ul>
           <ul class="d-flex w-100">
             <li class="atpVall">Total -</li>
-            <li class="atpinfo"><span id="total_mrp">₹0.00</span> <small>(inclusive all taxes)</small></li>
+            <li class="atpinfo">₹415.70 <small>(inclusive all taxes)</small></li>
           </ul>
           <ul class="d-flex w-100">
             <li class="atpVall">Discount -</li>
-            <li class="atpinfo" id="total_discount_amount">₹0.00</li>
+            <li class="atpinfo">₹49.15</li>
           </ul>
           <ul class="d-flex w-100">
             <li class="atpVall">Tax -</li>
-            <li class="atpinfo" id="tax_amount">₹0.00</li>
+            <li class="atpinfo">₹8.44</li>
           </ul>
           <ul class="d-flex w-100 subTotal">
             <li class="atpVall">Sub Total-</li>
-            <li class="atpinfo" id="sub_total_mrp">₹0.00</li>
-            <input type="hidden" name="sub_total" id="sub_total_mrp-input" value="0">
+            <li class="atpinfo">₹415.70</li>
           </ul>
           <ul class="d-flex w-100">
             <li class="atpVall">Round Off -</li>
-            <li class="atpinfo"><input type="text" name="round_off" id="round_off" class="small-input" placeholder="0" onkeydown="checkforroundoff(event,this)"></li>
+            <li class="atpinfo">(-) 0.70</li>
           </ul>
-          
-          
         </div>
       </div>
       <div class="atpMid d-flex justify-content-center align-items-center">
         <ul>
-          <li><a href="javascript:;" class="applyCharge">Apply Charge</a></li>
-          <li><a href="javascript:;" class="applyDiscount">Apply Discount </a></li>
+          <li><a href="#" class="applyCharge">Apply Charge</a></li>
+          <li><a href="#" class="applyDiscount">Apply Discount </a></li>
         </ul>
       </div>
       <div class="atpRight d-flex justify-content-center align-items-center">
         <div class="text-center">
           <h6>Amount to pay</h6>
-          <h3 id="total_payble_amount">₹0.00</h3>
+          <h3>₹415.00</h3>
         </div>
       </div>
     </div>
@@ -350,7 +401,10 @@
 @section('scripts') 
 <script>
 var stock_type	= 'w';
-</script> 
+</script>
+<!--<script src="{{ url('assets/admin/js/typeahead.min.js') }}"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/bloodhound.min.js"></script> --> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/pos.js') }}"></script> 
 <script>
