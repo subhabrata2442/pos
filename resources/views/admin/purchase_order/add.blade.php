@@ -491,7 +491,7 @@ $(document).on('change','#upload_invoice_pdf',function(){
                   '<input type="hidden" name="item_scan_time_' + product_id + '" id="item_scan_time_' + product_id + '" value="' + scan_time + '">' +
                   '<input type="hidden" name="inward_item_detail_id_' + product_id + '" id="inward_item_detail_id_' + product_id + '" value="">' +
                   '<input type="hidden" name="stock_transfers_detail_id_' + product_id + '" id="stock_transfers_detail_id_' + product_id + '" value="">' +
-                  '<td><a href="javascript:;" onclick="remove(' + product_id + ');"><i class="fas fa-times"></i></a></td>' +
+                  '<td><a href="javascript:;" onclick="remove(' + item_row + ');"><i class="fas fa-times"></i></a></td>' +
                   '<td id="product_barcode_' + product_id + '">' + product_barcode + '</td>' +
                   '<td id="product_case_qty_' + product_id + '">' + bottle_case + '</td>' +
                   '<td id="product_bottle_case_' + product_id + '">' + bottle_per_case + '</td>' +
