@@ -21,6 +21,8 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Abcdefg;
+use App\Models\BranchStockProducts;
+use App\Models\BranchStockProductSellPrice;
 use App\Models\Material;
 use App\Models\Service;
 use App\Models\Size;
@@ -36,7 +38,7 @@ use App\Models\Common;
 
 
 use App\Models\Warehouse;
-
+use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
 
 class PurchaseOrderController extends Controller
@@ -949,9 +951,19 @@ class PurchaseOrderController extends Controller
 
 		//dd($request->all());
 		$purchase_inward_stock = PurchaseInwardStock::where('id',base64_decode($request->id))->first();
-		$return_data['tp_no']			= $purchase_inward_stock->tp_no;
+		/* $return_data['tp_no']			= $purchase_inward_stock->tp_no;
         $return_data['invoice_no']		= $purchase_inward_stock->invoice_no;
         $return_data['invoice_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+        $return_data['purchase_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+        $return_data['payment_method']	= $purchase_inward_stock->payment_method;
+        $return_data['payment_date']	= $purchase_inward_stock->payment_date;
+        $return_data['invoice_stock']	= $purchase_inward_stock->invoice_stock; */
+		$return_data['inward_date']	= date('Y-m-d',strtotime($purchase_inward_stock->inward_date));
+        $return_data['purchase_date']	= date('Y-m-d',strtotime($purchase_inward_stock->purchase_date));
+        $return_data['invoice_stock_type']	= $purchase_inward_stock->invoice_stock_type;
+
+        $return_data['purchase_inward_stock']	= $purchase_inward_stock;
+		
 		$return_data['warehouse']		= $purchase_inward_stock->warehouse;
 		//$return_data['stock_products']	= $invoice_product_result;
 		$invoice_product_result = [];
@@ -991,5 +1003,30 @@ class PurchaseOrderController extends Controller
         $return_data['success']	= 1;
 		//return response()->json(['status'=>true,'massage'=>'User details saved Successfully']);
 		echo json_encode($return_data);
+	}
+
+	public function deleteInwardStock(Request $request,$id){
+		try {
+            $id = base64_decode($id);
+			//echo $id;die;
+			$inward_stock_products = InwardStockProducts::where('inward_stock_id',$id)->get();
+
+			if(count($inward_stock_products) > 0){
+				foreach($inward_stock_products as $product){
+					$branch_stock_product = BranchStockProducts::where('product_id',$product->product_id)->where('size_id',$product->size_id)->where('branch_id',1)->first();
+					$branch_stock_product_sell_price = BranchStockProductSellPrice::where('stock_id',$branch_stock_product->id)->first();
+					if($branch_stock_product_sell_price){
+						$branch_stock_product_sell_price->c_qty = $branch_stock_product_sell_price->c_qty - $product->product_qty;
+						$branch_stock_product_sell_price->updated_at = Carbon::now();
+						$branch_stock_product_sell_price->save(); 
+					}		
+				}
+			}
+            InwardStockProducts::where('inward_stock_id',$id)->delete();
+			PurchaseInwardStock::find($id)->delete();
+            return redirect()->back()->with('success', 'Purchase Order deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
 	}
 }

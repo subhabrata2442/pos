@@ -205,6 +205,7 @@ class AjaxController extends Controller {
 						'qty'				=> 1,
 						'bl'				=> 0,
 						'lpl'				=> 0,
+						'case_qty'			=> 0,
 						'product_mrp'		=> trim($product_mrp),
 						'unit_cost'			=> trim($product_mrp),
 						'total_cost'		=> trim($product_mrp),

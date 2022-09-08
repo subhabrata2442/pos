@@ -8,7 +8,10 @@
         <table id="stock_product" class="table table-bordered">
           <thead>
             <th>Barcode</th>
+			<th>Case Qty</th>
             <th>Bottle/case</th>
+            <th>Loose Qty</th>
+            <th>Total Qty</th>
             <th>Free Qty</th>
             <th>Category</th>
             <th>Sub Category</th>
@@ -56,8 +59,20 @@ $(function() {
 				name: 'barcode'
 			},	
 			{
+				data: 'case_qty',
+				name: 'case_qty'
+			},	
+			{
 				data: 'bottle_case',
 				name: 'bottle_case'
+			},	
+			{
+				data: 'loose_qty',
+				name: 'loose_qty'
+			},	
+			{
+				data: 'product_qty',
+				name: 'product_qty'
 			},	
 			{
 				data: 'free_qty',

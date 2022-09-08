@@ -8,14 +8,15 @@
       <div class="table-responsive dataTable-design">
         <table id="purchase_list" class="table table-bordered">
           <thead>
+			<th>Action</th>
             <th>Invoice No.</th>
             <th>TP Pass.</th>
             <th>Inward date</th>
-            <th>Invoice date</th>
+            <th>Purchase date</th>
             <th>Supplier Name</th>
             <th>Total Qty</th>
             <th>Total Cost</th>
-            <th>Action</th>
+            
            </thead>
           <tbody>
           </tbody>
@@ -28,13 +29,6 @@
 
 @section('scripts') 
 <script type="text/javascript">
-
-
-
-/* $(document).on('change','#product_upload_file',function(){
-	this.form.submit();
-}); */
-
 $(function() {
 
 	var table = $('#purchase_list').DataTable({
@@ -43,6 +37,11 @@ $(function() {
 		searchDelay: 350,
 		ajax: "{{ route('admin.report.purchase') }}",
 		columns: [
+			{
+				data: 'action',
+				name: 'action',
+                orderable: false, searchable: false
+			},
 			{
 				data: 'invoice_no',
 				name: 'invoice_no'
@@ -56,8 +55,8 @@ $(function() {
 				name: 'inward_date'
 			},
 			{
-				data: 'created_at',
-				name: 'created_at',
+				data: 'purchase_date',
+				name: 'purchase_date',
 			},
 			{
 				data: 'supplier_id',
@@ -71,15 +70,28 @@ $(function() {
 				data: 'sub_total',
 				name: 'sub_total'
 			},
-			{
-				data: 'action',
-				name: 'action',
-                orderable: false, searchable: false
-			},
+			
 			
 		]
 	});
 
 });
+$(document).on('click', '#delete_inward_stock', function() {
+            var url = $(this).data('url');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+
+                    window.location = url;
+                }
+            })
+        });
 </script> 
 @endsection 
