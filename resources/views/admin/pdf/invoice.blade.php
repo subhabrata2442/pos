@@ -126,38 +126,7 @@
   <tr>
   	<td style="text-align:center;padding:8px 7px; font-weight:bold; font-size:13px;">{{$total_amt_in_word}}</td>
   </tr>
-  {{-- <tr>
-  	<td style="text-align:right;padding:15px 2px 3px; font-weight:bold; font-size:13px;"><--GST Breakup Details-->(Amount in INR)</td>
-  </tr> --}}
-  
-  {{-- <tr>
-  	<td style="padding:5px 0;">
-    	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:#777 1px solid;">
-          <tr> 
 
-            <th width="" style="text-align:left;padding:8px 7px; border-bottom:#ccc 1px solid;" scope="col">GST%</th>
-            <th width="" style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;" scope="col">Taxable Amt.</th>
-            <th width="" style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;" scope="col">CGST<br>Rate & Amt.</th>
-            <th width="" style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;" scope="col">SGST<br>Rate & Amt.</th>
-            <th width="" style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;" scope="col">Total Amt.</th>
-          </tr>
-          <tr>
-            <td style="text-align:left;padding:8px 7px; border-bottom:#ccc 1px solid;">{{$gst['gst_val']}}%</td>
-            <td style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;">{{$gst['taxable_amt']}}</td>
-            <td style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;">{{$gst['cgst_rate']}}%<br>{{$gst['cgst_amt']}}</td>
-            <td style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;">{{$gst['sgst_rate']}}%<br>{{$gst['sgst_amt']}}</td>
-            <td style="text-align:right;padding:8px 7px; border-bottom:#ccc 1px solid;">{{$gst['total_amt']}}</td>
-          </tr>
-          <tr>
-            <td style="text-align:left;padding:8px 7px;font-weight:bold; font-size:13px;">Total</td>
-            <td style="text-align:right;padding:8px 7px;font-weight:bold; font-size:13px;">{{$gst['taxable_amt']}}</td>
-            <td style="text-align:right;padding:8px 7px;font-weight:bold; font-size:13px;">{{$gst['cgst_amt']}}</td>
-            <td style="text-align:right;padding:8px 7px;font-weight:bold; font-size:13px;">{{$gst['sgst_amt']}}</td>
-            <td style="text-align:right;padding:8px 7px;font-weight:bold; font-size:13px;">₹ {{$gst['total_amt']}}</td>
-          </tr>
-        </table>
-    </td>
-  </tr> --}}
   <tr>
     <td style="padding:10px 5px 2px;font-size:16px;font-weight:bold;">PAYMENT METHODS</td>
   </tr>
