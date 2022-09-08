@@ -21,6 +21,8 @@ use App\Models\Category;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Abcdefg;
+use App\Models\BranchStockProducts;
+use App\Models\BranchStockProductSellPrice;
 use App\Models\Material;
 use App\Models\Service;
 use App\Models\Size;
@@ -33,7 +35,7 @@ use App\Models\PurchaseInwardStock;
 use App\Models\InwardStockProducts;
 
 use App\Models\Warehouse;
-
+use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
 
 class PurchaseOrderController extends Controller
@@ -955,5 +957,30 @@ class PurchaseOrderController extends Controller
         $return_data['success']	= 1;
 		//return response()->json(['status'=>true,'massage'=>'User details saved Successfully']);
 		echo json_encode($return_data);
+	}
+
+	public function deleteInwardStock(Request $request,$id){
+		try {
+            $id = base64_decode($id);
+			//echo $id;die;
+			$inward_stock_products = InwardStockProducts::where('inward_stock_id',$id)->get();
+
+			if(count($inward_stock_products) > 0){
+				foreach($inward_stock_products as $product){
+					$branch_stock_product = BranchStockProducts::where('product_id',$product->product_id)->where('size_id',$product->size_id)->where('branch_id',1)->first();
+					$branch_stock_product_sell_price = BranchStockProductSellPrice::where('stock_id',$branch_stock_product->id)->first();
+					if($branch_stock_product_sell_price){
+						$branch_stock_product_sell_price->c_qty = $branch_stock_product_sell_price->c_qty - $product->product_qty;
+						$branch_stock_product_sell_price->updated_at = Carbon::now();
+						$branch_stock_product_sell_price->save(); 
+					}		
+				}
+			}
+            InwardStockProducts::where('inward_stock_id',$id)->delete();
+			PurchaseInwardStock::find($id)->delete();
+            return redirect()->back()->with('success', 'Purchase Order deleted successfully');
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
 	}
 }
