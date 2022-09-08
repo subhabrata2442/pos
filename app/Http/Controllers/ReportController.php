@@ -630,7 +630,8 @@ class ReportController extends Controller
     public function invoicePdf(){
         
         $data=[];
-        $data['indulgence'] = [
+        $data['shop_details'] = [
+            'name' => 'INDULGENCE',
             'address1'=>'Padarpan Abasan, Block A , Beside Madhyamgram Municipality',
             'address2' => 'Madhyamgram Kolkata - 700129',
             'phone'=>'(+91)93301 41544',
@@ -645,6 +646,7 @@ class ReportController extends Controller
             'invoice_date'=> '16-08-2022',
             'gstin'=> '19CTIPS9692B1ZZ',
             'place'=> 'West Bengal',
+            'branch'=> 'Baguihati',
             'cashier_name'=> 'Mrs Roy Suchandra',
         ];
         $data['items'] = [

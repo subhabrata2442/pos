@@ -8,19 +8,19 @@
 <body>
 <table width="100%" border="0" cellspacing="0" cellpadding="0" style="font-family:Gotham, 'Helvetica Neue', Helvetica, Arial, sans-serif; color:#333; font-size:13px;">
   <tr>
-    <td style="padding:8px 5px;font-size:16px;font-weight:bold; text-align:center;">TAX INVOICE</td>
+    <td style="padding:8px 5px;font-size:16px;font-weight:bold; text-align:center;">INVOICE</td>
   </tr>
   <tr>
-    <td style="padding:8px 7px;font-size:16px;font-weight:bold;">INDULGENCE</td>
+    <td style="padding:8px 7px;font-size:16px;font-weight:bold;">{{$shop_details['name']}}</td>{{-- Shop name --}}
   </tr>
   <tr>
-    <td style="padding:8px 7px;">{{$indulgence['address1']}}</td>
+    <td style="padding:8px 7px;">{{$shop_details['address1']}}</td>
   </tr>
   <tr>
-    <td style="padding:8px 7px;">{{$indulgence['address2']}}</td>
+    <td style="padding:8px 7px;">{{$shop_details['address2']}}</td>
   </tr>
   <tr>
-    <td style="padding:8px 7px;">{{$indulgence['phone']}}</td>
+    <td style="padding:8px 7px;">{{$shop_details['phone']}}</td>
   </tr>
   
   <tr>
@@ -40,11 +40,11 @@
             <td width="7%" style="padding:8px 7px; font-weight:bold; font-size:14px; text-align:center;">:</td>
             <td style="padding:8px 7px;font-size:13px; font-weight:normal;">{{$customer_details['mobile']}}</td>
           </tr>
-          <tr>
+         {{--  <tr>
             <td style="padding:8px 7px; font-weight:bold; font-size:14px">Address</td>
             <td width="7%" style="padding:8px 7px; font-weight:bold; font-size:14px; text-align:center;">:</td>
-            <td style="padding:8px 7px;font-size:13px; font-weight:normal;">{{$customer_details['address']}}</td>
-          </tr>
+            <td style="padding:8px 7px;font-size:13px; font-weight:normal;">{{@$customer_details['address']}}</td>
+          </tr> --}}
         </table>
     </td>
   </tr>
@@ -75,9 +75,9 @@
             <td>&nbsp;</td>
           </tr>
           <tr>
-            <td style="padding:8px 7px; font-weight:bold; font-size:14px">Place</td>
+            <td style="padding:8px 7px; font-weight:bold; font-size:14px">Branch</td>
             <td style="padding:8px 7px; font-weight:bold; font-size:14px; text-align:center;">:</td>
-            <td style="padding:8px 7px; font-size:13px; font-weight:normal; text-align:right;">{{$invoice_details['place']}}</td>
+            <td style="padding:8px 7px; font-size:13px; font-weight:normal; text-align:right;">{{$invoice_details['branch']}}</td>
             <td>&nbsp;</td>
           </tr>
           <tr>
@@ -126,11 +126,11 @@
   <tr>
   	<td style="text-align:center;padding:8px 7px; font-weight:bold; font-size:13px;">{{$total_amt_in_word}}</td>
   </tr>
-  <tr>
+  {{-- <tr>
   	<td style="text-align:right;padding:15px 2px 3px; font-weight:bold; font-size:13px;"><--GST Breakup Details-->(Amount in INR)</td>
-  </tr>
+  </tr> --}}
   
-  <tr>
+  {{-- <tr>
   	<td style="padding:5px 0;">
     	<table width="100%" border="0" cellspacing="0" cellpadding="0" style="border:#777 1px solid;">
           <tr> 
@@ -157,7 +157,7 @@
           </tr>
         </table>
     </td>
-  </tr>
+  </tr> --}}
   <tr>
     <td style="padding:10px 5px 2px;font-size:16px;font-weight:bold;">PAYMENT METHODS</td>
   </tr>
