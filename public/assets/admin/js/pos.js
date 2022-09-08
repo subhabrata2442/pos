@@ -1,3 +1,292 @@
+$(document).on('click', '.addTopSellingProduct', function() {
+	var product_id = $(this).attr('data-id');
+	$.ajax({
+        url: prop.ajaxurl,
+        type: 'post',
+        data: {
+            product_id: product_id,
+            action: 'get_sell_product_byId',
+            _token: prop.csrf_token
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.status == '1') {
+                var html = '';
+                var item_detail = response.product_result;
+
+                var barcode = '';
+                if (item_detail.product_barcode != null || item_detail.product_barcode != undefined) {
+                    barcode = item_detail.product_barcode;
+                }
+
+                var product_name = '';
+                if (item_detail.brand_name != null || item_detail.brand_name != undefined) {
+                    product_name = item_detail.brand_name;
+                }
+
+                var product_id = item_detail.branch_stock_product_id;
+
+                var item_prices_length = item_detail.item_prices.length;
+
+                var w_stock = 0;
+                var c_stock = 0;
+                var product_mrp = 0;
+				
+				var option_html='';
+				
+                if (item_prices_length > 1) {
+                    w_stock = item_detail.item_prices[0].w_qty;
+                    c_stock = item_detail.item_prices[0].c_qty;
+                    product_mrp = item_detail.item_prices[0].product_mrp;
+					
+					for(var p=0;item_detail.item_prices.length>p;p++){
+						option_html +='<option value="'+item_detail.item_prices[p]+'">'+item_detail.item_prices[p]+'</option>';
+						option_html +='<option value="'+item_detail.item_prices[p]+'">'+item_detail.item_prices[p]+'</option>';
+					}	
+                } else {
+                    w_stock = item_detail.item_prices[0].w_qty;
+                    c_stock = item_detail.item_prices[0].c_qty;
+                    product_mrp = item_detail.item_prices[0].product_mrp;
+					option_html +='<option value="'+product_mrp+'">'+product_mrp+'</option>';
+					
+                }
+
+                //alert(w_stock);
+
+                var item_row = 0;
+                if ($('#product_sell_record_sec tr').length == 0) {
+                    item_row++;
+                } else {
+                    var max = 0;
+                    $("#product_sell_record_sec tr").each(function() {
+                        var value = parseInt($(this).data('id'));
+                        max = (value > max) ? value : max;
+                    });
+                    item_row = max + 1;
+                }
+				
+				if (stock_type == 'w') {
+					stock = w_stock;
+				} else {
+					stock = c_stock;
+				}
+				
+				if(stock>0){
+					var same_item=0;
+					$("#product_sell_record_sec tr").each(function () {
+						var row_product_id = $(this).attr('id').split('_')[2];
+						console.log(row_product_id);
+						if (row_product_id == product_id) {
+							same_item=1;
+							
+							var qty = $('#product_qty_' + product_id).val();
+							var item_qty=Number(qty)+1;
+							
+							if (Number(item_qty) > Number(stock)) {
+								$('#product_qty_' + product_id).val(stock);
+								toastr.error("Entered Qty should not be greater than Stock");
+								return false;
+							}else{
+								$('#product_qty_' + product_id).val(item_qty);
+								var unit_price = $("#product_unit_price_amount_" + product_id).val();
+								var discount_percent = $("#product_disc_percent_" + product_id).val();
+								var total_discount = (Number(unit_price) * Number(item_qty)) * Number(discount_percent) / 100;
+								
+								if (Number(discount_percent) != 0 || discount_percent != '') {
+									$("#product_disc_amount_" + product_id).val(total_discount.toFixed(2));
+								}
+								var total_selling_cost = Number(unit_price) * Number(item_qty);
+								var discount_amount = Number(total_selling_cost) - Number(total_discount);
+								var total_amount = Number(discount_amount)
+								$("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+								$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
+							}
+							
+							total_cal();
+						}
+					});
+					
+					if(same_item==0){
+						html += '<tr id="sell_product_' + product_id + '" data-id="' + item_row + '">' +
+							'<input type="hidden" name="product_id[]" value="' + product_id + '">' +
+							'<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
+							'<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
+							'<input type="hidden" name="product_total_amount[]" id="input-product_total_amount_'+product_id+'" value="' + product_mrp + '">' +
+							'<td>' + barcode + '</td>' +
+							'<td class="proName">' + product_name + '</td>' +
+							'<td id="product_stock_' + product_id + '">W-' + w_stock + '</br>S-' + c_stock + '</td>' +
+							'<td id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
+							'<td><input type="number" name="product_qty[]" id="product_qty_' + product_id + '" class="input-3 product_qty" value="1"></td>' +
+							'<td><input type="text" name="product_disc_percent[]" id="product_disc_percent_' + product_id + '" class="input-3 product_disc_percent" value="0"></td>' +
+							'<td><input type="text" name="product_disc_amount[]" id="product_disc_amount_' + product_id + '" class="input-3 product_disc_amount" value="0"></td>' +
+							'<td class="relative"><select name="product_unit_price[]" id="product_unit_price_'+product_id+'" class="product_unit_price">'+option_html+'</select>'+
+							'<input type="text" class="product_unit_price_amount input-3" id="product_unit_price_amount_'+product_id+'" value="'+product_mrp+'" readonly="readonly"></td>' +
+							'<td id="product_total_amount_'+product_id+'">'+product_mrp+'</td>' +
+							'<td><a href="javascript:;" onclick="remove_sell_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
+							'</tr>';
+					$("#product_sell_record_sec").prepend(html);
+					total_cal();
+					}
+				}else{
+					toastr.error("Stock not available for this Product");
+				}
+            }else{
+				toastr.error("Stock not available for this Product");
+				
+			}
+        }
+    });
+});
+
+$(document).on('click', '#applyChargeBtn', function() {
+	var total_payble_amount = $('#total_payble_amount-input').val();
+	$("#charge_total_payable").html('₹' + Number(total_payble_amount).toFixed(2));
+	
+	var charge_amt	= $('#charge_amt-input').val();
+	$('#charge_amt').val(charge_amt);
+	
+	$('#modal-applyCharges').modal('show');
+});
+
+$(document).ready(function() {
+    $("#applyCharge-form").validate({
+        rules: {
+            charge_amt: "required",
+        },
+        messages: {
+            //promo: "Required",
+        },
+        errorElement: "em",
+        errorPlacement: function(error, element) {
+            // Add the `help-block` class to the error element
+            error.addClass("help-block");
+            error.insertAfter(element);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass("has-error").removeClass("has-success");
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).addClass("has-success").removeClass("has-error");
+        },
+        submitHandler: function(form) {
+			var gross_total_amount 	= $('#gross_total_amount-input').val();
+			var charge_amt 	= $('#charge_amt').val();
+			
+			var charge_amount = Number(gross_total_amount) + Number(charge_amt);
+            var total_amount = Number(charge_amount);
+			
+			$('#total_payble_amount-input').val(total_amount);
+			$("#total_payble_amount").html('₹' + Number(total_amount).toFixed(2));
+			$('#charge_amt-input').val(charge_amt);
+			
+			$('#modal-applyCharges').modal('hide');
+			
+		}
+    });
+});
+
+$(document).on('keyup', '#charge_amt', function() {
+    var gross_total_amount = $('#gross_total_amount-input').val();
+    var charge_amt = $(this).val();
+
+    if (Number(gross_total_amount) > 0) {
+		var charge_amount = Number(gross_total_amount) + Number(charge_amt);
+		$("#charge_total_payable").html('₹' + Number(charge_amount).toFixed(2));
+	} else {
+        toastr.error("Something Error Occurs!");
+        return false;
+    }
+});
+
+
+
+$(document).on('click', '#applyDiscountBtn', function() {
+	
+	var total_payble_amount = $('#total_payble_amount-input').val();
+	$("#discount_total_payable").html('₹' + Number(total_payble_amount).toFixed(2));
+	
+	var discount_percent	= $('#selling_special_discount_percent-input').val();
+	var total_discount		= $('#selling_special_discount_amt-input').val();
+	
+	$('#special_discount_percent').val(discount_percent);
+	$('#special_discount_amt').val(total_discount);
+	
+	
+	$('#modal-applyDiscount').modal('show');
+});
+
+$(document).ready(function() {
+    $("#applyDiscount-form").validate({
+        rules: {
+            special_discount_percent: "required",
+            special_discount_amt: "required",
+        },
+        messages: {
+            //promo: "Required",
+        },
+        errorElement: "em",
+        errorPlacement: function(error, element) {
+            // Add the `help-block` class to the error element
+            error.addClass("help-block");
+            error.insertAfter(element);
+        },
+        highlight: function(element, errorClass, validClass) {
+            $(element).addClass("has-error").removeClass("has-success");
+        },
+        unhighlight: function(element, errorClass, validClass) {
+            $(element).addClass("has-success").removeClass("has-error");
+        },
+        submitHandler: function(form) {
+			var gross_total_amount 	= $('#gross_total_amount-input').val();
+			var discount_percent 	= $('#special_discount_percent').val();
+			
+			var total_discount = Number(gross_total_amount) * Number(discount_percent) / 100;
+			var discount_amount = Number(gross_total_amount) - Number(total_discount);
+            var total_amount = Number(discount_amount);
+			
+			$('#total_payble_amount-input').val(total_amount);
+			$("#total_payble_amount").html('₹' + Number(total_amount).toFixed(2));
+			
+			$('#selling_special_discount_percent-input').val(discount_percent);
+			$('#selling_special_discount_amt-input').val(total_discount);
+			
+			$('#modal-applyDiscount').modal('hide');
+			
+		}
+    });
+});
+
+
+$(document).on('keyup', '#special_discount_percent', function() {
+    var gross_total_amount 	= $('#gross_total_amount-input').val();
+    var discount_percent 	= $(this).val();
+	var charge_amt			= $('#charge_amt-input').val();
+
+    if (Number(gross_total_amount) > 0) {
+        if (Number(discount_percent) > 100) {
+            toastr.error("Something Error Occurs!");
+            return false;
+        } else {
+            var total_discount = Number(gross_total_amount) * Number(discount_percent) / 100;
+            var discount_amount = Number(gross_total_amount) - Number(total_discount);
+            var total_amount = Number(discount_amount);
+
+            $("#special_discount_amt").val(total_discount);
+            $("#discount_total_payable").html('₹' + Number(total_amount).toFixed(2));
+        }
+
+    } else {
+        toastr.error("Something Error Occurs!");
+        return false;
+    }
+});
+
+
+
+
+
+
+
 $(document).ready(function() {
     $("#search_product").keyup(function() {
         var search = $(this).val();
@@ -106,29 +395,71 @@ function setProductRow(element) {
                     item_row = max + 1;
                 }
 				
+				if (stock_type == 'w') {
+					stock = w_stock;
+				} else {
+					stock = c_stock;
+				}
 				
+				if(stock>0){
+					var same_item=0;
+					$("#product_sell_record_sec tr").each(function () {
+						var row_product_id = $(this).attr('id').split('_')[2];
+						console.log(row_product_id);
+						if (row_product_id == product_id) {
+							same_item=1;
+							
+							var qty = $('#product_qty_' + product_id).val();
+							var item_qty=Number(qty)+1;
+							
+							if (Number(item_qty) > Number(stock)) {
+								$('#product_qty_' + product_id).val(stock);
+								toastr.error("Entered Qty should not be greater than Stock");
+								return false;
+							}else{
+								$('#product_qty_' + product_id).val(item_qty);
+								var unit_price = $("#product_unit_price_amount_" + product_id).val();
+								var discount_percent = $("#product_disc_percent_" + product_id).val();
+								var total_discount = (Number(unit_price) * Number(item_qty)) * Number(discount_percent) / 100;
+								
+								if (Number(discount_percent) != 0 || discount_percent != '') {
+									$("#product_disc_amount_" + product_id).val(total_discount.toFixed(2));
+								}
+								var total_selling_cost = Number(unit_price) * Number(item_qty);
+								var discount_amount = Number(total_selling_cost) - Number(total_discount);
+								var total_amount = Number(discount_amount)
+								$("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+								$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
+							}
+							
+							total_cal();
+						}
+					});
 					
-                html += '<tr id="sell_product_' + product_id + '" data-id="' + item_row + '">' +
-                    '<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
-                    '<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
-                    '<td>' + barcode + '</td>' +
-                    '<td class="proName">' + product_name + '</td>' +
-                    '<td id="product_stock_' + product_id + '">W-' + w_stock + '</br>S-' + c_stock + '</td>' +
-                    '<td id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
-                    '<td><input type="number" id="product_qty_' + product_id + '" class="input-3 product_qty" value="1"></td>' +
-                    '<td><input type="text" id="product_disc_percent_' + product_id + '" class="input-3 product_disc_percent" value="0"></td>' +
-                    '<td><input type="text" id="product_disc_amount_' + product_id + '" class="input-3 product_disc_amount" value="0"></td>' +
-                    '<td class="relative"><select id="product_unit_price_'+product_id+'" class="product_unit_price">'+option_html+'</select>'+
-					'<input type="text" class="product_unit_price_amount input-3" id="product_unit_price_amount_'+product_id+'" value="'+product_mrp+'" readonly="readonly"></td>' +
-                    '<td id="product_total_amount_'+product_id+'">'+product_mrp+'</td>' +
-                    '<td><a href="javascript:;" onclick="remove_sell_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
-                    '</tr>';
-
-                $("#product_sell_record_sec").prepend(html);
-				total_cal();
-
-                //alert(item_prices_length);
-
+					if(same_item==0){
+						html += '<tr id="sell_product_' + product_id + '" data-id="' + item_row + '">' +
+							'<input type="hidden" name="product_id[]" value="' + product_id + '">' +
+							'<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
+							'<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
+							'<input type="hidden" name="product_total_amount[]" id="input-product_total_amount_'+product_id+'" value="' + product_mrp + '">' +
+							'<td>' + barcode + '</td>' +
+							'<td class="proName">' + product_name + '</td>' +
+							'<td id="product_stock_' + product_id + '">W-' + w_stock + '</br>S-' + c_stock + '</td>' +
+							'<td id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
+							'<td><input type="number" name="product_qty[]" id="product_qty_' + product_id + '" class="input-3 product_qty" value="1"></td>' +
+							'<td><input type="text" name="product_disc_percent[]" id="product_disc_percent_' + product_id + '" class="input-3 product_disc_percent" value="0"></td>' +
+							'<td><input type="text" name="product_disc_amount[]" id="product_disc_amount_' + product_id + '" class="input-3 product_disc_amount" value="0"></td>' +
+							'<td class="relative"><select name="product_unit_price[]" id="product_unit_price_'+product_id+'" class="product_unit_price">'+option_html+'</select>'+
+							'<input type="text" class="product_unit_price_amount input-3" id="product_unit_price_amount_'+product_id+'" value="'+product_mrp+'" readonly="readonly"></td>' +
+							'<td id="product_total_amount_'+product_id+'">'+product_mrp+'</td>' +
+							'<td><a href="javascript:;" onclick="remove_sell_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
+							'</tr>';
+					$("#product_sell_record_sec").prepend(html);
+					total_cal();
+					}
+				}else{
+					toastr.error("Stock not available for this Product");
+				}
             }else{
 				toastr.error("Stock not available for this Product");
 				
@@ -152,6 +483,7 @@ $(document).on('keyup', '.product_qty', function() {
     var w_stock = $('#product_w_stock_' + product_id).val();
     var c_stock = $('#product_c_stock_' + product_id).val();
     var stock = 0;
+	
     if (stock_type == 'w') {
         stock = w_stock;
     } else {
@@ -173,6 +505,8 @@ $(document).on('keyup', '.product_qty', function() {
         var discount_amount = Number(total_selling_cost) - Number(total_discount);
         var total_amount = Number(discount_amount)
         $("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+		$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
+		
     }
 	
 	total_cal();
@@ -213,6 +547,7 @@ $(document).on('keyup', '.product_disc_percent', function() {
             var discount_amount = Number(total_selling_cost) - Number(total_discount);
             var total_amount = Number(discount_amount)
             $("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+			$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
         }
     }
 	
@@ -254,6 +589,7 @@ $(document).on('keyup', '.product_disc_amount', function() {
             var discount_amount = Number(total_selling_cost) - Number(total_discount);
             var total_amount = Number(discount_amount)
             $("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+			$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
         }
     }
 	
@@ -292,6 +628,7 @@ $(document).on('change', '.product_unit_price', function() {
             var discount_amount = Number(total_selling_cost) - Number(total_discount);
             var total_amount = Number(discount_amount)
             $("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+			$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
 			total_cal();
         }, 500);
     }
@@ -328,6 +665,7 @@ function discount_cal(product_id) {
             var discount_amount = Number(total_selling_cost) - Number(total_discount);
             var total_amount = Number(discount_amount)
             $("#product_total_amount_" + product_id).html(Number(total_amount).toFixed(2));
+			$("#input-product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
 			total_cal();
         }, 500);
     }
@@ -344,7 +682,16 @@ function total_cal() {
 
 
     $('#sub_total_mrp-input').val(0);
-
+	$('#total_quantity-input').val(0);
+	$('#total_mrp-input').val(0);
+	$('#total_discount_amount-input').val(0);
+	$('#tax_amount-input').val(0);
+	$('#total_payble_amount-input').val(0);
+	
+	$('#charge_amt-input').val(0);
+	$('#charge_amt').val(0);
+	$("#charge_total_payable").html('₹0');
+	
     var total_quantity = 0;
     var total_mrp = 0;
     var total_discount_amount = 0;
@@ -376,13 +723,38 @@ function total_cal() {
             sub_total_mrp += (Number(total_amount));
 
         });
-
+		
         $("#total_quantity").html(total_quantity);
         $("#total_mrp").html('₹' + total_mrp);
         $("#total_discount_amount").html('₹' + total_discount_amount);
         $("#sub_total_mrp").html('₹' + sub_total_mrp);
         $("#total_payble_amount").html('₹' + sub_total_mrp);
-        $('#sub_total_mrp-input').val(sub_total_mrp);
+        
+		
+		$('#sub_total_mrp-input').val(sub_total_mrp);
+		$('#total_quantity-input').val(total_quantity);
+		$('#total_mrp-input').val(total_mrp);
+		$('#total_discount_amount-input').val(total_discount_amount);
+		$('#tax_amount-input').val(0);
+		$('#total_payble_amount-input').val(sub_total_mrp);
+		$('#gross_total_amount-input').val(sub_total_mrp);
+		
+		
+		var special_discount_percent	= $('#selling_special_discount_percent-input').val();
+		if(special_discount_percent>0){
+			var gross_total_amount 	= $('#gross_total_amount-input').val();
+			var total_discount = Number(gross_total_amount) * Number(special_discount_percent) / 100;
+			var discount_amount = Number(gross_total_amount) - Number(total_discount);
+			
+			$("#total_payble_amount").html('₹' + discount_amount);
+			$('#total_payble_amount-input').val(discount_amount);
+			
+			$("#special_discount_amt").val(total_discount);
+			$("#selling_special_discount_amt-input").val(total_discount);
+			
+            $("#discount_total_payable").html('₹' + Number(discount_amount).toFixed(2));
+		}
+		
     }, 200);
 }
 
@@ -407,7 +779,31 @@ $(document).on('keyup', '#round_off', function() {
         if ($("#round_off").val() == '-') {
             roundoff = 0;
         }
-        $("#total_payble_amount").text((parseFloat($("#sub_total_mrp-input").val()) + parseFloat(roundoff)).toFixed(2));
+		
+		
+		//$('#gross_total_amount-input').val(total_payble_amount);
+		
+		var special_discount_percent	= $('#selling_special_discount_percent-input').val();
+		if(special_discount_percent>0){
+			var gross_total_amount 	= $('#gross_total_amount-input').val();
+			var total_discount = Number(gross_total_amount) * Number(special_discount_percent) / 100;
+			var discount_amount = Number(gross_total_amount) - Number(total_discount);
+			
+			var total_payble_amount=(parseFloat(discount_amount) + parseFloat(roundoff)).toFixed(2);
+			
+			$("#total_payble_amount").html('₹' + total_payble_amount);
+			$('#total_payble_amount-input').val(total_payble_amount);
+			
+			$("#special_discount_amt").val(total_discount);
+			$("#selling_special_discount_amt-input").val(total_discount);
+			
+            $("#discount_total_payable").html('₹' + Number(discount_amount).toFixed(2));
+		}else{
+			var total_payble_amount=(parseFloat($("#sub_total_mrp-input").val()) + parseFloat(roundoff)).toFixed(2);
+        	$("#total_payble_amount").text(total_payble_amount);
+			$('#total_payble_amount-input').val(total_payble_amount);
+		}
+		
     } else {
         $("#round_off").val(0);
     }

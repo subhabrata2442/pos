@@ -172,6 +172,12 @@ class Common extends Model{
 	 	return $value;
 	}	
 	
+	public static function get_user_settings($where,$company_id) {
+		$result=DB::table('site_settings')->select('option_value')->where($where)->where('company_id',$company_id)->first();
+		$value=isset($result->option_value)?$result->option_value:'';
+	 	return $value;
+	}
+	
 	/**
      * Add To Cart.
      *

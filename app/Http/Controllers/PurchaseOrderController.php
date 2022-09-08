@@ -31,6 +31,9 @@ use App\Models\MasterProducts;
 use App\Models\ProductRelationshipSize;
 use App\Models\PurchaseInwardStock;
 use App\Models\InwardStockProducts;
+use App\Models\Site_settings;
+use App\Models\Common;
+
 
 use App\Models\Warehouse;
 
@@ -42,6 +45,7 @@ class PurchaseOrderController extends Controller
 	public function pos_type()
     {
 		$data['heading'] 		= 'Purchase Order';
+		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
 		return view('admin.purchase_order.type', compact('data'));
 	}
 	public function pos_payment_method()
@@ -343,16 +347,15 @@ class PurchaseOrderController extends Controller
 		if(isset($data[$tp_no_row_id][1])){
 			if($data[$tp_no_row_id][1]!=''){
 				$tp_no_arr	= explode(':',$data[$tp_no_row_id][1]);
-				$tp_no		= isset($tp_no_arr[1])?$tp_no_arr[1]:'';	
+				$tp_no		= isset($tp_no_arr[1])?trim($tp_no_arr[1]):'';	
 			}
 		}
 		
 		if($tp_no!=''){
-			$check_tp_no=PurchaseInwardStock::query()->where('tp_no', 'LIKE', "%{$tp_no}%")->count();
-			
-			if($check_tp_no>0){
+			$check_tp_no=PurchaseInwardStock::where('tp_no', $tp_no)->get();
+			if(count($check_tp_no)>0){
 				$return_data['msg']		= 'This invoice is already uploaded!';
-				$return_data['success']	= 0;
+				$return_data['success']	= 2;
 				echo json_encode($return_data);exit;
 			}
 		}
@@ -840,8 +843,14 @@ class PurchaseOrderController extends Controller
                 DB::commit();
                 return redirect()->route('admin.stock.purchase-order.edit', [base64_encode($purchase->id)])->with('success', 'Purchase order placed successfully');
             }
+			
+			
             $data = [];
 			
+			$branch_id	= 1;
+			$stock_type	= Common::get_user_settings($where=['option_name'=>'stock_type'],$branch_id);
+			
+			$data['stock_type'] 	= isset($stock_type)?$stock_type:'w';
             $data['heading'] 		= 'Add Order';
             $data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
             $data['supplier'] 		= Supplier::all();

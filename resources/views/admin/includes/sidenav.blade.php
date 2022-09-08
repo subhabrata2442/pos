@@ -65,15 +65,15 @@
             <li class="nav-item"> <a href="{{ route('admin.purchase.inward_stock') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.inward_stock') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Purchase Order</p>
               </a> </li>
-            <li class="nav-item"> <a href="{{ route('admin.purchase.material_inward') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.material_inward') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+            <!--<li class="nav-item"> <a href="{{ route('admin.purchase.material_inward') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.material_inward') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Material Inward</p>
-              </a> </li>
-            <li class="nav-item"> <a href="{{ route('admin.purchase.supplier_bill') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.supplier_bill') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+              </a> </li>-->
+            <!--<li class="nav-item"> <a href="{{ route('admin.purchase.supplier_bill') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.supplier_bill') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Supplier Bill</p>
-              </a> </li>
-            <li class="nav-item"> <a href="{{ route('admin.purchase.debitnote') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.debitnote') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+              </a> </li>-->
+            <!--<li class="nav-item"> <a href="{{ route('admin.purchase.debitnote') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.debitnote') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Debit Note</p>
-              </a> </li>
+              </a> </li>-->
           </ul>
         </li>
           
@@ -83,18 +83,18 @@
           <p>Report <i class="fas fa-angle-left right"></i></p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item"> <a href="{{ route('admin.report.sales') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+            <!--<li class="nav-item"> <a href="{{ route('admin.report.sales') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Sales</p>
-              </a> </li>
+              </a> </li>-->
             <li class="nav-item"> <a href="{{ route('admin.report.purchase') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.purchase') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Purchase</p>
               </a> </li>
-            <li class="nav-item"> <a href="{{ route('admin.report.inventory') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.inventory') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+            <!--<li class="nav-item"> <a href="{{ route('admin.report.inventory') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.inventory') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Inventory</p>
-              </a> </li>
-            <li class="nav-item"> <a href="{{ route('admin.report.reminders') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.reminders') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+              </a> </li>-->
+            <!--<li class="nav-item"> <a href="{{ route('admin.report.reminders') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.reminders') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Reminders</p>
-              </a> </li>
+              </a> </li>-->
           </ul>
         </li>
         @endif

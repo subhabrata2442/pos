@@ -12,14 +12,14 @@ $(document).ready(function() {
             dataType: "json",
             beforeSend: function() {
                 $('#ajax_loader').fadeIn();
-				$('#warehouse').val('');
-				$('#warehouse_id').val('');
-				$('#input-supplier_invoice_no').val('');
-				$('#input-supplier_invoice_purchase_date').val('');
-				$('#input-supplier_invoice_inward_date').val('');
-				var warehouse_details_html = '<h4>Warehouse Details :</h4><p> Contact : <br>Email : <br></p>';
-				
-				$("#supplier_details_sec").html(warehouse_details_html);
+                $('#warehouse').val('');
+                $('#warehouse_id').val('');
+                $('#input-supplier_invoice_no').val('');
+                $('#input-supplier_invoice_purchase_date').val('');
+                $('#input-supplier_invoice_inward_date').val('');
+                var warehouse_details_html = '<h4>Warehouse Details :</h4><p> Contact : <br>Email : <br></p>';
+
+                $("#supplier_details_sec").html(warehouse_details_html);
             },
             complete: function() {
                 $('#ajax_loader').fadeOut();
@@ -51,8 +51,8 @@ $(document).ready(function() {
 
                     var invoice_date = json.invoice_date;
                     $('#purchase_date').val(invoice_date);
-					
-					var invoice_no = json.invoice_no;
+
+                    var invoice_no = json.invoice_no;
                     $('#invoice_no').val(invoice_no);
 
 
@@ -182,9 +182,9 @@ $(document).ready(function() {
                         var sp_fee = item_detail.sp_fee;
                         var product_mrp = item_detail.product_mrp;
 
-                        var bottle_case 	= item_detail.total_cases;
-						var bottle_per_case = item_detail.bottle_case;
-						var loose_qty 		= item_detail.loose_qty;
+                        var bottle_case = item_detail.total_cases;
+                        var bottle_per_case = item_detail.bottle_case;
+                        var loose_qty = item_detail.loose_qty;
                         var in_case = item_detail.in_cases;
 
                         var is_new = 'new_item';
@@ -205,7 +205,7 @@ $(document).ready(function() {
                             '<td><a href="javascript:;" onclick="remove(' + product_id + ');"><i class="fas fa-times"></i></a></td>' +
                             '<td id="product_barcode_' + product_id + '">' + product_barcode + '</td>' +
                             '<td id="product_case_qty_' + product_id + '">' + bottle_case + '</td>' +
-							'<td id="product_bottle_case_' + product_id + '">' + bottle_per_case + '</td>' +
+                            '<td id="product_bottle_case_' + product_id + '">' + bottle_per_case + '</td>' +
                             '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="product_loose_qty_' + product_id + '">' + loose_qty + '</td>' +
 
                             '<td onkeypress="return check_character(event);" class="number greenBg p_product_qty" contenteditable="true" id="product_qty_' + product_id + '">' + qty + '</td>' +
@@ -234,8 +234,12 @@ $(document).ready(function() {
 
 
                     //alert(json.result.length);
-                } else {
-                    toastr.error("No data found!");
+                } else if (json.success == 2) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: 'This invoice is already uploaded!',
+                    });
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {

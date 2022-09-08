@@ -112,7 +112,7 @@
     </div>
   </div>
 </form>
-<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
+<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data" style="display:none">
   <input type="hidden" name="supplier_id" id="supplier_id" value="{{$data['supplier']->id ?? ''}}">
   <input type="hidden" name="warehouse_id" id="warehouse_id">
   <input type="hidden" name="invoice_no" id="input-supplier_invoice_no" />
@@ -167,7 +167,7 @@
   </div>
   <div class="col-12">
     <div class="commonBox">
-      <div class="enterBarcode mb-3">
+      <!--<div class="enterBarcode mb-3">
         <div class="row">
           <div class="col">
             <div class="form-group relative enterBarcodeSrc m-0">
@@ -178,7 +178,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div>-->
       <div class="inwordTableWrap">
         <div class="table-responsive forTableHeight">
           <table class="inwordTable table-striped table-hover table mb-0">

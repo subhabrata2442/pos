@@ -497,7 +497,7 @@ hr {
 	margin: 0;
 	max-height: 300px;
 	overflow-y: auto;
-	z-index: 99;
+	z-index: 99999;
 	top: 100%;
 	background: #cfcff0;
 }
@@ -572,6 +572,20 @@ hr {
 	font-weight: normal;
 	border: #e1dcdc 1px solid;
 	height: 34px;
+}
+
+.input-2 {
+	display: block;
+	width: 100%;
+	padding: 0 0.75rem;
+	font-size: 15px;
+	line-height: 1.5;
+	color: #495057;
+	background-color: #fff;
+	font-family: 'Open Sans', sans-serif !important;
+	font-weight: normal;
+	border: #e1dcdc 1px solid;
+	height: 44px;
 }
 
 .enterBarcode .enterBarcodeSrc .searchBtn {
@@ -969,50 +983,34 @@ hr {
 
 .tablePage {
 	width: 100%;
-	padding: 2.8rem;
+	
 }
 .leftPannel {
-	width: 280px;
-	height: 100%;
-	background: url("../images/right-pannel.jpg") center center no-repeat;
-	position: fixed;
-	padding: 80px 15px 20px 15px;
-	left: 0;
-	top: 0;
-	z-index: 1;
+    flex: 0 0 366px;
+    max-width: 366px;
+    background: #abeafb;
+    padding: 30px;
 }
-.leftPannel:after{
-	content: "";
-	background-size: cover;
-	background: rgba(0, 0, 0, .85);
-	position: absolute;
-	left: 0;
-	top: 0;
-	height: 100%;
-	width: 100%;
-	z-index: -1;
-}
+
 .rightPannel {
-	flex: 0 0 calc(100% - 280px);
-	max-width: calc(100% - 280px);
-	padding: 20px;
+	flex: 1 0 0%;
 	height: 100%;
-	margin-left: 280px;
+	padding-left: 15px;
 }
 
 .leftPannel ul li:not(:last-child){
 	margin-bottom: 15px;
 }
 .leftPannel ul li a {
-	padding: 0 20px 0 0;
-	display: block;
-	color: #fff;
-	border-radius: 25px 16px 16px 25px;
-	background: #3470a6;
-	text-transform: uppercase;
-	font-weight: bold;
-	transition: all ease-in-out .4s;
-	font-size: .96rem;
+    padding: 10px 23px;
+    display: block;
+    color: #fff;
+    border-radius: 10px;
+    background: #3470a6;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: all ease-in-out .4s;
+    font-size: 18px;
 }
 
 .leftPannel ul li a:hover {
@@ -1022,25 +1020,18 @@ hr {
 
 
 .leftPannel ul li a img {
-	width: 22px;
-	display: block;
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50% , -50%);
+    display: block;
+    width: 100%;
 }
 
 .leftPannel ul li a span {
-	display: inline-block;
-	vertical-align: middle;
-	margin-right: 6px;
-	height: 48px;
-	width: 48px;
-	line-height: 40px;
-	text-align: center;
-	background: #e4a54d;
-	border-radius: 50%;
-	position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 8px;
+    text-align: center;
+    border-radius: 50%;
+    position: relative;
+    width: 34px;
 }
 .rightPannel ul li {
 	flex: 0 0 16.6666667%;
@@ -1088,3 +1079,304 @@ hr {
 	margin: 0;
 	z-index: 2;
 }
+
+.applyCoupon {
+	max-width: 500px;
+  }
+.applyCouponTop {
+	margin-bottom: 1.25rem;
+}
+  .ApplyBtn {
+	position: absolute;
+	right: 4px;
+	top: 5px;
+	background: #e08300;
+	padding: 0 14px;
+	height: 34px;
+	line-height: 34px;
+	color: #fff;
+	font-weight: bold;
+	border-radius: 6px;
+	text-transform: uppercase;
+} 
+.pmMenu ul li:not(:last-child){
+	border-bottom: #e9e9e9 1px solid;
+}
+.pmMenu ul li a {
+    display: block;
+    color: #333;
+    background: #fff;
+    padding: 18px 15px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.pmMenu ul li a:hover {
+    color: #282828;
+    background: #d7e2f5;
+}
+.pmMenu ul li a span {
+    display: inline-block;
+    margin-right: 15px;
+}
+.pmDetails {
+	padding-left: 20px;
+}
+.invoiceBalance-2 {
+    background: #203966;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px;
+    font-size: 1.1rem;
+}
+.invoiceBalance-2 span {
+	display: block;
+}
+.pmCardHeight {
+	min-height: 83vh;
+}
+
+.applyCouponTop h3 {
+    border-bottom: #e6e6e6 1px solid;
+    padding-bottom: 10px;
+    margin-bottom: 24px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+.paymentOptionTop {
+	margin-bottom: 2rem;
+} 
+
+.applyCouponTop label {
+    font-size: .9rem;
+    color: #202020;
+    font-weight: normal !important;
+}
+
+.paymentOptionTop ul li {
+	width: 25%;
+	flex: 0 0 25%;
+  }
+  .paymentOptionTop ul li a img {
+	width: 100%;
+  }
+.paymentOptionTop ul li a {
+	display: block;
+	box-shadow: rgba(0,0,0,0.3) 0 0 10px -5px;
+	border-radius: 50%;
+	overflow: hidden;
+	transition: all ease-in-out .4s;
+}
+.paymentOptionTop ul li a:hover , .paymentOptionTop ul li a.active {
+	box-shadow: rgba(4, 170, 32, 0.644) 0 0 16px -5px;
+}
+.paymentOptionInputBox , .paymentOptionTop {
+	max-width: 500px;
+}
+
+.cashOptionTopBox {
+    background: #6ab5f3;
+    padding: 14px;
+}
+
+.cashOptionTopBox label {
+    color: #fff;
+    text-align: center;
+    display: block;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+}
+
+.cashOptionTopBox span {
+	border-radius: 14px;
+	text-align: center;
+	font-weight: bold;
+	font-size: 1.2rem;
+	display: block;
+	background: #fff;
+	padding: 10px 0;
+}
+.cashOptionBtm .table tr td {
+	padding: 0;
+}
+.cashOptionBtm .table tr td a {
+    display: block;
+    height: 78px;
+    line-height: 78px;
+    font-weight: bold;
+    color: #281919;
+    background: #fff;
+    text-align: center;
+}
+.saveBtn-2 {
+	background: #3b60a5;
+	color: #fff;
+	border: none;
+	line-height: 42px;
+	font-weight: bold;
+	text-transform: uppercase;
+	border-radius: 4px;
+	padding: 0 2rem;
+	display: block;
+	font-size: 1rem;
+}
+
+
+.saveBtn-2:hover {
+	background: #254a8f;
+	color: #fff;
+}
+
+.saveBtnBdr {
+	background: #fff;
+	color: #6c757d;
+	border: #6c757d 1px solid;
+	line-height: 40px;
+	font-weight: bold;
+	text-transform: uppercase;
+	border-radius: 4px;
+	padding: 0 2rem;
+	display: block;
+	font-size: 1rem;
+}
+
+.saveBtnBdr:hover {
+	color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+}
+
+.cashOptionBtm {
+    background: #f5f5f5;
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.payWrap {
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 9999;
+    overflow-y: auto;
+    transform: translateX(100%);
+	-moz-transition: all ease-in-out .4s;
+	-webkit-transition: all ease-in-out .4s;
+    transition: all ease-in-out .4s;
+    max-width: 900px;
+}
+.payWrapLeft{
+	-ms-flex: 0 0 270px;
+    flex: 0 0 270px;
+    max-width: 270px;
+	padding-right: 7.5px;
+    padding-left: 7.5px;
+}
+.payWrapRight {
+    -ms-flex: 0 0 calc(100% - 270px);
+    flex: 0 0 calc(100% - 270px);
+    max-width: calc(100% - 270px);
+    padding-right: 7.5px;
+    padding-left: 7.5px;
+    border-left: #eee 1px solid;
+    min-height: 43vw;
+}
+.payWrap.active {
+    transform: translateX(0);
+	box-shadow: rgba(0,0,0,.15) -20px 0 50px 0;
+}
+
+span.payWrapCloseBtn {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.rightPannelTop {
+    padding: 30px 0px;
+    overflow: hidden;
+}
+.rightPannelTop .row{
+	margin-left: -25px;
+	margin-right: -25px;
+}
+.rightPannelTop .col-lg-4 {
+	padding-left:25px;
+	padding-right:25px;
+}
+.tabBox a {
+    display: block;
+    text-align: center;
+    font-weight: bold;
+    line-height: 60px;
+    border-radius: 30px;
+    background: #fff;
+	font-size: 23px;
+	color: #21314a;
+	text-transform: uppercase;
+	box-shadow: 0px 0px 16.74px 1.26px rgba(0, 0, 0, 0.21);
+	-moz-transition: all ease-in-out .4s;
+	-webkit-transition: all ease-in-out .4s;
+	transition: all ease-in-out .4s;
+	position: relative;
+}
+.tabBox a:hover {
+	background: #21314a;
+	color: #fff;
+}
+.tabBox a svg {
+    position: absolute;
+    right: 27px;
+    top: 50%;
+	-moz-transform: translateY(-50%);
+	-webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+}
+.tabBox a span img {
+	-moz-transition: all ease-in-out .4s;
+	-webkit-transition: all ease-in-out .4s;
+	transition: all ease-in-out .4s;
+	max-width: 100%;
+}
+
+.tabBox a:hover span img {
+	filter: brightness(0) invert(1);
+}
+
+.tabBox a span {
+    display: inline-block;
+    margin-right: 5px;
+    vertical-align: middle;
+    position: relative;
+    top: -3px;
+}
+.tableIndicate ul li:not(:last-child) {
+	margin-right: 25px;
+}
+.tableIndicate ul li {
+    font-size: 18px;
+}
+.tableIndicate ul li span {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    vertical-align: middle;
+    box-shadow: rgba(0,0,0,.3) 0 0 5px;
+    margin-right: 10px;
+    border-radius: 4px;
+}
+
+.tableIndicate {
+	margin-bottom: 40px;
+}
+
+
+  
+
+
+  
+
+

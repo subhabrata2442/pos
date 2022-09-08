@@ -1193,6 +1193,7 @@ p {
     background-color: transparent;
     font-size: 1.2vw;
     padding: .44vw;
+    outline: none;
 }
 
 .enterProductInner {
@@ -1211,9 +1212,10 @@ p {
 
 .tableFixHead {
     overflow: auto;
-    height: 21.6vw;
+    height: 20.19vw;
     margin-bottom: 1vw;
     border: #e1e1e1 1px solid;
+    border-radius: 6px;
 }
 
 .tableFixHead thead th {
@@ -1553,7 +1555,7 @@ p {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #f9e1d6;
+    background-color: #deeffb;
     -webkit-transition: .4s;
     transition: .4s;
     padding: 0 !important;
@@ -1567,7 +1569,7 @@ p {
     width: 2.6vw;
     left: .2vw;
     bottom: .1vw;
-    background-color: darkslategrey;
+    background-color: #80c3f3;
     -webkit-box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.22);
     -webkit-transition: .4s;
@@ -1588,7 +1590,7 @@ p {
     color: #fff;
     height: 2.8vw;
     border-radius: 133px;
-    background-color: #ff6418;
+    background-color: #3b81b3;
     -webkit-transform: translateX(-5.55vw);
     -ms-transform: translateX(-5.55vw);
     transform: translateX(-5.55vw);
@@ -1661,3 +1663,21 @@ p {
 	position: absolute;
 	left: 0;
 }
+
+.small-input {
+	font-size: 1vw;
+	height: 2.2vw;
+	padding: 0 .5vw;
+	background-color: rgba(255,255,255,.5);
+	border: none;
+	color: #fff;
+    border-radius: 4px;
+}
+
+.atpLeft ul:not(:last-child) {
+    margin-bottom: .1vw;
+  }
+
+
+
+  
