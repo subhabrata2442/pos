@@ -95,7 +95,6 @@
           <h3 id="total_payble_amount">₹0.00</h3>
           <input type="hidden" name="gross_total_amount" id="gross_total_amount-input" value="0">
           <input type="hidden" name="total_payble_amount" id="total_payble_amount-input" value="0">
-          
           <input type="hidden" name="special_discount_percent" id="selling_special_discount_percent-input" value="0">
           <input type="hidden" name="special_discount_amt" id="selling_special_discount_amt-input" value="0">
           <input type="hidden" name="charge_amt" id="charge_amt-input" value="0">
@@ -170,7 +169,6 @@
     </div>
   </div>
 </div>
-@endsection
 <div class="modal fade modalMdHeader" id="modal-applyDiscount" tabindex="-1" aria-labelledby="modal-1Label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -199,7 +197,6 @@
     </div>
   </div>
 </div>
-
 <div class="modal fade modalMdHeader" id="modal-applyCharges" tabindex="-1" aria-labelledby="modal-1Label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -214,7 +211,6 @@
               <label for="" class="form-label">Charge Amt</label>
               <input type="text" class="form-control number" name="charge_amt" id="charge_amt" autocomplete="off">
             </div>
-            
             <button type="submit" class="btn btn-primary">Submit</button>
           </form>
         </div>
@@ -226,7 +222,7 @@
   </div>
 </div>
 
-<div class="modal fade modalMdHeader" id="modal-2" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+<!--<div class="modal fade modalMdHeader" id="modal-2" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header">
@@ -275,8 +271,8 @@
       </div>
     </div>
   </div>
-</div>
-<div class="modal fade modalMdHeader" id="modal-3" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+</div>--> 
+<!--<div class="modal fade modalMdHeader" id="modal-3" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content">
       <div class="modal-header">
@@ -330,38 +326,101 @@
       </div>
     </div>
   </div>
-</div>
-<section class="payWrap">
-  <span class="payWrapCloseBtn"><i class="fas fa-times-circle"></i></span>
+</div>-->
+
+<section class="payWrap"> <span class="payWrapCloseBtn"><i class="fas fa-times-circle"></i></span>
   <div class="p-5">
     <div class="row">
       <div class="payWrapLeft">
         <div class="pmMenu">
           <ul>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/cash.png" alt=""></span> Cash</a></li>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/upi.png" alt=""></span> Upi</a></li>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/card-1.png" alt=""></span> Card</a></li>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/google-pay.png" alt=""></span> Upi / Phone / Gpay</a></li>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/coupon.png" alt=""></span> Coupon</a></li>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/credit-card.png" alt=""></span> Credit</a></li>
-            <li><a href="#"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/pay-per-click.png" alt=""></span> Multiple Pay</a></li>
+            <li><a href="javascript:;" class="active p-method-tab" data-type="cash"><span><img src="{{ url('assets/admin/images/cash.png') }}" alt=""></span> Cash</a></li>
+            <li><a href="javascript:;" class="p-method-tab" data-type="upi"><span><img src="{{ url('assets/admin/images/upi.png') }}" alt=""></span> Upi</a></li>
+            <li><a href="javascript:;" class="p-method-tab" data-type="card"><span><img src="{{ url('assets/admin/images/card-1.png') }}" alt=""></span> Card</a></li>
+            <li><a href="javascript:;" class="p-method-tab" data-type="gPay"><span><img src="{{ url('assets/admin/images/google-pay.png') }}" alt=""></span> Phonepe / Gpay</a></li>
+            <li><a href="javascript:;" class="p-method-tab" data-type="coupon"><span><img src="{{ url('assets/admin/images/coupon.png') }}" alt=""></span> Coupon</a></li>
+            <li><a href="javascript:;" class="p-method-tab" data-type="credit_card"><span><img src="{{ url('assets/admin/images/credit-card.png') }}" alt=""></span> Credit</a></li>
+            <li><a href="javascript:;" class="p-method-tab" data-type="multiple_pay"><span><img src="{{ url('assets/admin/images/pay-per-click.png') }}" alt=""></span> Multiple Pay</a></li>
           </ul>
         </div>
       </div>
       <div class="payWrapRight">
         <div class="pmDetails">
-          <div class="applyCoupon" style="display: none;">
+          <div class="cashOption tab_sec" id="cash_payment_sec">
+            <div class="cashOptionTop">
+              <ul class="row justify-content-center">
+                <li class="col-lg-4 col-md-4 col-sm-6 col-12">
+                  <div class="mb-3 cashOptionTopBox">
+                    <label for="" class="form-label">Due Ammout</label>
+                    <span style="color: #1c0a6b;" id="due_amount_tendering">0</span> </div>
+                    <input type="hidden" id="due_amount_tendering-input" value="0" />
+                </li>
+                <li class="col-lg-4 col-md-4 col-sm-6 col-12">
+                  <div class="mb-3 cashOptionTopBox">
+                    <label for="" class="form-label">Tendered</label>
+                    <span style="color: #0f7a88;" id="tendered_amount">0</span> </div>
+                    <input type="hidden" id="tendered_amount-input" value="0" />
+                </li>
+                <li class="col-lg-4 col-md-4 col-sm-6 col-12">
+                  <div class="mb-3 cashOptionTopBox">
+                    <label for="" class="form-label">Change</label>
+                    <span style="color: #910b95;" id="tendered_change_amount">0</span> </div>
+                    <input type="hidden" id="tendered_change_amount-input" value="0" />
+                </li>
+              </ul>
+            </div>
+            <div class="cashOptionBtm text-center">
+              <table class="table table-bordered mb-0">
+                <tbody>
+                  <tr>
+                    <td width="20%"><a href="#">1</a></td>
+                    <td width="20%"><a href="#">2</a></td>
+                    <td width="20%"><a href="#">3</a></td>
+                    <td width="20%"><a href="#">+05</a></td>
+                    <td width="20%"><a href="#">+100</a></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#">4</a></td>
+                    <td><a href="#">5</a></td>
+                    <td><a href="#">6</a></td>
+                    <td><a href="#">+10</a></td>
+                    <td><a href="#">+500</a></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#">7</a></td>
+                    <td><a href="#">8</a></td>
+                    <td><a href="#">9</a></td>
+                    <td><a href="#">+20</a></td>
+                    <td><a href="#">+2000</a></td>
+                  </tr>
+                  <tr>
+                    <td><a href="#">C</a></td>
+                    <td><a href="#">0</a></td>
+                    <td><a href="#">.</a></td>
+                    <td><a href="#">+5</a></td>
+                    <td><a href="#"><i class="fas fa-times-square"></i></a></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="d-flex justify-content-center">
+              <ul class="d-flex">
+                <li class="col-auto">
+                  <button type="button" class="saveBtn-2">Submit</button>
+                </li>
+                <li class="col-auto"><a href="#" class="saveBtnBdr">Cancel</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="applyCoupon tab_sec" id="coupon_payment_sec" style="display: none;">
             <div class="applyCouponTop">
               <h3>Apply Coupon</h3>
               <div class="relative applyCouponInput">
                 <input type="text" placeholder="Please Type Coupon Code" class="input-2"/>
-                <a href="#" class="ApplyBtn">Apply</a>
-              </div>
+                <a href="#" class="ApplyBtn">Apply</a> </div>
             </div>
             <div class="applyCouponBtm">
-              <div class="mb-3 text-center invoiceBalance-2">
-                <span>Invoice Balance : 160</span>
-              </div>
+              <div class="mb-3 text-center invoiceBalance-2"> <span>Invoice Balance : 160</span> </div>
               <form action="get">
                 <div class="mb-3">
                   <input type="text" class="form-control input-2" id="" placeholder="Coupon Name">
@@ -371,14 +430,16 @@
                 </div>
                 <div class="mb-3">
                   <ul class="d-flex">
-                    <li><button type="button" class="btn btn-primary">Submit</button></li>
+                    <li>
+                      <button type="button" class="btn btn-primary">Submit</button>
+                    </li>
                     <li><a href="#" class="btn btn-outline-secondary ml-3">Cancel</a></li>
                   </ul>
                 </div>
               </form>
             </div>
           </div>
-          <div class="applyCoupon" style="display: none;">
+          <div class="applyCoupon tab_sec" id="card_payment_sec" style="display: none;">
             <div class="applyCouponTop">
               <h3>Card Details</h3>
               <form action="get">
@@ -410,8 +471,7 @@
               </form>
             </div>
           </div>
-  
-          <div class="paymentOption" style="display: none;">
+          <div class="paymentOption tab_sec" id="gPay_payment_sec" style="display: none;">
             <div class="paymentOptionTop">
               <ul class="row">
                 <li><a href="#" class="active"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/paytm.jpg" alt=""></a></li>
@@ -420,7 +480,6 @@
                 <li><a href="#"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/upi.jpg" alt=""></a></li>
               </ul>
             </div>
-  
             <div class="paymentOptionInputBox">
               <form action="get">
                 <div class="mb-3">
@@ -428,87 +487,22 @@
                 </div>
                 <div class="d-flex justify-content-center">
                   <ul class="d-flex">
-                  <li class="col-auto"><button type="button" class="saveBtn-2">Submit</button></li>
-                  <li class="col-auto"><a href="#" class="saveBtnBdr">Cancel</a></li>
+                    <li class="col-auto">
+                      <button type="button" class="saveBtn-2">Submit</button>
+                    </li>
+                    <li class="col-auto"><a href="#" class="saveBtnBdr">Cancel</a></li>
                   </ul>
                 </div>
               </form>
             </div>
           </div>
-  
-          <div class="cashOption">
-            <div class="cashOptionTop">
-              <ul class="row justify-content-center">
-                <li class="col-lg-4 col-md-4 col-sm-6 col-12">
-                  <div class="mb-3 cashOptionTopBox">
-                    <label for="" class="form-label">Due Ammout</label>
-                    <span style="color: #1c0a6b;">158</span>
-                  </div>
-                </li>
-                <li class="col-lg-4 col-md-4 col-sm-6 col-12">
-                  <div class="mb-3 cashOptionTopBox">
-                    <label for="" class="form-label">Tendered</label>
-                    <span style="color: #0f7a88;">2258</span>
-                  </div>
-                </li>
-                <li class="col-lg-4 col-md-4 col-sm-6 col-12">
-                  <div class="mb-3 cashOptionTopBox">
-                    <label for="" class="form-label">Change</label>
-                    <span style="color: #910b95;">2100.00</span>
-                  </div>
-                </li>
-              </ul>
-            </div>
-            <div class="cashOptionBtm text-center">
-              <table class="table table-bordered mb-0">
-                
-                <tbody>
-                  <tr>
-                    <td width="20%"><a href="#">1</a></td>
-                    <td width="20%"><a href="#">2</a></td>
-                    <td width="20%"><a href="#">3</a></td>
-                    <td width="20%"><a href="#">+05</a></td>
-                    <td width="20%"><a href="#">+100</a></td>
-                  </tr>
-                  <tr>
-                    <td><a href="#">4</a></td>
-                    <td><a href="#">5</a></td>
-                    <td><a href="#">6</a></td>
-                    <td><a href="#">+10</a></td>
-                    <td><a href="#">+500</a></td>
-                  </tr>
-                  <tr>
-                    <td><a href="#">7</a></td>
-                    <td><a href="#">8</a></td>
-                    <td><a href="#">9</a></td>
-                    <td><a href="#">+20</a></td>
-                    <td><a href="#">+2000</a></td>
-                  </tr>
-                  <tr>
-                    <td><a href="#">C</a></td>
-                    <td><a href="#">0</a></td>
-                    <td><a href="#">.</a></td>
-                    <td><a href="#">+5</a></td>
-                    <td><a href="#"><i class="fas fa-times-square"></i></a></td>
-                  </tr>
-                  
-                </tbody>
-              </table>
-            </div>
-            <div class="d-flex justify-content-center">
-                <ul class="d-flex">
-                  <li class="col-auto"><button type="button" class="saveBtn-2">Submit</button></li>
-                  <li class="col-auto"><a href="#" class="saveBtnBdr">Cancel</a></li>
-                </ul>
-              </div>
-          </div>
-  
-  
         </div>
       </div>
     </div>
   </div>
 </section>
+@endsection
+
 @section('scripts') 
 <script>
 var stock_type	= "{{$data['stock_type']}}";
@@ -520,7 +514,6 @@ var stock_type	= "{{$data['stock_type']}}";
     $('[data-toggle="tooltip"]').tooltip()
   })
 </script> 
-
 <script>
   $(document).ready(function() {
       $(".payBtn").on('click', function(e) {
@@ -535,5 +528,5 @@ var stock_type	= "{{$data['stock_type']}}";
       //     $(".payWrap").removeClass('active');
       // });
   });
-</script>
+</script> 
 @endsection 

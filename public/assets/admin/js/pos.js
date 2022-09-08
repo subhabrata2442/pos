@@ -1,3 +1,18 @@
+
+/*Start Payment*/
+$(document).on('click', '.p-method-tab', function() {
+	var type=$(this).data('type');
+	$('.tab_sec').hide();
+	$('#'+type+'_payment_sec').show();
+});
+
+/*End Payment*/
+
+
+
+
+
+
 $(document).on('click', '.addTopSellingProduct', function() {
 	var product_id = $(this).attr('data-id');
 	$.ajax({

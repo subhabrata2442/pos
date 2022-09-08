@@ -57,6 +57,14 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 	
 	Route::prefix('pos')->name('pos.')->group(function () {
 		Route::match(['GET'], '/pos_type', [PurchaseOrderController::class, 'pos_type'])->name('pos_type');
+		
+		Route::match(['GET'], '/demo_page_1', [PurchaseOrderController::class, 'demo_page_1'])->name('demo_page_1');
+		Route::match(['GET'], '/demo_page_2', [PurchaseOrderController::class, 'demo_page_2'])->name('demo_page_2');
+		Route::match(['GET'], '/demo_page_3', [PurchaseOrderController::class, 'demo_page_3'])->name('demo_page_3');
+		Route::match(['GET'], '/demo_page_4', [PurchaseOrderController::class, 'demo_page_4'])->name('demo_page_4');
+		Route::match(['GET'], '/demo_page_5', [PurchaseOrderController::class, 'demo_page_5'])->name('demo_page_5');
+		
+		
 		Route::match(['GET'], '/pos_payment_method', [PurchaseOrderController::class, 'pos_payment_method'])->name('pos_payment_method');
 		
 		

@@ -48,6 +48,43 @@ class PurchaseOrderController extends Controller
 		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
 		return view('admin.purchase_order.type', compact('data'));
 	}
+	
+	
+	public function demo_page_1()
+    {
+		$data['heading'] 		= 'Purchase Order';
+		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
+		return view('admin.purchase_order.demo_page_1', compact('data'));
+	}
+	public function demo_page_2()
+    {
+		$data['heading'] 		= 'Purchase Order';
+		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
+		return view('admin.purchase_order.demo_page_2', compact('data'));
+	}
+	public function demo_page_3()
+    {
+		$data['heading'] 		= 'Purchase Order';
+		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
+		return view('admin.purchase_order.demo_page_3', compact('data'));
+	}
+	public function demo_page_4()
+    {
+		$data['heading'] 		= 'Purchase Order';
+		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
+		return view('admin.purchase_order.demo_page_4', compact('data'));
+	}
+	public function demo_page_5()
+    {
+		$data['heading'] 		= 'Purchase Order';
+		$data['breadcrumb'] 	= ['Stock', 'Purchase Order', 'Add'];
+		return view('admin.purchase_order.demo_page_5', compact('data'));
+	}
+	
+	
+	
+	
+	
 	public function pos_payment_method()
     {
 		
