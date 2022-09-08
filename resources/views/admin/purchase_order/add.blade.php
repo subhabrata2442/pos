@@ -112,7 +112,11 @@
     </div>
   </div>
 </form>
+@if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
+  <form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
+@else
 <form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data" style="display:none">
+@endif
   <input type="hidden" name="supplier_id" id="supplier_id" value="{{$data['supplier']->id ?? ''}}">
   <input type="hidden" name="warehouse_id" id="warehouse_id">
   <input type="hidden" name="invoice_no" id="input-supplier_invoice_no" />
