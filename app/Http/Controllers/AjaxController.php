@@ -39,6 +39,8 @@ class AjaxController extends Controller {
 		$this->{'ajaxpost_' . $action}($request);
 	}
 	
+	
+	
 	public function ajaxpost_get_sell_product_search($request) {
 		$search				= $request->search;
 		$searchTerm 		= $search;

@@ -1,9 +1,12 @@
 $(document).ready(function() {
     $(".payBtn").on('click', function(e) {
+		$('.payWrapLeft').show();
+		$('.payWrapRight').removeClass('tabMenuHideWrapRight');
+		
 		var total_quantity=$('#total_quantity-input').val();
 		var total_payble_amount=$('#total_payble_amount-input').val();
 		$('#due_amount_tendering').val(total_payble_amount);
-		$('#tendered_amount').val(total_payble_amount);
+		$('#tendered_amount').val('');
 		if(total_quantity>0){
 			$(".payWrap").toggleClass('active');
 		}else{
@@ -98,11 +101,7 @@ $(document).on('keyup', '#tendered_amount', function() {
 	var due_amount_tendering	= parseFloat($("#due_amount_tendering").val());
 	var tendered_amount			= parseFloat($("#tendered_amount").val());
 	
-	if (tendered_amount > due_amount_tendering) {
-		$("#tendered_change_amount").val((tendered_amount - due_amount_tendering).toFixed(2));
-	}else{
-		$("#tendered_change_amount").val(0);
-	}
+	$("#tendered_change_amount").val((tendered_amount - due_amount_tendering).toFixed(2));
 	
 	
 	console.log(tendered_amount);
@@ -117,38 +116,38 @@ $(document).ready(function() {
         highlight: function(element, errorClass, validClass) {},
         unhighlight: function(element, errorClass, validClass) {},
         submitHandler: function(form) {
-            var formData = new FormData($(form)[0]);
-            $.ajax({
-                type: "POST",
-                cache: false,
-                contentType: false,
-                processData: false,
-                url: $('#pos_create_order-form').attr('action'),
-                dataType: 'json',
-                data: formData,
-                success: function(data) {
-                    $(".payWrap").removeClass('active');
-                },
-                beforeSend: function() {
-                    $('#ajax_loader').fadeIn();
-                },
-                complete: function() {
-                    $('#ajax_loader').fadeOut();
-                    Swal.fire({
-                        title: 'Order successfully submitted.',
-                        icon: 'success',
-                        showDenyButton: false,
-                        showCancelButton: false,
-                        allowOutsideClick: false
-                    }).then((result) => {
+			var formData = new FormData($(form)[0]);
+			$.ajax({
+				type: "POST",
+				cache: false,
+				contentType: false,
+				processData: false,
+				url: $('#pos_create_order-form').attr('action'),
+				dataType: 'json',
+				data: formData,
+				success: function(data) {
+					$(".payWrap").removeClass('active');
+				},
+				beforeSend: function() {
+					$('#ajax_loader').fadeIn();
+				},
+				complete: function() {
+					$('#ajax_loader').fadeOut();
+					Swal.fire({
+                title: 'Order successfully submitted.',
+				icon: 'success',
+                showDenyButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false
+            }).then((result) => {
 
-                        if (result.isConfirmed) {
-                            location.reload();
+                if (result.isConfirmed) {
+                    location.reload();
 
-                        } else if (result.isDenied) {}
-                    });
-                }
+                } else if (result.isDenied) {}
             });
+				}
+			}); 
         }
     });
 });
@@ -161,6 +160,9 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
 		$('#rupee_due_amount_tendering-input').val(tendered_change_amount);
 		$('#rupee_due_amount_tendering').html(tendered_change_amount);
 		$('.tab_sec').hide();
+		
+		$('.payWrapLeft').hide();
+		$('.payWrapRight').addClass('tabMenuHideWrapRight');
 		$('#rupee_payment_sec').show();
 	}else{
 		
@@ -206,6 +208,8 @@ $(document).on('keyup', '.rupee_count_input', function() {
 });
 
 function backToLink(id,type){
+	$('.payWrapLeft').show();
+	$('.payWrapRight').removeClass('tabMenuHideWrapRight');
 	if(type=='p_tap'){
 		$('.tab_sec').hide();
 		$('#'+id).show();
@@ -563,8 +567,10 @@ $(document).ready(function() {
         submitHandler: function(form) {
 			var gross_total_amount 	= $('#gross_total_amount-input').val();
 			var discount_percent 	= $('#special_discount_percent').val();
+			var total_discount 		= $('#special_discount_amt').val();
 			
-			var total_discount = Number(gross_total_amount) * Number(discount_percent) / 100;
+			//var total_discount = Number(gross_total_amount) * Number(discount_percent) / 100;
+			
 			var discount_amount = Number(gross_total_amount) - Number(total_discount);
             var total_amount = Number(discount_amount);
 			
@@ -603,6 +609,31 @@ $(document).on('keyup', '#special_discount_percent', function() {
         toastr.error("Something Error Occurs!");
         return false;
     }
+});
+
+$(document).on('keyup', '#special_discount_amt', function() {
+    var gross_total_amount = $('#gross_total_amount-input').val();
+    var discount_percent = 0;
+    var charge_amt = $('#charge_amt-input').val();
+    var total_discount = $(this).val();
+
+    if (Number(gross_total_amount) > 0) {
+        if (total_discount!='') {
+            var discount_percent = (Number(total_discount) * 100) / (Number(gross_total_amount));
+            var discount_amount = Number(gross_total_amount) - Number(total_discount);
+            var total_amount = Number(discount_amount);
+
+            $("#discount_total_payable").html('₹' + Number(total_amount).toFixed(2));
+        } else {
+			$("#special_discount_percent").val(0);
+            toastr.error("Something Error Occurs!");
+            return false;
+        }
+    } else {
+        toastr.error("Something Error Occurs!");
+        return false;
+    }
+    $("#special_discount_percent").val(Number(discount_percent).toFixed(2));
 });
 
 
