@@ -1,3 +1,22 @@
+$(document).ready(function() {
+    $(".payBtn").on('click', function(e) {
+		var total_quantity=$('#total_quantity-input').val();
+		var total_payble_amount=$('#total_payble_amount-input').val();
+		$('#due_amount_tendering').val(total_payble_amount);
+		$('#tendered_amount').val(total_payble_amount);
+		if(total_quantity>0){
+			$(".payWrap").toggleClass('active');
+		}else{
+			toastr.error("Add minimum one product!");
+		}
+    });
+	
+    $(".paymentModalCloseBtn").on('click', function(e) {
+        $(".payWrap").removeClass('active');
+    });
+});
+
+
 
 /*Start Payment*/
 $(document).on('click', '.p-method-tab', function() {
@@ -6,9 +25,263 @@ $(document).on('click', '.p-method-tab', function() {
 	$('#'+type+'_payment_sec').show();
 });
 
+$(document).on('click', '.tendered_number_btn', function() {
+	var number=$(this).data('id');
+	if(!$("#tendered_amount").val()){
+		$("#tendered_amount").val(0);
+	}
+	
+	var tendered_amount=$("#tendered_amount").val();
+	
+	if (number == '.') {
+		var tendered_amount=parseFloat($("#tendered_amount").val());
+		var amount=tendered_amount + number;
+		if(tendered_amount>0){
+			amount=tendered_amount + number;
+		}
+		$("#tendered_amount").val(amount).trigger("keyup");
+	} else if (number == -1) {
+		if (tendered_amount.length != 1) {
+			var amount=parseFloat($("#tendered_amount").val().substring(0, $("#tendered_amount").val().length - 1));
+            $("#tendered_amount").val(amount).trigger("keyup");
+        } else {
+            $("#tendered_amount").val(0).trigger("keyup");
+        }
+	}else{
+		var amount=number;
+		if(tendered_amount>0){
+			amount=tendered_amount + number;
+		}
+		$("#tendered_amount").val(amount).trigger("keyup");
+	}	
+	
+	$('#tendered_amount').focus();
+});
+
+$(document).on('click', '.tendered_plus_number_btn', function() {
+	var number=$(this).data('id');
+	if(!$("#tendered_amount").val()){
+		$("#tendered_amount").val(0);
+	}
+	
+	var tendered_amount=parseFloat($("#tendered_amount").val());
+	
+	if (number == '.') {
+		var amount=tendered_amount + number;
+		if(tendered_amount>0){
+			amount=tendered_amount + number;
+		}
+		$("#tendered_amount").val(amount).trigger("keyup");
+	} else if (number == -1) {
+		if (tendered_amount.length != 1) {
+			var amount=parseFloat($("#tendered_amount").val().substring(0, $("#tendered_amount").val().length - 1));
+            $("#tendered_amount").val(amount).trigger("keyup");
+        } else {
+            $("#tendered_amount").val(0).trigger("keyup");
+        }
+	}else{
+		var amount=number;
+		if(tendered_amount>0){
+			amount=tendered_amount + number;
+		}
+		$("#tendered_amount").val(amount).trigger("keyup");
+	}	
+	$('#tendered_amount').focus();
+});
+
+$(document).on('click', '.tendered_number_reset', function() {
+	$("#tendered_amount").val("0").trigger("keyup");
+    $('#tendered_amount').focus();
+});
+
+$(document).on('keyup', '#tendered_amount', function() {
+	var due_amount_tendering	= parseFloat($("#due_amount_tendering").val());
+	var tendered_amount			= parseFloat($("#tendered_amount").val());
+	
+	if (tendered_amount > due_amount_tendering) {
+		$("#tendered_change_amount").val((tendered_amount - due_amount_tendering).toFixed(2));
+	}else{
+		$("#tendered_change_amount").val(0);
+	}
+	
+	
+	console.log(tendered_amount);
+});
+
+$(document).ready(function() {
+    $("#pos_create_order-form").validate({
+        rules: {},
+        messages: {},
+        errorElement: "em",
+        errorPlacement: function(error, element) {},
+        highlight: function(element, errorClass, validClass) {},
+        unhighlight: function(element, errorClass, validClass) {},
+        submitHandler: function(form) {
+            $(".payWrap").removeClass('active');
+            Swal.fire({
+                title: 'Order successfully submitted.',
+				icon: 'success',
+                showDenyButton: false,
+                showCancelButton: false,
+                allowOutsideClick: false
+            }).then((result) => {
+
+                if (result.isConfirmed) {
+                    location.reload();
+
+                } else if (result.isDenied) {}
+            });
+        }
+    });
+});
+
+$(document).on('click', '#calculate_cash_payment_btn', function() {
+	var due_amount_tendering=$('#due_amount_tendering').val();
+	var tendered_change_amount=$('#tendered_change_amount').val();
+	var tendered_amount=$('#tendered_amount').val();
+	if(tendered_change_amount>0){
+		$('#rupee_due_amount_tendering-input').val(tendered_change_amount);
+		$('#rupee_due_amount_tendering').html(tendered_change_amount);
+		$('.tab_sec').hide();
+		$('#rupee_payment_sec').show();
+	}else{
+		
+		if (due_amount_tendering>tendered_amount) {
+			toastr.error("Make Full Payment");
+		}else{
+			$('.note_coin_count_sec').html('<input type="hidden" name="note[]" value="'+tendered_amount+'"><input type="hidden" name="note_qty[]" value="1">');
+			$("#pos_create_order-form").submit();
+		}	
+	}
+});
+
+$(document).on('keyup', '.rupee_count_input', function() {
+    var rupee_type = $(this).data('type');
+    var rupee_qty = $(this).val();
+    var rupee_id = '';
+    var rupee_val = '';
+    if (rupee_qty == '') {
+        rupee_qty = 0;
+    }
+    if (rupee_type == 'note') {
+        rupee_id = $(this).attr('id').split('rupee_')[1];
+        rupee_val = rupee_id.split('-')[0];
+        var total_amount = Number(rupee_val) * Number(rupee_qty);
+        $('#rupee_' + rupee_val).val(total_amount);
+        $('#amount_per_note-rupee_' + rupee_val).html(total_amount);
+    } else {
+        rupee_id = $(this).attr('id').split('coin_')[1];
+        rupee_val = rupee_id.split('-')[0];
+		var total_amount = Number(rupee_val) * Number(rupee_qty);
+        $('#coin_' + rupee_val).val(total_amount);
+        $('#amount_per_note-coin_' + rupee_val).html(total_amount);
+    }
+
+});
+
+function backToLink(id,type){
+	if(type=='p_tap'){
+		$('.tab_sec').hide();
+		$('#'+id).show();
+	}
+}
+
+function final_payment_submit(type) {
+	var total_rupee_qty=0;
+	var total_rupee_amount=0;
+    if (type == 'cash') {
+        $('#payment_method_type-input').val('cash');
+        $('.note_coin_count_sec').html('');
+        $(".rupee_count_input").each(function(index, e) {
+            var rupee_type = $(this).data('type');
+            var rupee_qty = $(this).val();
+            var rupee_id = '';
+            var rupee_val = '';
+
+            if (rupee_qty != '') {
+                if (rupee_qty > 0) {
+                    if (rupee_type == 'note') {
+                        rupee_id = $(this).attr('id').split('rupee_')[1];
+                        rupee_val = rupee_id.split('-')[0];
+						
+						
+						if ($.isNumeric(rupee_qty)) {
+							total_rupee_qty += (Number(rupee_qty));
+						}
+						if ($.isNumeric(rupee_val)) {
+							total_rupee_amount += (Number(rupee_val) * Number(rupee_qty));
+						}
+                        $('.note_coin_count_sec').append('<input type="hidden" name="note[]" value="' + rupee_val + '"><input type="hidden" name="note_qty[]" value="' + rupee_qty + '">');
+
+                        //console.log(rupee_val);
+                    } else {
+                        rupee_id = $(this).attr('id').split('coin_')[1];
+                        rupee_val = rupee_id.split('-')[0];
+						if ($.isNumeric(rupee_qty)) {
+							total_rupee_qty += (Number(rupee_qty));
+						}
+						if ($.isNumeric(rupee_val)) {
+							total_rupee_amount += (Number(rupee_val) * Number(rupee_qty));
+						}
+                        $('.note_coin_count_sec').append('<input type="hidden" name="note[]" value="' + rupee_val + '"><input type="hidden" name="note_qty[]" value="' + rupee_qty + '">');
+                        //console.log(rupee_val);
+                    }
+                }
+            }
+        });
+		
+		var tendered_change_amount=$('#rupee_due_amount_tendering-input').val();
+		if(total_rupee_amount>0){
+			if(total_rupee_amount!=tendered_change_amount){
+				toastr.error("Something error occurs!");
+			}else{
+				$("#pos_create_order-form").submit();
+			}
+		}else{
+			toastr.error("Something error occurs!");
+		}	
+    }
+}
+
+/*$('.note_coin_count_sec').html('');
+	
+$(".rupee_count_input").each(function(index, e) {
+        var rupee_type	= $(this).data('type');
+		var rupee_qty	= $(this).val();
+		var rupee_id	= '';
+		var rupee_val	= '';
+		
+		if(rupee_qty!=''){
+			if(rupee_qty>0){
+				if(rupee_type=='note'){
+					rupee_id	= $(this).attr('id').split('rupee_')[1];
+					rupee_val	= rupee_id.split('-')[0];
+					$('.note_coin_count_sec').append('<input type="hidden" name="note[]" value="'+rupee_val+'"><input type="hidden" name="note_qty[]" value="'+rupee_qty+'">');
+					
+					//console.log(rupee_val);
+				}else{
+					rupee_id	= $(this).attr('id').split('coin_')[1];
+					rupee_val	= rupee_id.split('-')[0];
+					$('.note_coin_count_sec').append('<input type="hidden" name="note[]" value="'+rupee_val+'"><input type="hidden" name="note_qty[]" value="'+rupee_qty+'">');
+					//console.log(rupee_val);
+				}
+			}
+		}
+    });
+*/
+
+
+
+
+
 /*End Payment*/
 
-
+//allow only integer and one point in td editable
+function check_character(event) {
+    if ((event.which != 46 || $(event.target).text().indexOf('.') != -1) && (event.which < 48 || event.which > 57)) {
+        event.preventDefault();
+    }
+}
 
 
 

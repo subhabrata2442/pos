@@ -25,82 +25,91 @@
           <span class="slider round"></span> <span class="absolute-no">Return</span> </label>
       </div>
     </div>
-    <div class="w-100">
-      <div class="tableFixHead table-1">
-        <table width="100%" border="0" cellspacing="0" cellpadding="0">
-          <thead>
-            <tr>
-              <th width="6%">Barcode</th>
-              <th width="29%">Product</th>
-              <th width="7%">Stock</th>
-              <th width="11%">MRP</th>
-              <th width="9%">Qty.</th>
-              <th width="11%">Disc%</th>
-              <th width="11%">Disc Amt.</th>
-              <th width="8%">Unit Price</th>
-              <th width="7%">Total</th>
-              <th width="1%">&nbsp;</th>
-            </tr>
-          </thead>
-          <tbody id="product_sell_record_sec">
-          </tbody>
-        </table>
-      </div>
-    </div>
-    <div class="amountToPay d-flex w-100">
-      <div class="atpLeft">
-        <div class="atpLeftInner">
-          <ul class="d-flex w-100">
-            <li class="atpVall">Total Item -</li>
-            <li class="atpinfo" id="total_quantity">0</li>
-            <input type="hidden" name="total_quantity" id="total_quantity-input" value="0">
-          </ul>
-          <ul class="d-flex w-100">
-            <li class="atpVall">Total -</li>
-            <li class="atpinfo"><span id="total_mrp">₹0.00</span> <small>(inclusive all taxes)</small></li>
-            <input type="hidden" name="total_mrp" id="total_mrp-input" value="0">
-          </ul>
-          <ul class="d-flex w-100">
-            <li class="atpVall">Discount -</li>
-            <li class="atpinfo" id="total_discount_amount">₹0.00</li>
-            <input type="hidden" name="total_discount_amount" id="total_discount_amount-input" value="0">
-          </ul>
-          <ul class="d-flex w-100">
-            <li class="atpVall">Tax -</li>
-            <li class="atpinfo" id="tax_amount">₹0.00</li>
-            <input type="hidden" name="tax_amount" id="tax_amount-input" value="0">
-          </ul>
-          <ul class="d-flex w-100 subTotal">
-            <li class="atpVall">Sub Total-</li>
-            <li class="atpinfo" id="sub_total_mrp">₹0.00</li>
-            <input type="hidden" name="sub_total" id="sub_total_mrp-input" value="0">
-          </ul>
-          <ul class="d-flex w-100">
-            <li class="atpVall">Round Off -</li>
-            <li class="atpinfo">
-              <input type="text" name="round_off" id="round_off" class="small-input" placeholder="0" onkeydown="checkforroundoff(event,this)">
-            </li>
-          </ul>
+    <form method="post" action="" id="pos_create_order-form" novalidate enctype="multipart/form-data">
+      @csrf
+      <input type="hidden" name="payment_method_type" id="payment_method_type-input" value="cash">
+      <div class="w-100">
+        <div class="tableFixHead table-1">
+          <table width="100%" border="0" cellspacing="0" cellpadding="0">
+            <thead>
+              <tr>
+                <th width="6%">Barcode</th>
+                <th width="29%">Product</th>
+                <th width="7%">Stock</th>
+                <th width="11%">MRP</th>
+                <th width="9%">Qty.</th>
+                <th width="11%">Disc%</th>
+                <th width="11%">Disc Amt.</th>
+                <th width="8%">Unit Price</th>
+                <th width="7%">Total</th>
+                <th width="1%">&nbsp;</th>
+              </tr>
+            </thead>
+            <tbody id="product_sell_record_sec">
+            </tbody>
+          </table>
         </div>
       </div>
-      <div class="atpMid d-flex justify-content-center align-items-center">
-        <ul>
-          <li><a href="javascript:;" class="applyCharge" id="applyChargeBtn">Apply Charge</a></li>
-          <li><a href="javascript:;" class="applyDiscount" id="applyDiscountBtn">Apply Discount </a></li>
-        </ul>
-      </div>
-      <div class="atpRight d-flex justify-content-center align-items-center">
-        <div class="text-center">
-          <h6>Amount to pay</h6>
-          <h3 id="total_payble_amount">₹0.00</h3>
-          <input type="hidden" name="gross_total_amount" id="gross_total_amount-input" value="0">
-          <input type="hidden" name="total_payble_amount" id="total_payble_amount-input" value="0">
-          <input type="hidden" name="special_discount_percent" id="selling_special_discount_percent-input" value="0">
-          <input type="hidden" name="special_discount_amt" id="selling_special_discount_amt-input" value="0">
-          <input type="hidden" name="charge_amt" id="charge_amt-input" value="0">
+      <div class="amountToPay d-flex w-100">
+        <div class="atpLeft">
+          <div class="atpLeftInner">
+            <ul class="d-flex w-100">
+              <li class="atpVall">Total Item -</li>
+              <li class="atpinfo" id="total_quantity">0</li>
+              <input type="hidden" name="total_quantity" id="total_quantity-input" value="0">
+            </ul>
+            <ul class="d-flex w-100">
+              <li class="atpVall">Total -</li>
+              <li class="atpinfo"><span id="total_mrp">₹0.00</span> <small>(inclusive all taxes)</small></li>
+              <input type="hidden" name="total_mrp" id="total_mrp-input" value="0">
+            </ul>
+            <ul class="d-flex w-100">
+              <li class="atpVall">Discount -</li>
+              <li class="atpinfo" id="total_discount_amount">₹0.00</li>
+              <input type="hidden" name="total_discount_amount" id="total_discount_amount-input" value="0">
+            </ul>
+            <ul class="d-flex w-100">
+              <li class="atpVall">Tax -</li>
+              <li class="atpinfo" id="tax_amount">₹0.00</li>
+              <input type="hidden" name="tax_amount" id="tax_amount-input" value="0">
+            </ul>
+            <ul class="d-flex w-100 subTotal">
+              <li class="atpVall">Sub Total-</li>
+              <li class="atpinfo" id="sub_total_mrp">₹0.00</li>
+              <input type="hidden" name="sub_total" id="sub_total_mrp-input" value="0">
+            </ul>
+            <ul class="d-flex w-100">
+              <li class="atpVall">Round Off -</li>
+              <li class="atpinfo">
+                <input type="text" name="round_off" id="round_off" class="small-input" placeholder="0" onkeydown="checkforroundoff(event,this)">
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="atpMid d-flex justify-content-center align-items-center">
+          <ul>
+            <li><a href="javascript:;" class="applyCharge" id="applyChargeBtn">Apply Charge</a></li>
+            <li><a href="javascript:;" class="applyDiscount" id="applyDiscountBtn">Apply Discount </a></li>
+          </ul>
+        </div>
+        <div class="atpRight d-flex justify-content-center align-items-center">
+          <div class="text-center">
+            <h6>Amount to pay</h6>
+            <h3 id="total_payble_amount">₹0.00</h3>
+            <input type="hidden" name="gross_total_amount" id="gross_total_amount-input" value="0">
+            <input type="hidden" name="total_payble_amount" id="total_payble_amount-input" value="0">
+            <input type="hidden" name="special_discount_percent" id="selling_special_discount_percent-input" value="0">
+            <input type="hidden" name="special_discount_amt" id="selling_special_discount_amt-input" value="0">
+            <input type="hidden" name="charge_amt" id="charge_amt-input" value="0">
+          </div>
         </div>
       </div>
-    </div>
+      
+      <div class="note_coin_count_sec" style="display:none">
+      </div>
+      
+      
+    </form>
   </div>
   <div class="col-lg-4 col-md-4">
     <div class="srcArea relative">
@@ -328,7 +337,7 @@
   </div>
 </div>-->
 
-<section class="payWrap"> <span class="payWrapCloseBtn"><i class="fas fa-times-circle"></i></span>
+<section class="payWrap"> <span class="payWrapCloseBtn paymentModalCloseBtn"><i class="fas fa-times-circle"></i></span>
   <div class="p-5">
     <div class="row">
       <div class="payWrapLeft">
@@ -351,21 +360,21 @@
               <ul class="row justify-content-center">
                 <li class="col-lg-4 col-md-4 col-sm-6 col-12">
                   <div class="mb-3 cashOptionTopBox">
-                    <label for="" class="form-label">Due Ammout</label>
-                    <span style="color: #1c0a6b;" id="due_amount_tendering">0</span> </div>
-                    <input type="hidden" id="due_amount_tendering-input" value="0" />
+                    <label for="due_amount_tendering-input" class="form-label">Due Ammout</label>
+                    <input type="text" class="form-control tendering-input" id="due_amount_tendering" value="0" readonly="readonly" disabled="disabled"/>
+                  </div>
                 </li>
                 <li class="col-lg-4 col-md-4 col-sm-6 col-12">
                   <div class="mb-3 cashOptionTopBox">
-                    <label for="" class="form-label">Tendered</label>
-                    <span style="color: #0f7a88;" id="tendered_amount">0</span> </div>
-                    <input type="hidden" id="tendered_amount-input" value="0" />
+                    <label for="tendered_amount" class="form-label">Tendered</label>
+                    <input type="text" class="form-control tendering-input" id="tendered_amount" value="0" onkeypress="return check_character(event);">
+                  </div>
                 </li>
                 <li class="col-lg-4 col-md-4 col-sm-6 col-12">
                   <div class="mb-3 cashOptionTopBox">
-                    <label for="" class="form-label">Change</label>
-                    <span style="color: #910b95;" id="tendered_change_amount">0</span> </div>
-                    <input type="hidden" id="tendered_change_amount-input" value="0" />
+                    <label for="tendered_change_amount-input" class="form-label">Change</label>
+                    <input type="text" class="form-control tendering-input" id="tendered_change_amount" value="0" readonly="readonly" disabled="disabled"/>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -373,32 +382,32 @@
               <table class="table table-bordered mb-0">
                 <tbody>
                   <tr>
-                    <td width="20%"><a href="#">1</a></td>
-                    <td width="20%"><a href="#">2</a></td>
-                    <td width="20%"><a href="#">3</a></td>
-                    <td width="20%"><a href="#">+05</a></td>
-                    <td width="20%"><a href="#">+100</a></td>
+                    <td width="20%"><a href="javascript:;" class="tendered_number_btn" data-id="1">1</a></td>
+                    <td width="20%"><a href="javascript:;" class="tendered_number_btn" data-id="2">2</a></td>
+                    <td width="20%"><a href="javascript:;" class="tendered_number_btn" data-id="3">3</a></td>
+                    <td width="20%"><a href="javascript:;" class="tendered_plus_number_btn" data-id="5">+5</a></td>
+                    <td width="20%"><a href="javascript:;" class="tendered_plus_number_btn" data-id="100">+100</a></td>
                   </tr>
                   <tr>
-                    <td><a href="#">4</a></td>
-                    <td><a href="#">5</a></td>
-                    <td><a href="#">6</a></td>
-                    <td><a href="#">+10</a></td>
-                    <td><a href="#">+500</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="4">4</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="5">5</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="6">6</a></td>
+                    <td><a href="javascript:;" class="tendered_plus_number_btn" data-id="10">+10</a></td>
+                    <td><a href="javascript:;" class="tendered_plus_number_btn" data-id="500">+500</a></td>
                   </tr>
                   <tr>
-                    <td><a href="#">7</a></td>
-                    <td><a href="#">8</a></td>
-                    <td><a href="#">9</a></td>
-                    <td><a href="#">+20</a></td>
-                    <td><a href="#">+2000</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="7">7</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="8">8</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="9">9</a></td>
+                    <td><a href="javascript:;" class="tendered_plus_number_btn" data-id="20">+20</a></td>
+                    <td><a href="javascript:;" class="tendered_plus_number_btn" data-id="2000">+2000</a></td>
                   </tr>
                   <tr>
-                    <td><a href="#">C</a></td>
-                    <td><a href="#">0</a></td>
-                    <td><a href="#">.</a></td>
-                    <td><a href="#">+5</a></td>
-                    <td><a href="#"><i class="fas fa-times-square"></i></a></td>
+                    <td><a href="javascript:;" class="tendered_number_reset">C</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="0">0</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id=".">.</a></td>
+                    <td><a href="javascript:;" class="tendered_plus_number_btn" data-id="50">+50</a></td>
+                    <td><a href="javascript:;" class="tendered_number_btn" data-id="-1"><i class="fas fa-times-circle"></i></a></td>
                   </tr>
                 </tbody>
               </table>
@@ -406,9 +415,162 @@
             <div class="d-flex justify-content-center">
               <ul class="d-flex">
                 <li class="col-auto">
-                  <button type="button" class="saveBtn-2">Submit</button>
+                  <button type="button" class="saveBtn-2" id="calculate_cash_payment_btn">Submit</button>
                 </li>
-                <li class="col-auto"><a href="#" class="saveBtnBdr">Cancel</a></li>
+                <li class="col-auto"><a href="javascript:;" class="saveBtnBdr paymentModalCloseBtn">Cancel</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="noteType tab_sec" style="display:none" id="rupee_payment_sec">
+            <div class="cashOptionTop">
+              <ul class="row justify-content-center">
+                <li class="col-12">
+                  <div class="mb-3 cashOptionTopBox">
+                    <label for="rupee_due_amount_tendering" class="form-label">Due Ammout</label>
+                    <span style="color: #1c0a6b;" id="rupee_due_amount_tendering">0</span> </div>
+                    <input type="hidden" id="rupee_due_amount_tendering-input" value="0">
+                  
+                </li>
+              </ul>
+            </div>
+            <div class="rupeeTableMdArea">
+              <div class="row">
+                <div class="col-6">
+                  <div class="rupeeTableMd">
+                    <table class="table noBdr">
+                      <tbody>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/2000.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_2000-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_2000" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_2000">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/500.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_500-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_500" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_500">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/200.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_200-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_200" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_200">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/100.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_100-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_100" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_100">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/50.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_50-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_50" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_50">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/20.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_20-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_20" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_20">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/10.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_10-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_10" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_10">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/5.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_5-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_5" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_5">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/2.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_2-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_2" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_2">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/1.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="rupee_1-input" data-type="note" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="rupee_1" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-rupee_1">0</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="rupeeTableMd forCoin">
+                    <table class="table">
+                      <tbody>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/c-10.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="coin_10-input" data-type="coin" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="coin_10" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-coin_10">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/c-5.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="coin_5-input" data-type="coin" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="coin_5" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-coin_5">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/c-2.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="coin_2-input" data-type="coin" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="coin_2" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-coin_2">0</td>
+                        </tr>
+                        <tr>
+                          <td><img src="{{ url('assets/admin/images/c-1.jpg') }}" alt=""></td>
+                          <td>x</td>
+                          <td><input type="text" id="coin_1-input" data-type="coin" class="input-1 rupee_count_input" onkeypress="return check_character(event);"></td>
+                          <input type="hidden" id="coin_1" class="input-1 rupee_count">
+                          <td>=</td>
+                          <td id="amount_per_note-coin_1">0</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="d-flex justify-content-center">
+              <ul class="d-flex">
+                <li class="col-auto">
+                  <button type="button" class="saveBtn-2" onclick="final_payment_submit('cash')">Submit</button>
+                </li>
+                <li class="col-auto"><a href="javascript:;" class="saveBtnBdr" onclick="backToLink('cash_payment_sec','p_tap')">Back</a></li>
               </ul>
             </div>
           </div>
@@ -513,20 +675,5 @@ var stock_type	= "{{$data['stock_type']}}";
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
   })
-</script> 
-<script>
-  $(document).ready(function() {
-      $(".payBtn").on('click', function(e) {
-      $(".payWrap").toggleClass('active');
-      //e.stopPropagation();
-      });
-      $(".payWrapCloseBtn").on('click', function(e) {
-      $(".payWrap").removeClass('active');
-      //e.stopPropagation();
-      });
-      // $(document).click(function(){
-      //     $(".payWrap").removeClass('active');
-      // });
-  });
-</script> 
+</script>
 @endsection 

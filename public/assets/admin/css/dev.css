@@ -990,6 +990,7 @@ hr {
     max-width: 366px;
     background: #abeafb;
     padding: 30px;
+    border-radius: 15px;
 }
 
 .rightPannel {
@@ -1006,7 +1007,7 @@ hr {
     display: block;
     color: #fff;
     border-radius: 10px;
-    background: #3470a6;
+    background: #21314a;
     text-transform: uppercase;
     font-weight: bold;
     transition: all ease-in-out .4s;
@@ -1033,52 +1034,7 @@ hr {
     position: relative;
     width: 34px;
 }
-.rightPannel ul li {
-	flex: 0 0 16.6666667%;
-	max-width: 16.6666667%;
-}
-.rightPannel ul li a {
-	color: #fff;
-	text-align: center;
-	font-weight: bold;
-	/* border: #d7dcee 1px solid; */
-	padding: 20px;
-	display: block;
-	border-radius: 10px;
-	/* background: #ebefff; */
-	overflow: hidden;
-	position: relative;
-}
-.rightPannel ul li a span {
-	width: 100%;
-	display: block;
-	margin-top: 10px;
-}
-.rightPannel ul li a img {
-    width: 100%;
-    display: block;
-}
-.rightPannel ul li a.active:after{
-	content: "";
-	position: absolute;
-	left: 0;
-	top: 0;
-	width: 100%;
-	height: 100%;
-	background: rgba(0, 0, 0, 0.7);
-}
-.rightPannel ul li a span.occupied {
-	display: none;
-}
-.rightPannel ul li a.active span.occupied {
-	display: block;
-	position: absolute;
-	top: 7px;
-	left: 10px;
-	width: 50px;
-	margin: 0;
-	z-index: 2;
-}
+
 
 .applyCoupon {
 	max-width: 500px;
@@ -1187,14 +1143,16 @@ hr {
     text-transform: uppercase;
 }
 
-.cashOptionTopBox span {
-	border-radius: 14px;
-	text-align: center;
-	font-weight: bold;
-	font-size: 1.2rem;
-	display: block;
-	background: #fff;
-	padding: 10px 0;
+.cashOptionTopBox span, .cashOptionTopBox .tendering-input {
+    border-radius: 14px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    display: block;
+    background: #fff;
+    padding: 10px 0;
+    width: 100%;
+    border: none;
 }
 .cashOptionBtm .table tr td {
 	padding: 0;
@@ -1296,7 +1254,7 @@ span.payWrapCloseBtn {
     cursor: pointer;
 }
 .rightPannelTop {
-    padding: 30px 0px;
+    padding: 40px 0px;
     overflow: hidden;
 }
 .rightPannelTop .row{
@@ -1323,7 +1281,7 @@ span.payWrapCloseBtn {
 	transition: all ease-in-out .4s;
 	position: relative;
 }
-.tabBox a:hover {
+.tabBox a:hover , .tabBox a.active{
 	background: #21314a;
 	color: #fff;
 }
@@ -1342,7 +1300,7 @@ span.payWrapCloseBtn {
 	max-width: 100%;
 }
 
-.tabBox a:hover span img {
+.tabBox a:hover span img , .tabBox a.active span img {
 	filter: brightness(0) invert(1);
 }
 
@@ -1364,7 +1322,6 @@ span.payWrapCloseBtn {
     width: 26px;
     height: 26px;
     vertical-align: middle;
-    box-shadow: rgba(0,0,0,.3) 0 0 5px;
     margin-right: 10px;
     border-radius: 4px;
 }
@@ -1372,6 +1329,130 @@ span.payWrapCloseBtn {
 .tableIndicate {
 	margin-bottom: 40px;
 }
+
+
+.bgBlue {
+	background: #00bff3;
+}
+
+.bgTill {
+	background: #0eada7;
+}
+
+.bgGray {
+	background: #9ab3bd;
+}
+.bgViolet {
+	background: #9ab3bd;
+}
+.bgSafron {
+	background: #ef9770;
+}
+.bgYgreen {
+	background: #85a843;
+}
+
+.tableBox {
+    border-radius: 15px;
+    padding: 15px;
+	color: #fff;
+	letter-spacing: .5px;
+}
+
+.tableBoxTop {
+    border-bottom: rgba(255,255,255,.5) 1px solid;
+    padding: 0 0 10px 0;
+}
+.tableBoxTop h5 {
+    padding: 0;
+    color: #fff;
+    font-size: 18px;
+    text-transform: uppercase;
+    margin: 0;
+    font-weight: bold;
+}
+
+.tableBoxBtm {
+    margin: 50px 0 20px;
+}
+.tableBoxBtm ul li span {
+	font-weight: bold;
+}
+
+.countdownArea .countdown {
+	margin-left: 10px;
+	font-weight: bold;
+}
+
+.createOrder {
+    -ms-flex: 0 0 270px;
+    flex: 0 0 270px;
+    max-width: 270px;
+	padding-right: calc(var(--bs-gutter-x) * .5);
+    padding-left: calc(var(--bs-gutter-x) * .5);
+}
+.createOrder a {
+	display: block;
+	background-color: #ffffff;
+	box-shadow: 0px 0px 16.74px 1.26px rgba(0, 0, 0, 0.21);
+	line-height: 56px;
+	padding: 0 15px;
+	border-radius: 30px;
+	text-transform: uppercase;
+	font-size: 18px;
+	font-weight: bold;
+	color: #152338;
+}
+.co-searchInput {
+	padding: 0 70px 0 30px;
+	background-color: #ffffff;
+	box-shadow: 0px 0px 16.74px 1.26px rgba(0, 0, 0, 0.21);
+	line-height: 56px;
+	border-radius: 30px;
+	font-size: 18px;
+	font-weight: 600;
+	border: none;
+	width: 100%;
+}
+  
+.co-search {
+	flex: 1 0 0%;
+}
+.co-searchBtn {
+    position: absolute;
+    right: 13px;
+    top: 0;
+    height: 56px;
+    border: none;
+    background: #00bff3;
+    width: 80px;
+    border-radius: 0 30px 30px 0;
+    color: #fff;
+}
+.co-searchBtn i{ 
+	color: #fff;
+	font-size: 25px;
+}
+.rupeeTableMd {
+	max-height: 600px;
+	overflow-y: auto;
+}
+.rupeeTableMd table tr td{
+	vertical-align: middle;
+	text-align: center;
+	padding: 5px;
+	border: none !important;
+}
+.rupeeTableMd table tr td img {
+	width: 50px;
+	display: block;
+}
+
+/* .forCoin.rupeeTableMd table tr td img {
+	width: 50px;
+	display: block;
+} */
+
 
 
   
