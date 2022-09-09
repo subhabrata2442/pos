@@ -18,7 +18,8 @@ use PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Helper\Media;
-
+use App\Models\SellStockProducts;
+Use Illuminate\Support\Facades\Response;
 
 class ReportController extends Controller
 {
@@ -686,5 +687,70 @@ class ReportController extends Controller
         $data['payment_method'] = 'Cash';
         $pdf = PDF::loadView('admin.pdf.invoice', $data);
         return $pdf->download('invoice.pdf');
+    }
+
+    public function salesProduct(Request $request){
+        try {
+            if ($request->ajax()) {
+                //echo base64_decode($inward_stock_id);die;
+                $purchase = SellStockProducts::orderBy('id', 'desc')->get();
+                return DataTables::of($purchase)
+
+                    ->addColumn('product_name', function ($row) {
+                        return $row->product_name;
+                    })
+                    ->addColumn('barcode', function ($row) {
+                        return $row->barcode;
+                    })
+                    ->addColumn('created_at', function ($row) {
+                        return date('d-m-Y', strtotime($row->created_at));
+                    })
+                  
+                    ->addColumn('measure', function ($row) {
+                        return $row->size->name;
+                    })
+                    
+                    ->addColumn('product_qty', function ($row) {
+                        return $row->product_qty;
+                    })
+                    ->addColumn('product_mrp', function ($row) {
+                        return $row->product_mrp;
+                    })
+                    ->addColumn('total_cost', function ($row) {
+                        return number_format($row->total_cost,2) ;
+                    })
+                    ->rawColumns([])
+                    ->make(true);
+            }
+            $data = [];
+            $data['heading'] = 'Sales Product List';
+            $data['breadcrumb'] = ['Sales', 'Product', 'List'];
+            return view('admin.report.sales_product_list', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+
+    public function salesProductDownload(){
+        //echo "test";die;
+        $sales_products = SellStockProducts::all();
+        $content = "";
+        foreach ($sales_products as $product) {
+        $content .= '01/2007/0003|'.date('d-m-Y h:i', strtotime($product->created_at)).'|'.$product->barcode .'|'.substr($product->size->name,0,-4).'|'.$product->product_mrp.'|'.$product->product_qty;
+        $content .= "\n";
+        }
+
+        // file name that will be used in the download
+        $fileName = now()."SELL.txt";
+
+        // use headers in order to generate the download
+        $headers = [
+        'Content-type' => 'text/plain', 
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
+        //'Content-Length' => sizeof($content)
+        ];
+
+        // make a response, with the content, a 200 response code and the headers
+        return Response::make($content, 200, $headers);
     }
 }
