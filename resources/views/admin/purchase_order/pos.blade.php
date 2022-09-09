@@ -160,10 +160,10 @@
         <li class="col-3"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-2"><span><i class="fas fa-credit-card"></i></span>Reedem Credit</a></li>
         <li class="col-3"><a href="#"><span><i class="fas fa-hand-paper"></i></span>Hold</a></li>
         <li class="col-3"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-3"><span><i class="fas fa-street-view"></i></span>View Hold</a></li>
-        <li class="col-3"><a href="#"><span><i class="fas fa-wallet"></i></span>Reset Bill</a></li>
-        <li class="col-3"><a href="#"><span><i class="fas fa-luggage-cart"></i></span>Today Sale</a></li>
+        <li class="col-3"><a href="javascript:;"><span><i class="fas fa-wallet"></i></span>Reset Bill</a></li>
+        <li class="col-3"><a href="javascript:;"><span><i class="fas fa-luggage-cart"></i></span>Today Sale</a></li>
         <li class="payPrint col-6"><a href="javascript:;" class="payBtn"><span><i class="fas fa-money-check"></i></span>pay</a></li>
-        <li class="payPrint col-6"><a href="#"><span><i class="fas fa-print"></i></span>Print</a></li>
+        <li class="payPrint col-6"><a href="{{ route('admin.pos.print_invoice') }}" target="_blank"><span><i class="fas fa-print"></i></span>Print</a></li>
       </ul>
     </div>
   </div>
@@ -349,7 +349,6 @@
         <div class="pmMenu">
           <ul>
             <li><a href="javascript:;" class="active p-method-tab" data-type="cash"><span><img src="{{ url('assets/admin/images/cash.png') }}" alt=""></span> Cash</a></li>
-            <li><a href="javascript:;" class="p-method-tab" data-type="upi"><span><img src="{{ url('assets/admin/images/upi.png') }}" alt=""></span> Upi</a></li>
             <li><a href="javascript:;" class="p-method-tab" data-type="card"><span><img src="{{ url('assets/admin/images/card-1.png') }}" alt=""></span> Card</a></li>
             <li><a href="javascript:;" class="p-method-tab" data-type="gPay"><span><img src="{{ url('assets/admin/images/google-pay.png') }}" alt=""></span> Phonepe / Gpay</a></li>
             <li><a href="javascript:;" class="p-method-tab" data-type="coupon"><span><img src="{{ url('assets/admin/images/coupon.png') }}" alt=""></span> Coupon</a></li>
