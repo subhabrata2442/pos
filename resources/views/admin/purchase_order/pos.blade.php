@@ -25,9 +25,11 @@
           <span class="slider round"></span> <span class="absolute-no">Return</span> </label>
       </div>
     </div>
-    <form method="post" action="" id="pos_create_order-form" novalidate enctype="multipart/form-data">
+    <form method="post" action="{{ route('admin.pos.create') }}" id="pos_create_order-form" novalidate enctype="multipart/form-data">
       @csrf
       <input type="hidden" name="payment_method_type" id="payment_method_type-input" value="cash">
+      <input type="hidden" name="stock_type" value="{{$data['stock_type']}}">
+      
       <div class="w-100">
         <div class="tableFixHead table-1">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -101,6 +103,9 @@
             <input type="hidden" name="special_discount_percent" id="selling_special_discount_percent-input" value="0">
             <input type="hidden" name="special_discount_amt" id="selling_special_discount_amt-input" value="0">
             <input type="hidden" name="charge_amt" id="charge_amt-input" value="0">
+            
+            <input type="hidden" name="tendered_amount" id="total_tendered_amount" value="0">
+            <input type="hidden" name="tendered_change_amount" id="total_tendered_change_amount" value="0">
           </div>
         </div>
       </div>

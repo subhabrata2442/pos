@@ -117,19 +117,37 @@ $(document).ready(function() {
         highlight: function(element, errorClass, validClass) {},
         unhighlight: function(element, errorClass, validClass) {},
         submitHandler: function(form) {
-            $(".payWrap").removeClass('active');
-            Swal.fire({
-                title: 'Order successfully submitted.',
-				icon: 'success',
-                showDenyButton: false,
-                showCancelButton: false,
-                allowOutsideClick: false
-            }).then((result) => {
+            var formData = new FormData($(form)[0]);
+            $.ajax({
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: $('#pos_create_order-form').attr('action'),
+                dataType: 'json',
+                data: formData,
+                success: function(data) {
+                    $(".payWrap").removeClass('active');
+                },
+                beforeSend: function() {
+                    $('#ajax_loader').fadeIn();
+                },
+                complete: function() {
+                    $('#ajax_loader').fadeOut();
+                    Swal.fire({
+                        title: 'Order successfully submitted.',
+                        icon: 'success',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        allowOutsideClick: false
+                    }).then((result) => {
 
-                if (result.isConfirmed) {
-                    location.reload();
+                        if (result.isConfirmed) {
+                            location.reload();
 
-                } else if (result.isDenied) {}
+                        } else if (result.isDenied) {}
+                    });
+                }
             });
         }
     });
@@ -149,7 +167,15 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
 		if (due_amount_tendering>tendered_amount) {
 			toastr.error("Make Full Payment");
 		}else{
-			$('.note_coin_count_sec').html('<input type="hidden" name="note[]" value="'+tendered_amount+'"><input type="hidden" name="note_qty[]" value="1">');
+			$('.note_coin_count_sec').html('<input type="hidden" name="rupee_type[]" value="note"><input type="hidden" name="note[]" value="'+tendered_amount+'"><input type="hidden" name="note_qty[]" value="1">');
+			
+			var tendered_change_amount=$('#tendered_change_amount').val();
+			var tendered_amount=$('#tendered_amount').val();
+			$('#total_tendered_amount').val(tendered_amount);
+			$('#total_tendered_change_amount').val(tendered_change_amount);
+			
+			
+			
 			$("#pos_create_order-form").submit();
 		}	
 	}
@@ -211,7 +237,7 @@ function final_payment_submit(type) {
 						if ($.isNumeric(rupee_val)) {
 							total_rupee_amount += (Number(rupee_val) * Number(rupee_qty));
 						}
-                        $('.note_coin_count_sec').append('<input type="hidden" name="note[]" value="' + rupee_val + '"><input type="hidden" name="note_qty[]" value="' + rupee_qty + '">');
+                        $('.note_coin_count_sec').append('<input type="hidden" name="rupee_type[]" value="note"><input type="hidden" name="note[]" value="' + rupee_val + '"><input type="hidden" name="note_qty[]" value="' + rupee_qty + '">');
 
                         //console.log(rupee_val);
                     } else {
@@ -223,7 +249,7 @@ function final_payment_submit(type) {
 						if ($.isNumeric(rupee_val)) {
 							total_rupee_amount += (Number(rupee_val) * Number(rupee_qty));
 						}
-                        $('.note_coin_count_sec').append('<input type="hidden" name="note[]" value="' + rupee_val + '"><input type="hidden" name="note_qty[]" value="' + rupee_qty + '">');
+                        $('.note_coin_count_sec').append('<input type="hidden" name="rupee_type[]" value="coin"><input type="hidden" name="note[]" value="' + rupee_val + '"><input type="hidden" name="note_qty[]" value="' + rupee_qty + '">');
                         //console.log(rupee_val);
                     }
                 }
@@ -235,6 +261,10 @@ function final_payment_submit(type) {
 			if(total_rupee_amount!=tendered_change_amount){
 				toastr.error("Something error occurs!");
 			}else{
+				var tendered_change_amount=$('#tendered_change_amount').val();
+				var tendered_amount=$('#tendered_amount').val();
+				$('#total_tendered_amount').val(tendered_amount);
+				$('#total_tendered_change_amount').val(tendered_change_amount);
 				$("#pos_create_order-form").submit();
 			}
 		}else{
@@ -319,6 +349,7 @@ $(document).on('click', '.addTopSellingProduct', function() {
                 var w_stock = 0;
                 var c_stock = 0;
                 var product_mrp = 0;
+				var product_price_id = 0;
 				
 				var option_html='';
 				
@@ -326,6 +357,7 @@ $(document).on('click', '.addTopSellingProduct', function() {
                     w_stock = item_detail.item_prices[0].w_qty;
                     c_stock = item_detail.item_prices[0].c_qty;
                     product_mrp = item_detail.item_prices[0].product_mrp;
+					product_price_id = item_detail.item_prices[0].price_id;
 					
 					for(var p=0;item_detail.item_prices.length>p;p++){
 						option_html +='<option value="'+item_detail.item_prices[p]+'">'+item_detail.item_prices[p]+'</option>';
@@ -335,6 +367,7 @@ $(document).on('click', '.addTopSellingProduct', function() {
                     w_stock = item_detail.item_prices[0].w_qty;
                     c_stock = item_detail.item_prices[0].c_qty;
                     product_mrp = item_detail.item_prices[0].product_mrp;
+					product_price_id = item_detail.item_prices[0].price_id;
 					option_html +='<option value="'+product_mrp+'">'+product_mrp+'</option>';
 					
                 }
@@ -400,6 +433,9 @@ $(document).on('click', '.addTopSellingProduct', function() {
 							'<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
 							'<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
 							'<input type="hidden" name="product_total_amount[]" id="input-product_total_amount_'+product_id+'" value="' + product_mrp + '">' +
+							'<input type="hidden" name="product_price_id[]" id="input-product_price_id_'+product_id+'" value="' + product_price_id + '">' +
+							'<input type="hidden" name="product_barcode[]" id="input-product_barcode_'+product_id+'" value="' + barcode + '">' +
+							'<input type="hidden" name="product_name[]" id="input-product_name_'+product_id+'" value="' + product_name + '">' +
 							'<td>' + barcode + '</td>' +
 							'<td class="proName">' + product_name + '</td>' +
 							'<td id="product_stock_' + product_id + '">W-' + w_stock + '</br>S-' + c_stock + '</td>' +
@@ -649,6 +685,7 @@ function setProductRow(element) {
                 var w_stock = 0;
                 var c_stock = 0;
                 var product_mrp = 0;
+				var product_price_id=0;
 				
 				var option_html='';
 				
@@ -656,6 +693,7 @@ function setProductRow(element) {
                     w_stock = item_detail.item_prices[0].w_qty;
                     c_stock = item_detail.item_prices[0].c_qty;
                     product_mrp = item_detail.item_prices[0].product_mrp;
+					product_price_id = item_detail.item_prices[0].price_id;
 					
 					for(var p=0;item_detail.item_prices.length>p;p++){
 						option_html +='<option value="'+item_detail.item_prices[p]+'">'+item_detail.item_prices[p]+'</option>';
@@ -665,6 +703,7 @@ function setProductRow(element) {
                     w_stock = item_detail.item_prices[0].w_qty;
                     c_stock = item_detail.item_prices[0].c_qty;
                     product_mrp = item_detail.item_prices[0].product_mrp;
+					product_price_id = item_detail.item_prices[0].price_id;
 					option_html +='<option value="'+product_mrp+'">'+product_mrp+'</option>';
 					
                 }
@@ -730,6 +769,9 @@ function setProductRow(element) {
 							'<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
 							'<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
 							'<input type="hidden" name="product_total_amount[]" id="input-product_total_amount_'+product_id+'" value="' + product_mrp + '">' +
+							'<input type="hidden" name="product_price_id[]" id="input-product_price_id_'+product_id+'" value="' + product_price_id + '">' +
+							'<input type="hidden" name="product_barcode[]" id="input-product_barcode_'+product_id+'" value="' + barcode + '">' +
+							'<input type="hidden" name="product_name[]" id="input-product_name_'+product_id+'" value="' + product_name + '">' +
 							'<td>' + barcode + '</td>' +
 							'<td class="proName">' + product_name + '</td>' +
 							'<td id="product_stock_' + product_id + '">W-' + w_stock + '</br>S-' + c_stock + '</td>' +

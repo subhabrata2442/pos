@@ -69,6 +69,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		
 		
 		Route::match(['GET'], '/create_order', [PurchaseOrderController::class, 'pos_create'])->name('pos_create');
+		Route::match(['POST'], '/create', [PurchaseOrderController::class, 'create'])->name('create');
         /*Route::match(['GET', 'POST'], '/list', [CustomerController::class, 'list'])->name('list');
         Route::match(['GET', 'POST'], '/edit/{id}', [CustomerController::class, 'edit'])->name('edit');
         Route::match(['GET', 'POST'], '/delete/{id}', [CustomerController::class, 'delete'])->name('delete');*/
