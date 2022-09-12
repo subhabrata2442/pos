@@ -1278,4 +1278,30 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
 	}
+
+	public function pdfBrandRegister(){
+			$data = [];
+			//echo "test1";die;
+			$pdf = PDF::loadView('admin.pdf.brand-register', $data);
+			return $pdf->stream('brand-register.pdf');
+	}
+	public function pdfMonthwiseReport(){
+			$data = [];
+			//echo "test1";die;
+			$pdf = PDF::loadView('admin.pdf.monthwise-report', $data);
+			return $pdf->stream('monthwise-report.pdf');
+	}
+	public function pdfItemWiseSalesReport(){
+			$data = [];
+			//echo "test1";die;
+			$pdf = PDF::loadView('admin.pdf.item-wise-sales-report', $data);
+			return $pdf->stream('item-wise-sales-report.pdf');
+	}
+	public function pdfEReport(){
+			$data = [];
+			//echo "test1";die;
+			$pdf = PDF::loadView('admin.pdf.e-report', $data);
+			return $pdf->stream('e-report.pdf');
+	}
+	
 }

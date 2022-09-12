@@ -74,7 +74,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::match(['GET'], '/print_invoice', [PurchaseOrderController::class, 'print_invoice'])->name('print_invoice');
         /*Route::match(['GET', 'POST'], '/list', [CustomerController::class, 'list'])->name('list');
         Route::match(['GET', 'POST'], '/edit/{id}', [CustomerController::class, 'edit'])->name('edit');
-        Route::match(['GET', 'POST'], '/delete/{id}', [CustomerController::class, 'delete'])->name('delete');*/
+        Route::match(['GET', 'POST'], '/delete/{id}', [CustomerController::class, 'delete'])->name('delete');
+        */
+        Route::match(['GET'], '/brand-register', [PurchaseOrderController::class, 'pdfBrandRegister'])->name('brand_register');
+        Route::match(['GET'], '/monthwise-report', [PurchaseOrderController::class, 'pdfMonthwiseReport'])->name('monthwise_report');
+        Route::match(['GET'], '/item-wise-sales-report', [PurchaseOrderController::class, 'pdfItemWiseSalesReport'])->name('pdf3');
+        Route::match(['GET'], '/e-report', [PurchaseOrderController::class, 'pdfEReport'])->name('pdf4');
 	});
 	
 	Route::prefix('customer')->name('customer.')->group(function () {
@@ -106,7 +111,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		});
 	
         Route::match(['GET'], '/sales-product', [ReportController::class, 'salesProduct'])->name('sales.product');
-        Route::match(['GET'], '/sales-product/download', [ReportController::class, 'salesProductDownload'])->name('sales.product.download');
+        Route::match(['GET'], '/sales-product/download/{slug}', [ReportController::class, 'salesProductDownload'])->name('sales.product.download');
 		Route::match(['GET'], '/purchase', [ReportController::class, 'purchase'])->name('purchase');
         Route::match(['GET'], '/stock-product/list/{slug}', [ReportController::class, 'stockProductList'])->name('stock_product.list');
 		Route::match(['GET'], '/inventory', [ReportController::class, 'inventory'])->name('inventory');

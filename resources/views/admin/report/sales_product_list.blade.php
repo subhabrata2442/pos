@@ -4,17 +4,17 @@
   <div class="col-12">
     <div class="card">
       <x-alert />
-	  <a href="{{route('admin.report.sales.product.download')}}" target="_blank">Download</a>
-	  <form method="get" id="search-form" class="form-inline" role="form">
-
-		<div class="form-group">
-			<label for="date_search">Date</label>
-			<input type="date" class="form-control" name="date_search" id="date_search" placeholder="search Date">
-		</div>
-		
-
-		<button type="submit" class="btn btn-primary">Search</button>
-	</form>
+	  <div class="d-flex justify-content-between align-items-center mb-4">
+		<form method="get" id="search-form" class="form-inline" role="form">
+			<div class="form-group">
+				<label for="date_search" class="mr-3">Date</label>
+				<input type="date" class="form-control" name="date_search" id="date_search" placeholder="search Date">
+			</div>
+			<button type="submit" class="btn btn-primary ml-3">Search</button>
+		</form>
+		<a href="javascript:;" id="download" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Download</a>
+	  </div>
+	  
       <div class="table-responsive dataTable-design">
 		{{-- <input type="data" name="date_filter" class="form-control searchDate" placeholder="Date"> --}}
         <table id="stock_product" class="table table-bordered">
@@ -47,19 +47,19 @@
 
 $(function() {
 	var table = $('#stock_product').DataTable({
-		dom: "<'row'<'col-xs-12'<'col-xs-6'l><'col-xs-6'p>>r>"+
+		/* dom: "<'row'<'col-xs-12'<'col-xs-6'l><'col-xs-6'p>>r>"+
             "<'row'<'col-xs-12't>>"+
-            "<'row'<'col-xs-12'<'col-xs-6'i><'col-xs-6'p>>>",
+            "<'row'<'col-xs-12'<'col-xs-6'i><'col-xs-6'p>>>", */
 		processing: true,
 		serverSide: true,
 		searchDelay: 350,
-
+		searching: false,
 		ajax: {
 			url : "{{ route('admin.report.sales.product')}}",
 			data: function (d) {
                 //d.email = $('.searchDate').val(),
                 //d.search = $('input[type="search"]').val()
-				//d.date = $('input[name=date_search]').val();
+				d.date_search = $('input[name=date_search]').val();
             }
 		},
 		columns: [
@@ -100,13 +100,19 @@ $(function() {
         table.draw();
     }); */
 
-	/* $('#search-form').on('submit', function(e) {
-        oTable.draw();
+	$('#search-form').on('submit', function(e) {
+		$('#download').attr('data-date',$('#date_search').val()); //setter
+        table.draw();
         e.preventDefault();
-    }); */
+    });
+
+	$('#download').on("click",function(){
+	
+		var date =  $(this).attr("data-date");
+		var url = "{{route('admin.report.sales.product.download',1)}}";
+		$(this).attr('href',url);
+	})
 
 });
-
-
 </script> 
 @endsection 

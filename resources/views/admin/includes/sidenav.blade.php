@@ -94,15 +94,15 @@
           <p>Report <i class="fas fa-angle-left right"></i></p>
           </a>
           <ul class="nav nav-treeview">
-            <li class="nav-item"> <a href="{{ route('admin.report.sales') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+            {{-- <li class="nav-item"> <a href="{{ route('admin.report.sales') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Sales</p>
-              </a> </li>
+              </a> </li> --}}
             <li class="nav-item"> <a href="{{ route('admin.report.purchase') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.purchase') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Purchase</p>
               </a> </li>
               <li class="nav-item"> 
                 <a href="{{ route('admin.report.sales.product') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.product') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
-                <p>Sales Product</p>
+                <p>Sales Report</p>
                 </a> 
               </li>
             <!--<li class="nav-item"> <a href="{{ route('admin.report.inventory') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.inventory') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>

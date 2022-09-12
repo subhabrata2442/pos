@@ -20,6 +20,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Helper\Media;
 use App\Models\SellStockProducts;
 Use Illuminate\Support\Facades\Response;
+Use Illuminate\Support\Str;
 
 class ReportController extends Controller
 {
@@ -694,7 +695,29 @@ class ReportController extends Controller
             if ($request->ajax()) {
                 //echo base64_decode($inward_stock_id);die;
                 $purchase = SellStockProducts::orderBy('id', 'desc')->get();
+                //echo "<pre>";print_r($request);die;
                 return DataTables::of($purchase)
+
+                ->filter(function ($instance) use ($request) {
+                    if (!empty($request->get('date_search'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            return Str::contains(date('d-m-Y', strtotime($row['created_at'])), date('d-m-Y', strtotime($request->get('date_search')))) ? true : false;
+                        });
+                    }
+
+                    /* if (!empty($request->get('search'))) {
+                        $instance->collection = $instance->collection->filter(function ($row) use ($request) {
+                            if (Str::contains(Str::lower($row['created_at']), Str::lower($request->get('search')))){
+                                return true;
+                            }else if (Str::contains(Str::lower($row['name']), Str::lower($request->get('search')))) {
+                                return true;
+                            }
+
+                            return false;
+                        });
+                    } */
+
+                })
 
                     ->addColumn('product_name', function ($row) {
                         return $row->product_name;
@@ -725,13 +748,15 @@ class ReportController extends Controller
             $data = [];
             $data['heading'] = 'Sales Product List';
             $data['breadcrumb'] = ['Sales', 'Product', 'List'];
+            $data['date_search'] =$request->get('date_search') ? $request->get('date_search') : 0;
             return view('admin.report.sales_product_list', compact('data'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
 
-    public function salesProductDownload(){
+    public function salesProductDownload($date=''){
+        //echo $date;die;
         //echo "test";die;
         $sales_products = SellStockProducts::all();
         $content = "";
