@@ -16,6 +16,7 @@ use DB;
 use PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+Use Illuminate\Support\Facades\Response;
 
 use App\Models\Category;
 use App\Models\Brand;
@@ -38,9 +39,11 @@ use App\Models\SellInwardTenderedChangeAmount;
 use App\Models\SellStockProducts;
 use App\Models\Site_settings;
 use App\Models\Common;
-Use Illuminate\Support\Facades\Response;
+
 
 use App\Models\Warehouse;
+use App\Models\RestaurantFloor;
+use App\Models\FloorWiseTable;
 use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
 
@@ -140,6 +143,38 @@ class PurchaseOrderController extends Controller
 			
 		}
     }
+	
+	public function bar_dine_in_table_booking(Request $request)
+    {
+        DB::beginTransaction();
+        try {
+            $data = [];
+			$branch_id=1;
+			
+            $data['heading'] 		= 'Purchase Order';
+            $data['breadcrumb'] 	= ['Purchase Order', 'Add'];
+            $data['floor_list'] 	= RestaurantFloor::where('branch_id',$branch_id)->get();
+			
+			//$product=Product::where('id','403')->get();
+			
+			//echo '<pre>';print_r($product[0]->subcategory_id);exit;
+			
+			//$product[0]->category->name
+			
+			//$product[0]->category_id
+			//$product[0]->subcategory_id
+			
+			
+            return view('admin.bar_pos.dine_in_pos_tbl_booking', compact('data'));
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+	
+	
+	
+	
 	
 	public function pos_type()
     {
@@ -269,6 +304,8 @@ class PurchaseOrderController extends Controller
 			$product_id 		= isset($branch_product_stock_info[0]->product_id)?$branch_product_stock_info[0]->product_id:'';
 			$product_size_id 	= isset($branch_product_stock_info[0]->size_id)?$branch_product_stock_info[0]->size_id:'0';
 			
+			
+			
 			if($product_id!=''){
 				$total_amount	= isset($product_total_amount[$i])?$product_total_amount[$i]:'0';
 				$barcode		= isset($product_barcode[$i])?$product_barcode[$i]:'';
@@ -279,6 +316,13 @@ class PurchaseOrderController extends Controller
 				$unit_price		= isset($product_unit_price[$i])?$product_unit_price[$i]:0;
 				$price_id		= isset($product_price_id[$i])?$product_price_id[$i]:0;
 				
+				$productInfo	= Product::where('id',$product_id)->get();
+				$category_id	= isset($productInfo[0]->category_id)?$productInfo[0]->category_id:0;
+				$subcategory_id	= isset($productInfo[0]->subcategory_id)?$productInfo[0]->subcategory_id:0;
+				
+				$productSizeInfo= Size::where('id',$product_size_id)->get();
+				$size	= isset($productSizeInfo[0]->name)?$productSizeInfo[0]->name:0;
+								
 				$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('id',$price_id)->get();
 				
 				$sell_price_id=isset($branch_product_stock_sell_price_info[0]->id)?$branch_product_stock_sell_price_info[0]->id:'';
@@ -303,6 +347,9 @@ class PurchaseOrderController extends Controller
 					'product_name'  	=> $name,
 					'price_id'  		=> $price_id,
 					'size_id'  			=> $product_size_id,
+					'category_id'  		=> $category_id,
+					'subcategory_id'  	=> $subcategory_id,
+					'size_ml'  			=> $size,
 					'product_qty'		=> $qty,
 					'discount_percent'  => $disc_percent,
 					'discount_amount'  	=> $disc_amount,
@@ -338,6 +385,7 @@ class PurchaseOrderController extends Controller
 			//print_r($tenderedChangeAmount);exit;
 			SellInwardTenderedChangeAmount::create($tenderedChangeAmount);
 		}
+		
 		
 		$return_data['success']	= 1;
 		echo json_encode($return_data);
