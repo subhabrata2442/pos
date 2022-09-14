@@ -71,6 +71,10 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::match(['GET'], '/create_order', [PurchaseOrderController::class, 'pos_create'])->name('pos_create');
 		Route::match(['POST'], '/create', [PurchaseOrderController::class, 'create'])->name('create');
 		
+		Route::match(['GET'], '/bar_dine_in_table_booking', [PurchaseOrderController::class, 'bar_dine_in_table_booking'])->name('bar_dine_in_table_booking');
+		
+		
+		
 		Route::match(['GET'], '/print_invoice', [PurchaseOrderController::class, 'print_invoice'])->name('print_invoice');
         Route::match(['GET'], '/today-sales-product/download', [PurchaseOrderController::class, 'todaySalesProductDownload']);
         /*Route::match(['GET', 'POST'], '/list', [CustomerController::class, 'list'])->name('list');
