@@ -38,7 +38,7 @@ use App\Models\SellInwardTenderedChangeAmount;
 use App\Models\SellStockProducts;
 use App\Models\Site_settings;
 use App\Models\Common;
-
+Use Illuminate\Support\Facades\Response;
 
 use App\Models\Warehouse;
 use Carbon\Carbon;
@@ -1281,25 +1281,25 @@ class PurchaseOrderController extends Controller
 
 	public function pdfBrandRegister(){
 			$data = [];
-			//echo "test1";die;
-			$pdf = PDF::loadView('admin.pdf.brand-register', $data);
+			$pdf = PDF::loadView('admin.pdf.brand-register', $data,[], 
+			[ 
+				'format' => [1400, 900],
+			  	'orientation' => 'L'
+			]);
 			return $pdf->stream('brand-register.pdf');
 	}
 	public function pdfMonthwiseReport(){
 			$data = [];
-			//echo "test1";die;
 			$pdf = PDF::loadView('admin.pdf.monthwise-report', $data);
 			return $pdf->stream('monthwise-report.pdf');
 	}
 	public function pdfItemWiseSalesReport(){
 			$data = [];
-			//echo "test1";die;
 			$pdf = PDF::loadView('admin.pdf.item-wise-sales-report', $data);
 			return $pdf->stream('item-wise-sales-report.pdf');
 	}
 	public function pdfEReport(){
 			$data = [];
-			//echo "test1";die;
 			$pdf = PDF::loadView('admin.pdf.e-report', $data);
 			return $pdf->stream('e-report.pdf');
 	}
