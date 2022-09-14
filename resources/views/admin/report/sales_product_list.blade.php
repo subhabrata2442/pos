@@ -1,14 +1,26 @@
 @extends('layouts.admin')
 @section('admin-content')
+
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+
 <div class="row">
   <div class="col-12">
     <div class="card">
       <x-alert />
 	  <div class="d-flex justify-content-between align-items-center mb-4">
 		<form method="get" id="search-form" class="form-inline" role="form">
+			
+			{{-- <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
+				<i class="fa fa-calendar"></i>&nbsp;
+				<span></span> <i class="fa fa-caret-down"></i>
+			</div> --}}
+			<input type="hidden" name="start_date" id="start_date" value="">
+			<input type="hidden" name="end_date" id="end_date" value="">
 			<div class="form-group">
 				<label for="date_search" class="mr-3">Date</label>
-				<input type="date" class="form-control" name="date_search" id="date_search" placeholder="search Date">
+				<input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off">
 			</div>
 			<button type="submit" class="btn btn-primary ml-3">Search</button>
 		</form>
@@ -57,9 +69,8 @@ $(function() {
 		ajax: {
 			url : "{{ route('admin.report.sales.product')}}",
 			data: function (d) {
-                //d.email = $('.searchDate').val(),
-                //d.search = $('input[type="search"]').val()
-				d.date_search = $('input[name=date_search]').val();
+				d.start_date = $('input[name=start_date]').val();
+				d.end_date = $('input[name=end_date]').val();
             }
 		},
 		columns: [
@@ -90,29 +101,60 @@ $(function() {
 			{
 				data: 'created_at',
 				name: 'created_at'
-			},	
-			
-			
-			
+			},		
 		]
+		
 	});
 	/* $(".searchDate").keyup(function(){
         table.draw();
     }); */
 
 	$('#search-form').on('submit', function(e) {
-		$('#download').attr('data-date',$('#date_search').val()); //setter
         table.draw();
         e.preventDefault();
     });
 
 	$('#download').on("click",function(){
-	
-		var date =  $(this).attr("data-date");
-		var url = "{{route('admin.report.sales.product.download',1)}}";
-		$(this).attr('href',url);
+		var start_date = $('input[name=start_date]').val();
+		//alert(start_date);
+		var end_date = $('input[name=end_date]').val();
+		var url = "{{route('admin.report.sales.product.download')}}";
+		$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
 	})
+	//Start date range picker
+	/* var start = moment().subtract(29, 'days');
+    var end = moment();
+	 */
 
+   /*  function cb(start, end) {
+        //$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+        $('#reportrange').val(start.format('D-MM-YYYY') + ' - ' + end.format('D-MM-YYYY'));
+		$('#start_date').val(start.format('YYYY-MM-DD'));
+		$('#end_date').val(end.format('YYYY-MM-DD'));
+    } */
+
+    $('#reportrange').daterangepicker({
+        //startDate: start,
+        //endDate: end,
+		autoUpdateInput: false,
+        ranges: {
+           'Today': [moment(), moment()],
+           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+           'This Month': [moment().startOf('month'), moment().endOf('month')],
+           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        }
+    });
+
+    //cb(start, end);
+
+	$('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
+      	$(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
+	  	$('#start_date').val(picker.startDate.format('YYYY-MM-DD'));
+		$('#end_date').val(picker.endDate.format('YYYY-MM-DD'));
+  	});
+	//End Date range picker
 });
 </script> 
 @endsection 

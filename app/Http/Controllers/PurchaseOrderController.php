@@ -1283,7 +1283,8 @@ class PurchaseOrderController extends Controller
 			$data = [];
 			$pdf = PDF::loadView('admin.pdf.brand-register', $data,[], 
 			[ 
-				'format' => [1400, 900],
+				'format' => [250, 580],
+				//'format' => 'A4-L',
 			  	'orientation' => 'L'
 			]);
 			return $pdf->stream('brand-register.pdf');

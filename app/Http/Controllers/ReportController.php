@@ -18,7 +18,10 @@ use PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Helper\Media;
+use App\Models\Category;
 use App\Models\SellStockProducts;
+use App\Models\Subcategory;
+use Carbon\Carbon;
 Use Illuminate\Support\Facades\Response;
 Use Illuminate\Support\Str;
 
@@ -694,18 +697,23 @@ class ReportController extends Controller
         try {
             if ($request->ajax()) {
                 //echo base64_decode($inward_stock_id);die;
-                $purchase = SellStockProducts::orderBy('id', 'desc')->get();
-                //echo "<pre>";print_r($request);die;
+                if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
+                    $purchase = SellStockProducts::whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')])->get();
+                }else{
+                    $purchase = SellStockProducts::orderBy('id', 'desc')->get();
+                }
+                
+                //echo "<pre>";print_r($request->all());die;
                 return DataTables::of($purchase)
 
-                ->filter(function ($instance) use ($request) {
+                /* ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('date_search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
                             return Str::contains(date('d-m-Y', strtotime($row['created_at'])), date('d-m-Y', strtotime($request->get('date_search')))) ? true : false;
                         });
                     }
 
-                    /* if (!empty($request->get('search'))) {
+                    if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
                             if (Str::contains(Str::lower($row['created_at']), Str::lower($request->get('search')))){
                                 return true;
@@ -715,9 +723,9 @@ class ReportController extends Controller
 
                             return false;
                         });
-                    } */
+                    }
 
-                })
+                }) */
 
                     ->addColumn('product_name', function ($row) {
                         return $row->product_name;
@@ -745,6 +753,7 @@ class ReportController extends Controller
                     ->rawColumns([])
                     ->make(true);
             }
+            
             $data = [];
             $data['heading'] = 'Sales Product List';
             $data['breadcrumb'] = ['Sales', 'Product', 'List'];
@@ -755,10 +764,13 @@ class ReportController extends Controller
         }
     }
 
-    public function salesProductDownload($date=''){
-        //echo $date;die;
-        //echo "test";die;
-        $sales_products = SellStockProducts::all();
+    public function salesProductDownload(Request $request){
+        //dd($request->all());
+        if($request->has('start_date') && $request->start_date != '' && $request->has('end_date') && $request->end_date != ''){
+            $sales_products = SellStockProducts::whereBetween('created_at', [$request->start_date, $request->end_date])->get();
+        }else{
+            $sales_products = SellStockProducts::all();
+        }
         $content = "";
         foreach ($sales_products as $product) {
         $content .= '01/2007/0003|'.date('d-m-Y h:i', strtotime($product->created_at)).'|'.$product->barcode .'|'.substr($product->size->name,0,-4).'|'.$product->product_mrp.'|'.$product->product_qty;
@@ -766,7 +778,8 @@ class ReportController extends Controller
         }
 
         // file name that will be used in the download
-        $fileName = now()."SELL.txt";
+        $fdate = ($request->has('date') && $request->date != '') ? $request->date : Carbon::now();
+        $fileName = $fdate."-Filter-Sell.txt";
 
         // use headers in order to generate the download
         $headers = [
@@ -777,5 +790,22 @@ class ReportController extends Controller
 
         // make a response, with the content, a 200 response code and the headers
         return Response::make($content, 200, $headers);
+    }
+    public function itemWiseSaleReport(){
+        $categores = Category::all();
+        $sub_categores = Subcategory::all();
+        $items = [];
+        foreach($categores as $category){
+            $items['category'][] = $category->name;
+            
+        }
+        foreach($sub_categores as $sub_cat){
+            $items['category']['sub_cat'][] = $sub_cat->name;
+        }
+        echo "<pre>";print_r($items);
+        $sales_products = SellStockProducts::groupBy(['product_id','size_id'])
+                    ->selectRaw('*,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')
+                    ->get();
+        //dd($sales_products);
     }
 }
