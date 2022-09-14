@@ -310,7 +310,7 @@ class PurchaseOrderController extends Controller
 					'unit_price'  		=> $unit_price,
 					'offer_price'  		=> $unit_price,
 					'total_cost'		=> $total_amount,
-					'created_at'		=> date('Y-m-d')
+					//'created_at'		=> date('Y-m-d')
 				);
 				//print_r($sellStockproductData);exit;
 				SellStockProducts::create($sellStockproductData);
@@ -1303,6 +1303,28 @@ class PurchaseOrderController extends Controller
 			$data = [];
 			$pdf = PDF::loadView('admin.pdf.e-report', $data);
 			return $pdf->stream('e-report.pdf');
+	}
+
+	public function todaySalesProductDownload(){
+		$sales_products = SellStockProducts::whereDate('created_at', Carbon::today())->get();
+        $content = "";
+        foreach ($sales_products as $product) {
+        $content .= '01/2007/0003|'.date('d-m-Y h:i', strtotime($product->created_at)).'|'.$product->barcode .'|'.substr($product->size->name,0,-4).'|'.$product->product_mrp.'|'.$product->product_qty;
+        $content .= "\n";
+        }
+
+        // file name that will be used in the download
+        $fileName = now()."SELL.txt";
+
+        // use headers in order to generate the download
+        $headers = [
+        'Content-type' => 'text/plain', 
+        'Content-Disposition' => sprintf('attachment; filename="%s"', $fileName),
+        //'Content-Length' => sizeof($content)
+        ];
+
+        // make a response, with the content, a 200 response code and the headers
+        return Response::make($content, 200, $headers);
 	}
 	
 }
