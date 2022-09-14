@@ -339,6 +339,7 @@ class PurchaseOrderController extends Controller
 			SellInwardTenderedChangeAmount::create($tenderedChangeAmount);
 		}
 		
+		
 		$return_data['success']	= 1;
 		echo json_encode($return_data);
 		
