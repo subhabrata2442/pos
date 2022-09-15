@@ -11,7 +11,7 @@
       <x-alert />
 	  <div class="d-flex justify-content-between align-items-center mb-4">
 		<form method="get" id="search-form" class="form-inline" role="form">
-			
+			<input type="hidden" name="item_id" value="{{$data['item_id']}}" id="item_id">
 			{{-- <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
 				<i class="fa fa-calendar"></i>&nbsp;
 				<span></span> <i class="fa fa-caret-down"></i>
@@ -71,6 +71,7 @@ $(function() {
 			data: function (d) {
 				d.start_date = $('input[name=start_date]').val();
 				d.end_date = $('input[name=end_date]').val();
+				d.id = $('input[name=item_id]').val();
             }
 		},
 		columns: [
