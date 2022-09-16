@@ -255,40 +255,17 @@
           <div class="col-lg-5 col-md-5 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #d64f35;"><span>Coupons & Membership</span><img src="{{ url('assets/admin/new/images/icon/4.svg') }}" alt=""/></a> </div>
           <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #f76ce1;"><span>Sales</span><img src="{{ url('assets/admin/new/images/icon/5.svg') }}" alt=""/></a> </div>
           <div class="col-lg-4 col-md-4 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #b81249;"><span>Bank / Cash</span><img src="{{ url('assets/admin/new/images/icon/7.svg') }}" alt=""/></a> </div>
-          <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="javascript:;" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #203966;" data-bs-toggle="modal" data-bs-target="#exampleModal"><span>POS</span><img src="{{ url('assets/admin/new/images/icon/8.svg') }}" alt=""/></a> </div>
+          <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="{{ route('admin.pos.pos_create') }}" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #203966;"><span>POS</span><img src="{{ url('assets/admin/new/images/icon/8.svg') }}" alt=""/></a> </div>
           <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="{{ route('admin.supplier.list') }}" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #910b95;"><span>Supplier</span><img src="{{ url('assets/admin/new/images/icon/9.svg') }}" alt=""/></a> </div>
           <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #0f54b2;"><span>Accounting</span><img src="{{ url('assets/admin/new/images/icon/10.svg') }}" alt=""/></a> </div>
           <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #e08300;"><span>Report</span><img src="{{ url('assets/admin/new/images/icon/11.svg') }}" alt=""/></a> </div>
           <div class="col-lg-4 col-md-4 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #506aad;"><span>Report (BETA)</span><img src="{{ url('assets/admin/new/images/icon/12.svg') }}" alt=""/></a> </div>
           <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #052d72;"><span>Utilities</span><img src="{{ url('assets/admin/new/images/icon/14.svg') }}" alt=""/></a> </div>
           <div class="col-lg-3 col-md-3 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #8ca32f;"><span>Settings</span><img src="{{ url('assets/admin/new/images/icon/15.svg') }}" alt=""/></a> </div>
-          <div class="col-lg-2 col-md-2 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #e77272;" ><span>Versions</span><img src="{{ url('assets/admin/new/images/icon/13.svg') }}" alt=""/></a> </div>
+          <div class="col-lg-2 col-md-2 col-sm-4 col-12"> <a href="#" class="metroBox d-flex align-items-center justify-content-center wow zoomIn" style="background: #e77272;"><span>Versions</span><img src="{{ url('assets/admin/new/images/icon/13.svg') }}" alt=""/></a> </div>
         </div>
       </div>
     </div>
   </div>
 </section>
-<div class="modal fade dbModal" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered modal-lg">
-    <div class="modal-content">
-      
-      <div class="modal-body">
-        <div class="row">
-          <div class="col-6">
-            <a href="{{ route('admin.pos.pos_create') }}" class="gotoPos">
-              <img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/off-counter.svg" alt="">
-              <span>Off Counter</span>
-            </a>
-          </div>
-          <div class="col-6">
-            <a href="{{ route('admin.pos.bar_dine_in_table_booking') }}" class="gotoPos">
-              <img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/bar-cum-restaurannt-01.svg" alt="">
-              <span>Bar Cum Restaurant</span>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
 @endsection 

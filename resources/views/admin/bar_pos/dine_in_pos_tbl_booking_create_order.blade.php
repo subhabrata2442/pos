@@ -1,60 +1,32 @@
 @extends('layouts.sidebar_collapse_admin')
 <style>
-  .content-wrapper{
-    background: #fff !important;
-  }
-  .content-header {
-    display: none !important;
-  }
+.content-wrapper{
+	background: #fff !important;
+	height: auto !important;
+}
+.content-header {
+	display: none !important;
+}
+.content-header {
+	display: none !important;
+}
 </style>
 @section('admin-content')
-
 <section class="tablePage">
-  <!-- <div class="rightPannelTop">
-    <div class="row">
-      <div class="col-lg-4 col-md-3 col-sm-3 col-12">
-        <div class="tabBox">
-          <a href="#" class="active"><span><img src="{{ url('assets/admin/images/dine-in.png') }}" alt=""></span> Dine  in <i class="fas fa-bell"></i></a>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-3 col-sm-3 col-12">
-        <div class="tabBox">
-          <a href="#"><span><img src="{{ url('assets/admin/images/take-way.png') }}" alt=""></span> Take Away</a>
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-3 col-sm-3 col-12">
-        <div class="tabBox">
-          <a href="#"><span><img src="{{ url('assets/admin/images/online.png') }}" alt=""></span> online</a>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="tableIndicate d-flex justify-content-center">
-    <ul class="d-flex flex-wrap">
-      <li><span style="background: #9ab3bd;"></span> Blank Table</li>
-      <li><span style="background: #00bff3;"></span> Running Table</li>
-      <li><span style="background: #39b54a;"></span> Printed Table</li>
-      <li><span style="background: #fdc689;"></span> Paid Table</li>
-      <li><span style="background: #f7941d;"></span> Running KOT Table</li>
-    </ul>
-  </div> -->
-
-
   <div class="filterTable d-flex flex-wrap">
     <div class="filterTableLeft d-flex flex-wrap">
       <div class="ftMenu">
         <div class="ftMenuTop">
-          <div class="catalogsearch-box">
-            <span id="select-box-category">food</span>
+        <a href="{{ route('admin.pos.bar_dine_in_table_booking') }}" class="backBtn"><i class="fas fa-arrow-left"></i> Back</a>
+          <div class="catalogsearch-box"> <span id="select-box-category">food</span>
             <div id="categories-box" style="display:none;">
-                <input style="display:none;" type="text" value="" id="qsearch">
-                <ul class="cat-list dd-container" id="cat">
-                    <li class="catItem top">food</li>
-                    <li class=" catItem">Drinks</li>
-                </ul>
+              <input style="display:none;" type="text" value="" id="qsearch">
+              <ul class="cat-list dd-container" id="cat">
+                <li class="catItem top">food</li>
+                <li class=" catItem">Drinks</li>
+              </ul>
             </div>
-        </div>
+          </div>
         </div>
         <div class="ftMenuBtm">
           <ul>
@@ -69,7 +41,6 @@
             <li><a href="#">Italian</a></li>
           </ul>
         </div>
-
       </div>
       <div class="ftDetails">
         <div class="relative mb-4 onlineTab">
@@ -79,172 +50,85 @@
         <div class="ftDetailsInner">
           <div class="row g-3">
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Chocolate<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Chocolate<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Cool Blue</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Cool Blue</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Banana<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Banana<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Chocolate<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Chocolate<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Cool Blue</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Cool Blue</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Green Apple<br>Mojito</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Green Apple<br>
+                Mojito</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Chocolate<br>Smoothie</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Chocolate<br>
+                Smoothie</span> </a> </div>
             </div>
             <div class="col-lg-4 col-md-4 col-sm-4 col-12">
-              <div class="ftBox">
-                <a href="#">
-                  <img src="{{ url('assets/admin/images/food-1.png') }}" alt="">
-                  <span>Cool Blue</span>
-                </a>
-              </div>
+              <div class="ftBox"> <a href="#"> <img src="{{ url('assets/admin/images/food-1.png') }}" alt=""> <span>Cool Blue</span> </a> </div>
             </div>
           </div>
         </div>
@@ -276,16 +160,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -293,16 +174,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -310,16 +188,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -327,16 +202,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -344,16 +216,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -361,16 +230,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -378,16 +244,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -395,16 +258,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -412,16 +272,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -429,16 +286,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -446,16 +300,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
               <tr>
@@ -463,16 +314,13 @@
                 <td class="text-center">Tandori Chicken</td>
                 <td class="text-center">Full</td>
                 <td class="text-center">320.00</td>
-                <td class="text-center">
-                  <div>
+                <td class="text-center"><div>
                     <div class="priceControl d-flex">
                       <button class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2" value="0" data-max-lim="20">
                       <button class="controls2" value="+">+</button>
-                  </div>
-                  </div>
-                  
-                </td>
+                    </div>
+                  </div></td>
                 <td class="text-center">315.00</td>
               </tr>
             </tbody>
@@ -499,11 +347,7 @@
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center mt-3">
-    <a href="#" class="backBtn"><i class="fas fa-arrow-left"></i> Back</a>
-  </div>
 </section>
-
 @endsection
 
 
@@ -529,8 +373,7 @@
     if ((seconds <= 0) && (minutes <= 0)) clearInterval(interval);
     timer2 = minutes + ':' + seconds;
   }, 1000);
-</script>
-
+</script> 
 <script>
   var qty = 0, maxlim;
   $('.priceControl .controls2').on('click', function () {
@@ -545,8 +388,7 @@
       $(this).siblings('.qtyInput2').val(qty);
 
   });
-</script>
-
+</script> 
 <script type="text/javascript">
   document.addEventListener("DOMContentLoaded", function () {
       var qsearch, select, ul, li, a, i;
@@ -588,5 +430,5 @@
           return false;
       };
   };
-</script>
+</script> 
 @endsection 

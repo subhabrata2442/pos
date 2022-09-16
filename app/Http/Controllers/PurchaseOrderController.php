@@ -42,8 +42,11 @@ use App\Models\Common;
 
 
 use App\Models\Warehouse;
+use App\Models\TableBookingHistory;
 use App\Models\RestaurantFloor;
 use App\Models\FloorWiseTable;
+use App\Models\Waiter;
+
 use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
 
@@ -154,16 +157,60 @@ class PurchaseOrderController extends Controller
             $data['heading'] 		= 'Purchase Order';
             $data['breadcrumb'] 	= ['Purchase Order', 'Add'];
             $data['floor_list'] 	= RestaurantFloor::where('branch_id',$branch_id)->get();
+			$data['waiter_list'] 	= Waiter::where('branch_id',$branch_id)->get();
 			
-			//$product=Product::where('id','403')->get();
+			$floor_id=isset($data['floor_list'][0]->id)?$data['floor_list'][0]->id:'';
+			$tables=[];
+			if($floor_id!=''){
+				$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('status',1)->orderBy('id', 'ASC')->get();
+				
+				foreach($table_result as $key=>$row){
+					$waiter_id		= '';
+					$waiter_name	= '';
+					$items_qty		= '';
+					$total_amount	= '';
+					$booking_date	= '';
+					$booking_time	= '';
+					$customer_id	= '';
+					$customer_name	= '';
+					$customer_phone	= '';
+					
+					
+					
+					if($row->booking_status==2){
+						$table_info	= TableBookingHistory::where('floor_id',$floor_id)->where('table_id',$row->id)->orderBy('id', 'DESC')->first();
+						
+						$waiter_id		= isset($table_info->waiter_id)?$table_info->waiter_id:'';
+						$waiter_name	= isset($table_info->waiter->name)?$table_info->waiter->name:'';
+						$items_qty		= isset($table_info->items_qty)?$table_info->items_qty:'';
+						$total_amount	= isset($table_info->total_amount)?$table_info->total_amount:'';
+						$booking_date	= isset($table_info->booking_date)?$table_info->booking_date:'';
+						$booking_time	= isset($table_info->booking_time)?$table_info->booking_time:'';
+						$customer_id	= isset($table_info->customer_id)?$table_info->customer_id:'';
+						$customer_name	= isset($table_info->customer_name)?$table_info->customer_name:'';
+						$customer_phone	= isset($table_info->customer_phone)?$table_info->customer_phone:'';
+					}
+					
+					$tables[]=array(
+						'floor_id'			=> $row->floor_id,
+						'table_id'			=> $row->id,
+						'table_name'		=> $row->table_name,
+						'status'			=> $row->booking_status,
+						'waiter_id'			=> $waiter_id,
+						'waiter_name'		=> $waiter_name,
+						'items_qty'			=> $items_qty,
+						'total_amount'		=> $total_amount,
+						'booking_date'		=> $booking_date,
+						'booking_time'		=> $booking_time,
+						'customer_id'		=> $customer_id,
+						'customer_name'		=> $customer_name,
+						'customer_phone'	=> $customer_phone,
+					);
+					
+				}
+			}
 			
-			//echo '<pre>';print_r($product[0]->subcategory_id);exit;
-			
-			//$product[0]->category->name
-			
-			//$product[0]->category_id
-			//$product[0]->subcategory_id
-			
+			$data['tables'] 	= $tables;
 			
             return view('admin.bar_pos.dine_in_pos_tbl_booking', compact('data'));
         } catch (\Exception $e) {
@@ -172,9 +219,29 @@ class PurchaseOrderController extends Controller
         }
     }
 	
-	
-	
-	
+	public function bar_dine_in_table_booking_create_order(Request $request, $id)
+    {
+        try {
+            $data = [];
+			$branch_id=1;
+			
+            $data['heading'] 		= 'Purchase Order';
+            $data['breadcrumb'] 	= ['Purchase Order', 'Add'];
+            $data['floor_list'] 	= RestaurantFloor::where('branch_id',$branch_id)->get();
+			$data['waiter_list'] 	= Waiter::where('branch_id',$branch_id)->get();
+			
+			$table_booking_id 		= base64_decode($id);	
+			$table_booking_info		= TableBookingHistory::where('id',$table_booking_id)->first();
+			$data['waiter_list']	= $table_booking_info;
+			
+			
+			
+			
+            return view('admin.bar_pos.dine_in_pos_tbl_booking_create_order', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
 	
 	public function pos_type()
     {

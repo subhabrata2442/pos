@@ -72,7 +72,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::match(['POST'], '/create', [PurchaseOrderController::class, 'create'])->name('create');
 		
 		Route::match(['GET'], '/bar_dine_in_table_booking', [PurchaseOrderController::class, 'bar_dine_in_table_booking'])->name('bar_dine_in_table_booking');
-		
+		Route::match(['GET'], '/bar_dine_in_table_booking/create_order/{id}', [PurchaseOrderController::class, 'bar_dine_in_table_booking_create_order'])->name('bar_dine_in_table_booking_create_order');
 		
 		
 		Route::match(['GET'], '/print_invoice', [PurchaseOrderController::class, 'print_invoice'])->name('print_invoice');
