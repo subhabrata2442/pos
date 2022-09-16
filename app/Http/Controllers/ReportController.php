@@ -18,7 +18,11 @@ use PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Helper\Media;
+use App\Models\Category;
+use App\Models\SellInwardStock;
 use App\Models\SellStockProducts;
+use App\Models\Subcategory;
+use Carbon\Carbon;
 Use Illuminate\Support\Facades\Response;
 Use Illuminate\Support\Str;
 
@@ -691,21 +695,39 @@ class ReportController extends Controller
     }
 
     public function salesProduct(Request $request){
+        /* if(isset($request->id)){
+            echo base64_decode($request->id);die;
+        } */
         try {
             if ($request->ajax()) {
                 //echo base64_decode($inward_stock_id);die;
-                $purchase = SellStockProducts::orderBy('id', 'desc')->get();
-                //echo "<pre>";print_r($request);die;
-                return DataTables::of($purchase)
+                $products = SellStockProducts::where('product_id','!=','');
+                
+                if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
+                    if($request->get('start_date') == $request->get('end_date')){
+                        $products->whereDate('created_at', $request->get('start_date'));
+                    }else{
+                        $products->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
+                    }    
+                }
+                if(isset($request->id) && !empty($request->id)){
+                    $sell_inward_stock_id = base64_decode($request->id);
+                    $products->where('inward_stock_id',$sell_inward_stock_id);
+                }
+                //echo  $products;die;
+                $products->orderBy('id', 'desc')->get();
+                
+                //echo "<pre>";print_r($request->all());die;
+                return DataTables::of($products)
 
-                ->filter(function ($instance) use ($request) {
+                /* ->filter(function ($instance) use ($request) {
                     if (!empty($request->get('date_search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
                             return Str::contains(date('d-m-Y', strtotime($row['created_at'])), date('d-m-Y', strtotime($request->get('date_search')))) ? true : false;
                         });
                     }
 
-                    /* if (!empty($request->get('search'))) {
+                    if (!empty($request->get('search'))) {
                         $instance->collection = $instance->collection->filter(function ($row) use ($request) {
                             if (Str::contains(Str::lower($row['created_at']), Str::lower($request->get('search')))){
                                 return true;
@@ -715,9 +737,9 @@ class ReportController extends Controller
 
                             return false;
                         });
-                    } */
+                    }
 
-                })
+                }) */
 
                     ->addColumn('product_name', function ($row) {
                         return $row->product_name;
@@ -745,20 +767,29 @@ class ReportController extends Controller
                     ->rawColumns([])
                     ->make(true);
             }
+            
             $data = [];
             $data['heading'] = 'Sales Product List';
             $data['breadcrumb'] = ['Sales', 'Product', 'List'];
-            $data['date_search'] =$request->get('date_search') ? $request->get('date_search') : 0;
+            $data['item_id'] =$request->get('id') ? $request->get('id') : '';
             return view('admin.report.sales_product_list', compact('data'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
 
-    public function salesProductDownload($date=''){
-        //echo $date;die;
-        //echo "test";die;
-        $sales_products = SellStockProducts::all();
+    public function salesProductDownload(Request $request){
+        //dd($request->all());
+        if($request->has('start_date') && $request->start_date != '' && $request->has('end_date') && $request->end_date != ''){
+            if($request->start_date == $request->end_date){
+                $sales_products = SellStockProducts::whereDate('created_at', $request->start_date)->get();
+            }else{
+                $sales_products = SellStockProducts::whereBetween('created_at', [$request->start_date, $request->end_date])->get();
+            }
+            
+        }else{
+            $sales_products = SellStockProducts::all();
+        }
         $content = "";
         foreach ($sales_products as $product) {
         $content .= '01/2007/0003|'.date('d-m-Y h:i', strtotime($product->created_at)).'|'.$product->barcode .'|'.substr($product->size->name,0,-4).'|'.$product->product_mrp.'|'.$product->product_qty;
@@ -766,7 +797,8 @@ class ReportController extends Controller
         }
 
         // file name that will be used in the download
-        $fileName = now()."SELL.txt";
+        $fdate = ($request->has('date') && $request->date != '') ? $request->date : Carbon::now();
+        $fileName = $fdate."-Filter-Sell.txt";
 
         // use headers in order to generate the download
         $headers = [
@@ -777,5 +809,109 @@ class ReportController extends Controller
 
         // make a response, with the content, a 200 response code and the headers
         return Response::make($content, 200, $headers);
+    }
+    public function salesItems(Request $request){
+        try {
+            if ($request->ajax()) {
+                $sales = SellInwardStock::where('invoice_no','!=','');
+                if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
+                    if($request->get('start_date') == $request->get('end_date')){
+                        $sales->whereDate('sell_date', $request->get('start_date'));
+                    }else{
+                        $sales->whereBetween('sell_date', [$request->get('start_date'), $request->get('end_date')]);
+                    }    
+                }
+
+                $sales->orderBy('id', 'desc')->get();
+                
+                
+                //echo "<pre>";print_r($request->all());die;
+                return DataTables::of($sales)
+                    ->addColumn('invoice_no', function ($row) {
+                        return '<a class="td-anchor" href="'.route('admin.report.sales.product', [ 'id'=>base64_encode($row->id)]) .'" target="_blank">' . $row->invoice_no . '</a>';
+                    
+                    })
+                    ->addColumn('supplier', function ($row) {
+                        return $row->supplierDetails->company_name;
+                    })
+                    ->addColumn('total_qty', function ($row) {
+                        return $row->total_qty;
+                    })
+                    ->addColumn('gross_amount', function ($row) {
+                        return $row->gross_amount;
+                    })
+                    ->addColumn('discount_amount', function ($row) {
+                        return $row->discount_amount;
+                    })
+                    ->addColumn('sub_total', function ($row) {
+                        return $row->sub_total;
+                    })
+                    ->addColumn('pay_amount', function ($row) {
+                        return $row->pay_amount;
+                    })
+                    ->addColumn('payment_method', function ($row) {
+                        return $row->payment_method;
+                    })
+                    ->addColumn('sell_date', function ($row) {
+                        return date('d-m-Y', strtotime($row->sell_date));
+                    })
+                  
+                    /* ->addColumn('total_cost', function ($row) {
+                        return number_format($row->total_cost,2) ;
+                    }) */
+                    ->rawColumns(['invoice_no'])
+                    ->make(true);
+            }
+            
+            $data = [];
+            $data['heading'] = 'Sales List';
+            $data['breadcrumb'] = ['Sales', '', 'List'];
+
+            return view('admin.report.sales_item_list', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+   
+    public function itemWiseSaleReportPdf(Request $request){
+       $satrt_date = $request->start_date.' 00:00:00';
+       $end_date = $request->end_date.' 23:59:00';
+       //echo $satrt_date;die;
+        $items = [];
+        $group_cat_products = SellStockProducts::with('category')->groupBy(['category_id'])->whereBetween('created_at', [$satrt_date, $end_date])->get();
+        foreach($group_cat_products as $group_cat_product){
+            //$items['category'][] =  $group_cat_product->category->name;
+            $group_sub_cat_products = SellStockProducts::
+                        where('category_id',$group_cat_product->category->id)
+                        ->whereBetween('created_at', [$satrt_date, $end_date])
+                        ->groupBy(['subcategory_id'])
+                        ->get();
+            foreach($group_sub_cat_products as $group_sub_cat_product){
+                //$items['category'][$group_cat_product->category->name][] = $group_sub_cat_product->subCategory->name;
+
+                $sales_products = SellStockProducts::where('subcategory_id',$group_sub_cat_product->subCategory->id)
+                    ->whereBetween('created_at', [$satrt_date, $end_date])
+                    ->groupBy(['product_id','size_id'])
+                    ->selectRaw('product_name,product_mrp,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')
+                    ->get();
+                $items[$group_cat_product->category->name][$group_sub_cat_product->subCategory->name]    = $sales_products;
+            }           
+        }
+        $payment_type_ammount = SellInwardStock::whereBetween('payment_date', [$satrt_date, $end_date])
+                        ->groupBy(['payment_method'])
+                        ->selectRaw('payment_method,sum(pay_amount) as total_payment')
+                        ->get();
+        
+        $data = [];
+        $data['items'] = $items;
+        $data['shop_name'] = 'BAZIMAT';
+        $data['shop_address'] = 'West Chowbaga Kolkata - 700105 West Bengal';
+        $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
+        $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
+
+        $pdf = PDF::loadView('admin.pdf.item-wise-sales-report', $data);
+         //echo "<pre>";print_r($items);die;
+		return $pdf->stream(now().'-invoice.pdf');
+       
     }
 }

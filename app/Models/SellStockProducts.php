@@ -17,5 +17,11 @@ class SellStockProducts extends Model
     public function size(){
         return $this->hasOne(Size::class,'id','size_id');
     }
+    public function category(){
+        return $this->hasOne(Category::class,'id','category_id');
+    }
+    public function subCategory(){
+        return $this->hasOne(Subcategory::class,'id','subcategory_id');
+    }
 
 }

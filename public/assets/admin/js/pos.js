@@ -7,6 +7,7 @@ $(document).ready(function() {
         var total_payble_amount = $('#total_payble_amount-input').val();
         $('#due_amount_tendering').val(total_payble_amount);
         $('#tendered_amount').val('');
+        $('#tendered_change_amount').val('');
         if (total_quantity > 0) {
             $(".payWrap").toggleClass('active');
         } else {

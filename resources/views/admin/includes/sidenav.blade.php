@@ -90,7 +90,7 @@
           
           
         
-        <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.report') !== false) menu-open @endif"> <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.report') !== false) parent-active @endif"> <i class="fas fa-user nav-icon"></i>
+        <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.report') !== false) menu-open @endif"> <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.report') !== false) parent-active @endif"> <i class="fas fa-flag nav-icon"></i>
           <p>Report <i class="fas fa-angle-left right"></i></p>
           </a>
           <ul class="nav nav-treeview">
@@ -99,12 +99,31 @@
               </a> </li> --}}
             <li class="nav-item"> <a href="{{ route('admin.report.purchase') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.purchase') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Purchase</p>
-              </a> </li>
-              <li class="nav-item"> 
-                <a href="{{ route('admin.report.sales.product') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.product') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
-                <p>Sales Report</p>
-                </a> 
-              </li>
+              </a> 
+            </li>
+
+            
+            <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.report.sales') !== false) menu-open @endif"">
+              <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.report.sales') !== false) parent-active @endif">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>
+                      Sales
+                      <i class="right fas fa-angle-left"></i>
+                  </p>
+              </a>
+              <ul class="nav nav-treeview" >
+                <li class="nav-item"> 
+                  <a href="{{ route('admin.report.sales.item') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.item') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+                  <p>Sales</p>
+                  </a> 
+                </li>
+                <li class="nav-item"> 
+                  <a href="{{ route('admin.report.sales.product') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.product') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+                  <p>Sales Product</p>
+                  </a> 
+                </li>
+              </ul>
+          </li>
             <!--<li class="nav-item"> <a href="{{ route('admin.report.inventory') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.inventory') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Inventory</p>
               </a> </li>-->
