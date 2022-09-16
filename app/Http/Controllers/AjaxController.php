@@ -26,6 +26,10 @@ use App\Models\InwardStockProducts;
 use App\Models\BranchStockProducts;
 use App\Models\BranchStockProductSellPrice;
 
+use App\Models\RestaurantFloor;
+use App\Models\FloorWiseTable;
+use App\Models\TableBookingHistory;
+
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -38,9 +42,109 @@ class AjaxController extends Controller {
 		$action = $request->action;
 		$this->{'ajaxpost_' . $action}($request);
 	}
+	/*BAR POS*/
+	public function ajaxpost_get_table($request) {
+		$floor_id	= $request->floor_id;
+		
+		$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('status',1)->orderBy('id', 'DESC')->get();
+		
+		$result=[];
+		foreach($table_result as $key=>$row){
+			$waiter_id		= '';
+			$waiter_name	= '';
+			$items_qty		= '';
+			$total_amount	= '';
+			$booking_date	= '';
+			$booking_time	= '';
+			$customer_id	= '';
+			$customer_name	= '';
+			$customer_phone	= '';
+			if($row->booking_status==2){
+				$table_info	= TableBookingHistory::where('floor_id',$floor_id)->where('table_id',$row->id)->orderBy('id', 'DESC')->first();
+				
+				$waiter_id		= isset($table_info->waiter_id)?$table_info->waiter_id:'';
+				$waiter_name	= isset($table_info->waiter->name)?$table_info->waiter->name:'';
+				$items_qty		= isset($table_info->items_qty)?$table_info->items_qty:'';
+				$total_amount	= isset($table_info->total_amount)?$table_info->total_amount:'';
+				$booking_date	= isset($table_info->booking_date)?$table_info->booking_date:'';
+				$booking_time	= isset($table_info->booking_time)?$table_info->booking_time:'';
+				$customer_id	= isset($table_info->customer_id)?$table_info->customer_id:'';
+				$customer_name	= isset($table_info->customer_name)?$table_info->customer_name:'';
+				$customer_phone	= isset($table_info->customer_phone)?$table_info->customer_phone:'';
+			}
+			$result[]=array(
+				'floor_id'			=> $row->floor_id,
+				'table_id'			=> $row->id,
+				'table_name'		=> $row->table_name,
+				'status'			=> $row->booking_status,
+				'waiter_id'			=> $waiter_id,
+				'waiter_name'		=> $waiter_name,
+				'items_qty'			=> $items_qty,
+				'total_amount'		=> $total_amount,
+				'booking_date'		=> $booking_date,
+				'booking_time'		=> $booking_time,
+				'customer_id'		=> $customer_id,
+				'customer_name'		=> $customer_name,
+				'customer_phone'	=> $customer_phone,
+			);
+		}
+		
+		$return_data['result']	= $result;
+		$return_data['status']	= 1;
+		
+		echo json_encode($return_data);		
+	}
 	
+	public function ajaxpost_get_table_availability($request) {
+		$floor_id	= $request->floor_id;
+		$tbl_id		= $request->tbl_id;
+		
+		$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('id',$tbl_id)->where('status',1)->orderBy('id', 'DESC')->first();
+		$booking_status	= isset($table_result->booking_status)?$table_result->booking_status:'';
+		
+		if($booking_status!=''){
+			$return_data['table_name']	= $table_result->table_name;
+			if($booking_status==2){
+				$table_info	= TableBookingHistory::where('floor_id',$floor_id)->where('table_id',$tbl_id)->orderBy('id', 'DESC')->first();
+				$booking_url='admin/pos/bar_dine_in_table_booking/create_order/'.base64_encode($table_info->id);
+				$return_data['booking_url']	= $booking_url;
+			}	
+		}
+		
+		$return_data['status']	= $booking_status;
+		echo json_encode($return_data);
+		
+	}
 	
-	
+	public function ajaxpost_set_table_booking($request) {
+		$floor_id	= $request->floor_id;
+		$tbl_id		= $request->tbl_id;
+		$waiter_id	= $request->waiter_id;
+		
+		$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('id',$tbl_id)->where('status',1)->orderBy('id', 'DESC')->first();
+		$booking_status	= isset($table_result->booking_status)?$table_result->booking_status:'';
+		
+		
+		$booking_url='';
+		if($booking_status!=''){
+			if($booking_status==1){
+				$tableBooking = TableBookingHistory::create([
+					'floor_id' 		=> $floor_id,
+					'table_id' 		=> $tbl_id,
+					'waiter_id'		=> $waiter_id,
+					'booking_date' 	=> date('Y-m-d'),
+					'booking_time' 	=> date('H:i:s')
+				]);
+				
+				$tableBookingId=$tableBooking->id;
+				$booking_url='admin/pos/bar_dine_in_table_booking/create_order/'.base64_encode($tableBookingId);
+				FloorWiseTable::where('floor_id',$floor_id)->where('id',$tbl_id)->update(['booking_status' => 2]);
+			}
+		}
+		
+		$return_data['booking_url']	= $booking_url;
+		echo json_encode($return_data);		
+	}
 	public function ajaxpost_get_sell_product_search($request) {
 		$search				= $request->search;
 		$searchTerm 		= $search;
