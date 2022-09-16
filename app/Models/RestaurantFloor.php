@@ -13,4 +13,8 @@ class RestaurantFloor extends Model
 	protected $table = 'restaurant_floor';
 	protected $guarded	= [];
 
+    public function tables(){
+        return $this->hasMany(FloorWiseTable::class,'floor_id','id');
+    }
+
 }
