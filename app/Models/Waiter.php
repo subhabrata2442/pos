@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Waiter extends Model
 {
     use HasFactory;
-    //use SoftDeletes;
+    use SoftDeletes;
 	
 	protected $table = 'waiters';
 	protected $guarded	= [];

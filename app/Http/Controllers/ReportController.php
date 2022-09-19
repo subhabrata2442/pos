@@ -908,6 +908,7 @@ class ReportController extends Controller
         $data['shop_address'] = 'West Chowbaga Kolkata - 700105 West Bengal';
         $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
         $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
+        $data['payment_type_ammount'] = $payment_type_ammount;
 
         $pdf = PDF::loadView('admin.pdf.item-wise-sales-report', $data);
          //echo "<pre>";print_r($items);die;

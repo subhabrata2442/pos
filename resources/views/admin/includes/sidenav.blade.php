@@ -88,6 +88,54 @@
           </ul>
         </li>
           
+        <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.restaurant') !== false) menu-open @endif"> <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.restaurant') !== false) parent-active @endif"> <i class="fas fa-cutlery nav-icon"></i>
+          <p>Restaurant <i class="fas fa-angle-left right"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
+            <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.restaurant.waiter') !== false) menu-open @endif"">
+              <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.restaurant.waiter') !== false) parent-active @endif">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>
+                      Waiter
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+              </a>
+              <ul class="nav nav-treeview" >
+                <li class="nav-item"> 
+                  <a href="{{ route('admin.restaurant.waiter.list') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.restaurant.waiter.list') active @endif"> <i class="fas fa-list nav-icon"></i>
+                  <p>List Waiter</p>
+                  </a> 
+                </li>
+                <li class="nav-item"> 
+                  <a href="{{ route('admin.restaurant.waiter.add') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.restaurant.waiter.add') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+                  <p>Add Waiter</p>
+                  </a> 
+                </li>
+              </ul>
+            </li>
+            <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.restaurant.table') !== false) menu-open @endif"">
+              <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.restaurant.table') !== false) parent-active @endif">
+                  <i class="nav-icon fas fa-circle"></i>
+                  <p>
+                      Manage Room/Table
+                    <i class="right fas fa-angle-left"></i>
+                  </p>
+              </a>
+              <ul class="nav nav-treeview" >
+                <li class="nav-item"> 
+                  <a href="{{ route('admin.restaurant.table.list') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.restaurant.table.list') active @endif"> <i class="fas fa-list nav-icon"></i>
+                  <p>List Room/Table</p>
+                  </a> 
+                </li>
+                <li class="nav-item"> 
+                  <a href="{{ route('admin.restaurant.table.add') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.restaurant.table.add') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
+                  <p>Add Room/Table</p>
+                  </a> 
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </li>  
           
         
         <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.report') !== false) menu-open @endif"> <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.report') !== false) parent-active @endif"> <i class="fas fa-flag nav-icon"></i>

@@ -8,6 +8,8 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AjaxController;
+use App\Http\Controllers\WaiterController;
+use App\Http\Controllers\ManageTableController;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -145,6 +147,20 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET'], '/ajax-get', [PurchaseOrderController::class, 'ajaxPurchaseById'])->name('list.ajax');
 	});
 	
+    Route::prefix('restaurant')->name('restaurant.')->group(function () {
+        Route::prefix('waiter')->name('waiter.')->group(function () {
+            Route::match(['GET', 'POST'], '/add', [WaiterController::class, 'add'])->name('add');
+            Route::match(['GET', 'POST'], '/list', [WaiterController::class, 'list'])->name('list');
+            Route::match(['GET', 'POST'], '/edit/{id}', [WaiterController::class, 'edit'])->name('edit');
+            Route::match(['GET', 'POST'], '/delete/{id}', [WaiterController::class, 'delete'])->name('delete');
+        });
+        Route::prefix('table')->name('table.')->group(function () {
+            Route::match(['GET', 'POST'], '/add', [ManageTableController::class, 'add'])->name('add');
+            Route::match(['GET', 'POST'], '/list', [ManageTableController::class, 'list'])->name('list');
+            Route::match(['GET', 'POST'], '/edit/{id}', [ManageTableController::class, 'edit'])->name('edit');
+            Route::match(['GET', 'POST'], '/delete/{id}', [ManageTableController::class, 'delete'])->name('delete');
+        });
+    });
 	
 	Route::get('/invoice',[ReportController::class,'invoicePdf'])->name('sale_pdf');
 	
