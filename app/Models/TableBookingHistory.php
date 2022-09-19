@@ -17,5 +17,9 @@ class TableBookingHistory extends Model
     {
 		return $this->hasOne(Waiter::class,'id', 'waiter_id'); 
     }
+	public function table()
+    {
+		return $this->hasOne(FloorWiseTable::class,'id', 'table_id'); 
+    }
 
 }

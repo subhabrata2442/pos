@@ -1,3 +1,8 @@
+$(document).on('change', '#invoice_stock', function() {
+	var stock_type=$(this).val();
+	$('#upload_invoice_stock_type').val(stock_type);
+});
+
 $(document).ready(function() {
     $('#invoice_upload-form').submit(function(evt) {
         evt.preventDefault();
@@ -125,6 +130,7 @@ $(document).ready(function() {
                         });
                     } else {
                         toastr.error("Warehouse Not Found!");
+						$('#invoice_upload-form')[0].reset();
 
                     }
 
@@ -240,6 +246,7 @@ $(document).ready(function() {
                         title: 'Oops...',
                         text: 'This invoice is already uploaded!',
                     });
+					$('#invoice_upload-form')[0].reset();
                 }
             },
             error: function(xhr, ajaxOptions, thrownError) {
@@ -248,6 +255,7 @@ $(document).ready(function() {
                     title: 'Oops...',
                     text: 'Something went wrong!',
                 });
+				$('#invoice_upload-form')[0].reset();
                 //toastr.error("No data found!");
                 //alert(thrownError + "\r\n" + xhr.statusText + "\r\n" + xhr.responseText);
             }

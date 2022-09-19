@@ -328,6 +328,7 @@
 <div style="display:none;">
   <form method="post" action="{{ route('admin.purchase.invoice_upload') }}" class="needs-validation" id="invoice_upload-form" novalidate enctype="multipart/form-data">
     @csrf
+    <input type="hidden" name="upload_invoice_stock_type" id="upload_invoice_stock_type" value="counter">
     <input name="upload_invoice_pdf" id="upload_invoice_pdf" style="display:none" type="file">
   </form>
 </div>
