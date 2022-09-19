@@ -33,11 +33,12 @@
         <div id="add_table">
           @if(count($data['floor']->tables) > 0)
             @foreach ($data['floor']->tables as $key => $table)
+            <input type="hidden" name="table_ids[]" value="{{$table->id}}">
             <div class="row add_table_sec" id="table_">
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="table_name" class="form-label">Table Name</label>
-                  <input type="text" class="form-control admin-input" id="table_name" name="table_name[{{$table->id}}]" value="{{$table->table_name}}" autocomplete="off" placeholder="Enter Table Name">
+                  <input type="text" class="form-control admin-input" id="table_name" name="table_names[{{$table->id}}]" value="{{$table->table_name}}" autocomplete="off" placeholder="Enter Table Name">
                 </div>
               </div>
             </div>
@@ -48,7 +49,7 @@
               <div class="col-md-4">
                 <div class="form-group">
                   <label for="table_name" class="form-label">Table Name</label>
-                  <input type="text" class="form-control admin-input" id="table_name" name="table_name[]" value="" autocomplete="off" placeholder="Enter Table Name">
+                  <input type="text" class="form-control admin-input" id="table_name" name="table_names[]" value="" autocomplete="off" placeholder="Enter Table Name">
                 </div>
               </div>
             </div>
@@ -98,7 +99,7 @@ $(document).on('click', '#add_more_table', function(){
   html += `<div class="row add_table_sec" id="table_`+id+`">
             <div class="col-md-4">
               <div class="form-group">
-                <input type="text" class="form-control admin-input" name="table_name[]" value="" placeholder="Enter Table Name">
+                <input type="text" class="form-control admin-input" name="table_names[]" value="" placeholder="Enter Table Name">
               </div>
             </div>
             <div class="col-auto">
