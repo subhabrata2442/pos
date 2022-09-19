@@ -1339,15 +1339,17 @@ span.payWrapCloseBtn {
 	margin-right: 25px;
 }
 .tableIndicate ul li {
-    font-size: 18px;
+	font-size: 16px;
+	font-weight: bold;
+	line-height: 1.2;
 }
 .tableIndicate ul li span {
-    display: inline-block;
-    width: 26px;
-    height: 26px;
-    vertical-align: middle;
-    margin-right: 10px;
-    border-radius: 4px;
+	display: inline-block;
+	width: 16px;
+	height: 16px;
+	vertical-align: middle;
+	margin-right: 4px;
+	border-radius: 4px;
 }
 
 .tableIndicate {
@@ -1381,6 +1383,7 @@ span.payWrapCloseBtn {
     padding: 15px;
 	color: #fff;
 	letter-spacing: .5px;
+	height: 100%;
 }
 a.tableBox:hover {
 	color: #fff;
@@ -1576,17 +1579,31 @@ a.tableBox:hover {
 	margin-bottom: 5px;
 }
 .ftMenuBtm ul li a {
-    display: block;
-    background: #003f80;
-    padding: 15px;
-    border-radius: 8px;
-    color: #fff;
-    font-weight: bold;
+	display: block;
+	background: #fbfbfb;
+	padding: 6px 10px;
+	border-radius: 4px;
+	color: #595959;
+	font-weight: bold;
+	font-size: .81rem;
+	border: #eae9e9 1px solid;
+	transition: all ease-in-out .4s;
+}
+.ftMenuBtm ul li a img {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 5px;
+	width: 24px;
+}
+.ftMenuBtm ul li a:hover , .ftMenuBtm ul li a.active {
+	background: #00bff3;
+	color: #fff;
+	border-color: #00bff3;
 }
 
 .ftBox a{
 	display: block;
-	padding: 32px;
+	padding: 32px 15px;
 	background: #fff;
 	box-shadow: 0px 5px 15px -5px rgba(0, 0, 0, 0.15);
 	text-align: center;
@@ -1655,7 +1672,7 @@ a.tableBox:hover {
 	 position: sticky; top: 0; z-index: 1; 
 }
 .ftiTable {
-	max-height: 49.3vh;
+	max-height: 57.3vh;
 }
 
 .controls2{
@@ -1690,51 +1707,41 @@ a.tableBox:hover {
 	background: #fff;
 }
 .catalogsearch-box {
-    display: block;
-    color: #2a2a2a;
-    position: relative;
-    background: #00bff3;
-    border-radius: 8px;
-    font-weight: bold;
-    font-size: 16px;
-    text-transform: capitalize;
-    margin-bottom: 5px;
+	color: #2a2a2a;
+	position: relative;
+	border-radius: 8px;
+	font-weight: bold;
+	font-size: 16px;
+	text-transform: capitalize;
+	margin: 10px 0;
 }
-.catalogsearch-box span {
-    display: block;
-    padding: 15px;
-    cursor: pointer;
-}
-.dd-container {
-    background-color: #00bff3;
-    position: absolute;
-    z-index: 99;
-    left: 0;
-    width: 100%;
-    margin-top: -6px;
-}
-.dd-container li {
-    border: 0;
-    color: #fff;
-    padding: 5px 15px;
-    text-align: left;
+.catalogsearch-box .form-check {
+	border: #ddd 1px solid;
+	padding: 0;
+	border-radius: 6px;
 	cursor: pointer;
 }
-
-.dd-container li:hover {
-    background: rgba(255,255,255,.2);
+.catalogsearch-box .form-check *{
+	cursor: pointer;
+}
+.catalogsearch-box .form-check label {
+	padding: .2rem 1rem .2rem 1.25rem;
+}
+.catalogsearch-box .form-check .form-check-input[type="radio"] {
+	position: absolute;
+	top: 3px;
+	left: 14px;
+  }
+.catalogsearch-box .form-check:hover , .catalogsearch-box .form-check.active {
+	background: #00bff3;
+	border-color: #00bff3;
+	color: #fff;
 }
 
-.catalogsearch-box span::after {
-    content: "\f0d7";
-    display: block;
-    font-size: 14px;
-    font-family: FontAwesome;
-    position: absolute;
-    right: 15px;
-    top: 50%;
-    transform: translateY(-50%);
-}
+.catalogsearch-box .form-check .form-check-input:checked {
+	background-color: #023a49;
+	border-color: #00bff3;
+  }
 
 .payWrapRight.tabMenuHideWrapRight , 
 .payWrapRight.tabMenuHideWrapRight .pmDetails {
@@ -1863,34 +1870,50 @@ a.downloadBtn {
 	border-color: transparent !important;
 }
 .ftDetailsInner {
-	max-height: 66vh;
+	max-height: 76vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 .ftMenuBtm {
-	max-height: 66vh;
+	max-height: 76vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 .filterTable {
 	padding: 10px 0;
 }
+.backBtnWrap {
+	margin-bottom: 5px;
+  }
 .backBtn {
-	background: #003f80;
+	background: #d2600e;
 	padding: 5px 27px;
 	border-radius: 30px;
 	color: #fff;
 	font-size: .8rem;
 	font-weight: bold;
+	display: inline-block;
 }
 .backBtn:hover {
 	background: #2479ce;
 	color: #fff;
 }
 
+.ftBox-col {
+	-ms-flex: 0 0 25%;
+	flex: 0 0 25%;
+	max-width: 25%;
+	position: relative;
+}
+
 
 
 @media only screen and (max-width: 1366px) {
+	.ftBox-col {
+		-ms-flex: 0 0 33.333333%;
+		flex: 0 0 33.333333%;
+		max-width: 33.333333%;
+	}
 	.tabBox a {
 		line-height: 42px;
 		font-size: .98rem;
@@ -1982,6 +2005,8 @@ a.downloadBtn {
 		letter-spacing: 0;
 	}
 }
+
+
 
 
   

@@ -171,14 +171,14 @@
     <div class="topsellingProduct">
       <h4>Top Selling Sroducts</h4>
       <ul class="row">
-        <li><a href="javascript:;" data-id="635" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>McDowell's No. 1 Superior Whisky (750  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="742" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>SEAGRAMS IMPERIAL BLUE CLASSIC GRAIN WHISKY (750  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="663" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>OFFICER'S CHOICE DELUXE WHISKY (750  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="632" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>Mc Dowells No.1 Luxury Premium Whisky (750  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="306" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>Old Monk Lemon Rum (750  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="9" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>BIRA91 GOLD WHEAT STRONG BEER (650  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="293" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>McDowells No.1 Celebration Matured XXX Rum (750  ml)</span></a></li>
-        <li><a href="javascript:;" data-id="40" class="addTopSellingProduct"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/1.png" alt=""><span>Kingfisher Strong Premium Beer (650  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="102" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>Best Taste (600 ml)</span></a></li>
+        <li><a href="javascript:;" data-id="742" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>SEAGRAMS IMPERIAL BLUE CLASSIC GRAIN WHISKY (750  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="663" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>OFFICER'S CHOICE DELUXE WHISKY (750  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="632" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>Mc Dowells No.1 Luxury Premium Whisky (750  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="306" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>Old Monk Lemon Rum (750  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="9" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>BIRA91 GOLD WHEAT STRONG BEER (650  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="293" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>McDowells No.1 Celebration Matured XXX Rum (750  ml)</span></a></li>
+        <li><a href="javascript:;" data-id="40" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>Kingfisher Strong Premium Beer (650  ml)</span></a></li>
       </ul>
     </div>
   </div>

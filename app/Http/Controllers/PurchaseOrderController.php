@@ -232,11 +232,14 @@ class PurchaseOrderController extends Controller
 			
 			$table_booking_id 		= base64_decode($id);	
 			$table_booking_info		= TableBookingHistory::where('id',$table_booking_id)->first();
-			$data['waiter_list']	= $table_booking_info;
+			$data['booking_info']	= $table_booking_info;
 			
+			//echo '<pre>';print_r($data['booking_info']->table->table_name);exit;
 			
+			$data['subcategory']	= Subcategory::where('food_type',1)->where('status',1)->orderBy('name', 'ASC')->get();
 			
-			
+			$stock_type				= Common::get_user_settings($where=['option_name'=>'stock_type'],$branch_id);
+			$data['stock_type'] 	= isset($stock_type)?$stock_type:'w';
             return view('admin.bar_pos.dine_in_pos_tbl_booking_create_order', compact('data'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
@@ -390,7 +393,7 @@ class PurchaseOrderController extends Controller
 				$productSizeInfo= Size::where('id',$product_size_id)->get();
 				$size	= isset($productSizeInfo[0]->name)?$productSizeInfo[0]->name:0;
 								
-				$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('id',$price_id)->get();
+				$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('id',$price_id)->where('stock_type','counter')->get();
 				
 				$sell_price_id=isset($branch_product_stock_sell_price_info[0]->id)?$branch_product_stock_sell_price_info[0]->id:'';
 				
@@ -399,11 +402,11 @@ class PurchaseOrderController extends Controller
 				if($request->stock_type=='s'){
 					$sell_price_c_qty +=isset($branch_product_stock_sell_price_info[0]->c_qty)?$branch_product_stock_sell_price_info[0]->c_qty:'';
 					$sell_price_c_qty -=$qty;
-					BranchStockProductSellPrice::where('id', $sell_price_id)->update(['c_qty' => $sell_price_c_qty]);
+					BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type','counter')->update(['c_qty' => $sell_price_c_qty]);
 				}else{
 					$sell_price_w_qty +=isset($branch_product_stock_sell_price_info[0]->w_qty)?$branch_product_stock_sell_price_info[0]->w_qty:0;
 					$sell_price_w_qty -=$qty;
-					BranchStockProductSellPrice::where('id', $sell_price_id)->update(['w_qty' => $sell_price_w_qty]);
+					BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type','counter')->update(['w_qty' => $sell_price_w_qty]);
 				}
 				
 				$sellStockproductData=array(
@@ -712,6 +715,8 @@ class PurchaseOrderController extends Controller
 	}
 	
 	public function invoice_upload(Request $request){
+		$stock_type=$request->upload_invoice_stock_type;
+		
 		$file = $request->file('upload_invoice_pdf');
 		/*$request->validate([
 			'file' => 'required|mimes:pdf',
@@ -755,7 +760,7 @@ class PurchaseOrderController extends Controller
 		}
 		
 		if($tp_no!=''){
-			$check_tp_no=PurchaseInwardStock::where('tp_no', $tp_no)->get();
+			$check_tp_no=PurchaseInwardStock::where('tp_no', $tp_no)->where('invoice_stock', $stock_type)->get();
 			if(count($check_tp_no)>0){
 				$return_data['msg']		= 'This invoice is already uploaded!';
 				$return_data['success']	= 2;

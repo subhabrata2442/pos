@@ -56,7 +56,7 @@
             	$tbl_color = 'bgSafron';
             }
            @endphp
-           <div class="col-lg-2 col-md-2 col-sm-6 col-12 tbl_btn" data-tblid="{{$tbl_row['table_id']}}" data-floorid="{{$tbl_row['floor_id']}}" id="table_{{$tbl_row['floor_id']}}_{{$tbl_row['table_id']}}"><div class="tableBox {{$tbl_color}}"><div class="tableBoxTop d-flex align-items-center justify-content-between"><h5>{{$tbl_row['table_name']}}</h5><div class="countdownArea d-flex align-items-center"> <i class="far fa-clock"></i><div class="countdown">00:00</div></div></div><div class="tableBoxBtm"><ul><li><span>{{$tbl_row['waiter_name']}}</span></li> <li>Amount: <span>{{$tbl_row['total_amount']}}</span></li></ul></div></div></div>
+           <div class="col-lg-2 col-md-2 col-sm-6 col-12 tbl_btn" data-tblid="{{$tbl_row['table_id']}}" data-floorid="{{$tbl_row['floor_id']}}" id="table_{{$tbl_row['floor_id']}}_{{$tbl_row['table_id']}}"><div class="tableBox {{$tbl_color}}"><div class="tableBoxTop d-flex align-items-center justify-content-between"><h5>{{$tbl_row['table_name']}}</h5><div class="countdownArea d-flex align-items-center"> <i class="far fa-clock"></i><div class="countdown">00:00</div></div></div>@if ($tbl_row['status'] != 1) <div class="tableBoxBtm"><ul><li><span>{{$tbl_row['waiter_name']}}</span></li> <li>Amount: <span>{{$tbl_row['total_amount']}}</span></li></ul></div> @endif</div></div>
            @endforeach
             
             

@@ -13,5 +13,10 @@ class BranchStockProducts extends Model
 	
 	protected $table = 'branch_stock_products';
 	protected $guarded	= [];
+	
+	public function size()
+    {
+		return $this->hasOne(Size::class,'id', 'size_id'); 
+    }
 
 }
