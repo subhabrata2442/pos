@@ -56,9 +56,11 @@
             	$tbl_color = 'bgSafron';
             }
            @endphp
-           <div class="col-lg-2 col-md-2 col-sm-6 col-12 tbl_btn" data-tblid="{{$tbl_row['table_id']}}" data-floorid="{{$tbl_row['floor_id']}}" id="table_{{$tbl_row['floor_id']}}_{{$tbl_row['table_id']}}"><div class="tableBox {{$tbl_color}}"><div class="tableBoxTop d-flex align-items-center justify-content-between"><h5>{{$tbl_row['table_name']}}</h5><div class="countdownArea d-flex align-items-center"> <i class="far fa-clock"></i><div class="countdown">00:00</div></div></div>@if ($tbl_row['status'] != 1) <div class="tableBoxBtm"><ul><li><span>{{$tbl_row['waiter_name']}}</span></li> <li>Amount: <span>{{$tbl_row['total_amount']}}</span></li></ul></div> @endif</div></div>
+           <div class="col-lg-2 col-md-2 col-sm-6 col-12 tbl_btn" data-tblid="{{$tbl_row['table_id']}}" data-floorid="{{$tbl_row['floor_id']}}" id="table_{{$tbl_row['floor_id']}}_{{$tbl_row['table_id']}}"><div class="tableBox {{$tbl_color}}"><div class="tableBoxTop d-flex align-items-center justify-content-between"><h5>{{$tbl_row['table_name']}}</h5><div class="countdownArea d-flex align-items-center"> <i class="far fa-clock"></i><div class="countdown" id="countdown_{{$tbl_row['table_id']}}">00:00</div></div></div>@if ($tbl_row['status'] != 1) <div class="tableBoxBtm"><ul><li><span>{{$tbl_row['waiter_name']}}</span></li> <li>Amount: <span>{{$tbl_row['total_amount']}}</span></li></ul></div> @endif</div></div>
            @endforeach
-            
+            <script>
+              //alert('dsf');
+            </script>
             
           </div>
         </div>
@@ -111,25 +113,23 @@
 @section('scripts') 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/bar_pos.js') }}"></script> 
-<script>
-/*  var timer2 = "5:01";
-  var interval = setInterval(function() {
-
-
-    var timer = timer2.split(':');
-    //by parsing integer, I avoid all extra string processing
-    var minutes = parseInt(timer[0], 10);
-    var seconds = parseInt(timer[1], 10);
-    --seconds;
-    minutes = (seconds < 0) ? --minutes : minutes;
-    seconds = (seconds < 0) ? 59 : seconds;
-    seconds = (seconds < 10) ? '0' + seconds : seconds;
-    //minutes = (minutes < 10) ?  minutes : minutes;
-    $('.countdown').html(minutes + ':' + seconds);
-    if (minutes < 0) clearInterval(interval);
-    //check if both minutes and seconds are 0
-    if ((seconds <= 0) && (minutes <= 0)) clearInterval(interval);
-    timer2 = minutes + ':' + seconds;
-  }, 1000)*/;
-</script> 
+@foreach($data['tables'] as $key => $tbl_row)
+  @if ($tbl_row['status'] == 2) 
+    @php 
+      $start_time = \Carbon\Carbon::parse($tbl_row['booking_time']);
+      $now = \Carbon\Carbon::now();
+      $duration = $start_time->diffInSeconds($now);
+      //echo $duration;die;
+    @endphp
+  <script>
+    
+    var sec = '{{$duration}}';
+    function pad(val) { return val > 9 ? val : "0" + val; }
+    setInterval(function () {
+      $('#countdown_1').html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
+    }, 1000);
+  </script> 
+    
+  @endif
+@endforeach
 @endsection 
