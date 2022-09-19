@@ -83,12 +83,13 @@ class ProductController extends Controller
 					$brand_slug 	= $this->create_slug($brand_name);
 					
 					$category_title=trim($category);
-					$category_result=Category::where('name',$category_title)->get();
+					$category_result=Category::where('name',$category_title)->where('food_type',1)->get();
 					if(count($category_result)>0){
 						$category_id=isset($category_result[0]->id)?$category_result[0]->id:0;
 					}else{
 						$feature_data=array(
 							'name'  		=> $category_title,
+							'food_type'  	=> 1,
 							'created_at'	=> date('Y-m-d')
 						);
 						$feature=Category::create($feature_data);
@@ -107,12 +108,13 @@ class ProductController extends Controller
 						$size_id=$feature->id;
 					}
 					
-					$type_result=Subcategory::where('name',$type)->get();
+					$type_result=Subcategory::where('name',$type)->where('food_type',1)->get();
 					if(count($type_result)>0){
 						$subcategory_id=isset($type_result[0]->id)?$type_result[0]->id:0;
 					}else{
 						$feature_data=array(
 							'name'  		=> $type,
+							'food_type'  	=> 1,
 							'created_at'	=> date('Y-m-d')
 						);
 						$feature=Subcategory::create($feature_data);
@@ -147,8 +149,8 @@ class ProductController extends Controller
 							'product_barcode'	=> $product_barcode,
 							'default_qty' 		=> 1,
 							//'cost_rate' 		=> $mrp,
-							//'offer_price' 		=> $mrp,
-							//'product_mrp' 		=> $mrp,
+							//'offer_price' 	=> $mrp,
+							//'product_mrp' 	=> $mrp,
 							'category_id' 		=> $category_id,
 							'brand_id' 			=> $brand_id,
 							'subcategory_id' 	=> $subcategory_id
