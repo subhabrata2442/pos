@@ -165,6 +165,7 @@ class PurchaseOrderController extends Controller
 				$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('status',1)->orderBy('id', 'ASC')->get();
 				
 				foreach($table_result as $key=>$row){
+					$booking_history_id	='';
 					$waiter_id		= '';
 					$waiter_name	= '';
 					$items_qty		= '';
@@ -179,7 +180,7 @@ class PurchaseOrderController extends Controller
 					
 					if($row->booking_status==2){
 						$table_info	= TableBookingHistory::where('floor_id',$floor_id)->where('table_id',$row->id)->orderBy('id', 'DESC')->first();
-						
+						$booking_history_id	= isset($table_info->id)?$table_info->id:'';
 						$waiter_id		= isset($table_info->waiter_id)?$table_info->waiter_id:'';
 						$waiter_name	= isset($table_info->waiter->name)?$table_info->waiter->name:'';
 						$items_qty		= isset($table_info->items_qty)?$table_info->items_qty:'';
@@ -192,6 +193,7 @@ class PurchaseOrderController extends Controller
 					}
 					
 					$tables[]=array(
+						'booking_history_id' => $booking_history_id,
 						'floor_id'			=> $row->floor_id,
 						'table_id'			=> $row->id,
 						'table_name'		=> $row->table_name,
