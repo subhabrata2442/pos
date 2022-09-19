@@ -23,6 +23,8 @@ use App\Models\Measurement;
 use App\Models\Product;
 use App\Models\MasterProducts;
 use App\Models\ProductRelationshipSize;
+use App\Models\BarProductSizePrice;
+
 
 use Illuminate\Http\Request;
 use DataTables;
@@ -225,6 +227,137 @@ class ProductController extends Controller
 					
 					//echo $j.'</br>';
 					
+				}
+			$j++;}
+			
+			//echo '<pre>';print_r($brand_data);exit;
+			
+			return redirect()->back()->with('success', 'Product created successfully');
+		}
+		
+	}
+	
+	public function bar_product_price_upload(Request $request){
+		$file = $request->file('product_upload_file');
+		if($file){
+			$filename = $file->getClientOriginalName();
+			$extension = $file->getClientOriginalExtension();
+			$tempPath = $file->getRealPath();
+			$fileSize = $file->getSize();
+			
+			if($extension!='csv'){
+				return redirect()->back()->with('error', 'Something error occurs!');
+			}
+			$location = 'uploads';
+			$file->move($location, $filename);
+			$filepath = public_path($location . "/" . $filename);
+			
+			$file = fopen($filepath, "r");
+			$importData_arr = array();
+			$i = 0; 
+			while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+				$num = count($filedata);
+				if ($i == 0) {
+					$i++;
+					continue;
+				}
+				for ($c = 0; $c < $num; $c++) {
+					$importData_arr[$i][] = $filedata[$c];
+				}
+				$i++;
+			}
+			
+			
+			
+			$j = 0;
+			$brand_data=[];
+			foreach ($importData_arr as $importData) {
+				$size=[];
+				$barcode			= $importData[0];
+				$brand_code			= $importData[1];
+				$category			= $importData[2];
+				$type 				= $importData[3];
+				$sn 				= $importData[4];
+				$product_name		= $importData[5];
+				$size[30] 			= isset($importData[6])?$importData[6]:'';
+				$size[60] 			= isset($importData[7])?$importData[7]:'';
+				$size[90] 			= isset($importData[8])?$importData[8]:'';
+				$size[180] 			= isset($importData[10])?$importData[9]:'';
+				$size[187] 			= isset($importData[11])?$importData[10]:'';
+				$size[200] 			= isset($importData[12])?$importData[11]:'';
+				$size[250] 			= isset($importData[13])?$importData[12]:'';
+				$size[275] 			= isset($importData[14])?$importData[13]:'';
+				$size[300] 			= isset($importData[15])?$importData[14]:'';
+				$size[330] 			= isset($importData[16])?$importData[15]:'';
+				$size[360] 			= isset($importData[17])?$importData[16]:'';
+				$size[375] 			= isset($importData[18])?$importData[17]:'';
+				$size[500] 			= isset($importData[19])?$importData[18]:'';
+				$size[600] 			= isset($importData[20])?$importData[19]:'';
+				$size[650] 			= isset($importData[21])?$importData[20]:'';
+				$size[700] 			= isset($importData[22])?$importData[21]:'';
+				$size[720] 			= isset($importData[23])?$importData[22]:'';
+				$size[750] 			= isset($importData[24])?$importData[23]:'';
+				$size[1000] 		= isset($importData[25])?$importData[24]:'';
+				$size[2000] 		= isset($importData[26])?$importData[25]:'';
+				
+				if($category!=''){
+					$category_title	= trim($category);
+					
+					
+					$category_result=Category::where('name',$category_title)->where('food_type',1)->get();
+					if(count($category_result)>0){
+						$category_id=isset($category_result[0]->id)?$category_result[0]->id:0;
+					}else{
+						$feature_data=array(
+							'name'  		=> $category_title,
+							'food_type'  	=> 1,
+							'created_at'	=> date('Y-m-d')
+						);
+						$feature=Category::create($feature_data);
+						$category_id=$feature->id;
+					}
+					
+					$subcategory_result=Subcategory::where('name',$type)->where('food_type',1)->get();
+					if(count($subcategory_result)>0){
+						$subcategory_id=isset($subcategory_result[0]->id)?$subcategory_result[0]->id:0;
+					}else{
+						$feature_data=array(
+							'name'  		=> $type,
+							'food_type'  	=> 1,
+							'created_at'	=> date('Y-m-d')
+						);
+						$feature=Subcategory::create($feature_data);
+						$subcategory_id=$feature->id;
+					}
+					
+					$branch_id		= 1;
+					$brand_slug 	= $this->create_slug($product_name);
+					$product_result	= Product::select('id')->where('branch_id',$branch_id)->where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();	
+					$product_id		= isset($product_result->id)?$product_result->id:'';
+					
+					//echo '<pre>';print_r($size);exit;
+					if($product_id!=''){
+						foreach($size as $key=>$val){
+							$size_ml	= $key;
+							$size_val	= $val;
+							if($size_val!=''){
+								$size_result=Size::where('ml',$size_ml)->get();
+								if(count($size_result)>0){
+									$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+									BarProductSizePrice::where('product_id', $product_id)->where('size_id', $size_id)->delete();
+									$product_mrp=$size_val;
+									$size_cost_data=array(
+										'product_id'  			=> $product_id,
+										'size_id'  				=> $size_id,
+										'product_mrp'  			=> $product_mrp
+									);
+									
+									//echo '<pre>';print_r($size_cost_data);exit;
+									BarProductSizePrice::create($size_cost_data);
+								}	
+							}
+						}
+					}					
 				}
 			$j++;}
 			
