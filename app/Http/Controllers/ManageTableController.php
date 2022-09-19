@@ -98,7 +98,6 @@ class ManageTableController extends Controller
         try {
             $floor_id = base64_decode($id);
             if ($request->isMethod('post')) {
-                //dd($request->all());
                 $validator = Validator::make($request->all(), [
                     'title' 		=> 'required',
                 ]);
@@ -111,7 +110,22 @@ class ManageTableController extends Controller
 					'title'  		=> $request->title,
 				);
                 $restaurant_floor = RestaurantFloor::find($floor_id)->update($room_floor_data);
-				
+                if(count($request->table_names) > 0){
+                    foreach($request->table_names as $key=>$table_name){
+                        if(in_array($key,$request->table_ids)){
+                            //Update
+                            FloorWiseTable::where('id',$key)->update(['table_name' => $table_name]);
+                        }else{
+                            //insert
+                            $table=array(
+								'floor_id'  			=> $floor_id,
+								'table_name'  			=> $request->table_names[$key],
+							);
+							FloorWiseTable::create($table);
+                        }
+                    }
+                }
+              
                 return redirect()->back()->with('success', 'Room/Table updated successfully');
             }
             $data = [];
