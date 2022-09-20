@@ -117,7 +117,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::prefix('invoice')->name('invoice.')->group(function () {
 			Route::match(['GET'], '/report', [ReportController::class, 'invoice_report'])->name('invoice_report');
 		});
-	
+        
         Route::match(['GET'], '/sales/sales-product', [ReportController::class, 'salesProduct'])->name('sales.product');
         Route::match(['GET'], '/sales-product/download', [ReportController::class, 'salesProductDownload'])->name('sales.product.download');
         
@@ -129,6 +129,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET'], '/sales/sales-item', [ReportController::class, 'salesItems'])->name('sales.item');
     
         Route::match(['GET'],'/item-wise-sales-report', [ReportController::class, 'itemWiseSaleReportPdf'])->name('sales.product.item_wise');
+
+        Route::match(['GET'],'/product-wise-sales-report', [ReportController::class, 'productWiseSaleReport'])->name('sales.report.product.wise');
+
 		
         //Route::match(['GET', 'POST'], '/list', [ProductController::class, 'list'])->name('list');
         //Route::match(['GET', 'POST'], '/edit/{id}', [ProductController::class, 'edit'])->name('edit');
@@ -164,7 +167,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     });
 	
 	Route::get('/invoice',[ReportController::class,'invoicePdf'])->name('sale_pdf');
-	
+
+    //Ajax get customer by name type
+	Route::get('/get-customer-by-name',[ReportController::class,'getCustomerByKeyup'])->name('ajax.customer-list');
+	Route::get('/get-sale-invoice-by-name',[ReportController::class,'getSaleInvoiceByKeyup'])->name('ajax.sale-invoice-list');
+	Route::get('/get-product-by-name',[ReportController::class,'getProductByKeyup'])->name('ajax.sale-product');
 	
 });
 

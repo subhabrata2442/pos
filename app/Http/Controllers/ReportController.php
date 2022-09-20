@@ -19,8 +19,10 @@ use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Helper\Media;
 use App\Models\Category;
+use App\Models\Customer;
 use App\Models\SellInwardStock;
 use App\Models\SellStockProducts;
+use App\Models\Size;
 use App\Models\Subcategory;
 use Carbon\Carbon;
 Use Illuminate\Support\Facades\Response;
@@ -914,5 +916,87 @@ class ReportController extends Controller
          //echo "<pre>";print_r($items);die;
 		return $pdf->stream(now().'-invoice.pdf');
        
+    }
+
+    public function productWiseSaleReport(Request $request){
+        try {
+            //echo $request->get('start_date');die;
+            //dd($request);
+            $data = [];
+            $queryProduct = SellStockProducts::query();
+            //Add sorting
+            $queryProduct->orderBy('id', 'desc');
+            if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
+                if($request->get('start_date') == $request->get('end_date')){
+                    $queryProduct->whereDate('created_at', $request->get('start_date'));
+                }else{
+                    $queryProduct->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
+                }    
+            }
+            if(!is_null($request['customer_id'])) {
+                $queryProduct->whereHas('sellInwardStock',function($q) use ($request){
+                    return $q->where('customer_id',$request['customer_id']);
+                });
+            }
+            if(!is_null($request['invoice_id'])) {
+                $queryProduct->whereHas('sellInwardStock',function($q) use ($request){
+                    return $q->where('id',$request['invoice_id']);
+                });
+            }
+            if(!is_null($request['product_id'])) {
+                $queryProduct->where('product_id',$request['product_id']);
+            }
+            if(!is_null($request['category'])) {
+                $queryProduct->where('category_id',$request['category']);
+            }
+            if(!is_null($request['sub_category'])) {
+                $queryProduct->where('subcategory_id',$request['sub_category']);
+            }
+            if(!is_null($request['size'])) {
+                $queryProduct->where('size_id',$request['size']);
+            }
+            $total_qty =  $queryProduct->sum('product_qty');
+            $total_cost =  $queryProduct->sum('total_cost');
+            $all_product = $queryProduct->get();
+            $products = $queryProduct->paginate(10);
+            $data['heading']    = 'Sales List';
+            $data['breadcrumb'] = ['Sales', '', 'List'];
+            $data['products']   = $products;
+            $data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
+            $data['total_qty']  = $total_qty;
+            $data['total_cost'] = $total_cost;
+            $data['categories'] = Category::all();
+            $data['sizes']      = Size::all();
+            $data['sub_categories']      = Subcategory::all();
+            //$data['request'] = $request;
+            return view('admin.report.product_wise_sales_report', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+
+    public function getCustomerByKeyup(Request $request){
+        $search = $request->search;
+        $result = Customer::select('customer_fname','customer_last_name','id')->whereRaw("concat(customer_fname, ' ', customer_last_name) like '%" .$search. "%' ")->take(20)->get();
+        $return_data['result']	= $result;
+		$return_data['status']	= 1;
+		echo json_encode($return_data);	
+    }
+    public function getSaleInvoiceByKeyup(Request $request){
+        $search = $request->search;
+        $result = SellInwardStock::select('id','invoice_no')->where('invoice_no', 'LIKE', "%{$search}%")->take(20)->get();
+        $return_data['result']	= $result;
+		$return_data['status']	= 1;
+		echo json_encode($return_data);	
+    }
+    public function getProductByKeyup(Request $request){
+        $search = $request->search;
+        $result = Product::select('id','product_barcode','product_name')
+                            ->where('product_name', 'LIKE', "%{$search}%")
+                            ->orWhere('product_barcode', 'LIKE', "%{$search}%")
+                            ->take(20)->get();
+        $return_data['result']	= $result;
+		$return_data['status']	= 1;
+		echo json_encode($return_data);	
     }
 }
