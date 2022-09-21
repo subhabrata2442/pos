@@ -18,4 +18,11 @@ class SellInwardStock extends Model
         return $this->hasOne(Supplier::class,'id','supplier_id');
     }
 
+    public function supplier(){
+        return $this->hasOne(Supplier::class,'id','supplier_id');
+    }
+    public function customer(){
+        return $this->hasOne(Customer::class,'id','customer_id');
+    }
+
 }

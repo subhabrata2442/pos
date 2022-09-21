@@ -24,4 +24,7 @@ class SellStockProducts extends Model
         return $this->hasOne(Subcategory::class,'id','subcategory_id');
     }
 
+    public function sellInwardStock(){
+        return $this->hasOne(SellInwardStock::class,'id','inward_stock_id');
+    }
 }
