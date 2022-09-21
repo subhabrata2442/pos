@@ -171,7 +171,7 @@
 					<li>
 						<button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
 					</li>
-					<li class="d-flex align-items-center">
+					{{-- <li class="d-flex align-items-center">
 						<div>
 							<select class="form-control custom-select form-control-select" id="report_type">
 								<option value=""> Select Report Type</option>
@@ -181,7 +181,7 @@
 						<div>
 							<button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
 						</div>
-					</li>
+					</li> --}}
 				</ul>
 			</div>
 		</div>

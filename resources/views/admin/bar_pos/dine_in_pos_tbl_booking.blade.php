@@ -140,10 +140,10 @@
 @endforeach
 function pad(val) { return val > 9 ? val : "0" + val; };
 function interval(sec,table_id){
-      setInterval(function () {
-        document.getElementById('countdown_'+table_id).innerHTML = pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60);
-        //$('#countdown_'+table_id).html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
-      }, 1000);
+  setInterval(function () {
+    document.getElementById('countdown_'+table_id).innerHTML = pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60);
+    //$('#countdown_'+table_id).html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
+  }, 1000);
 }
 </script> 
 @endsection 
