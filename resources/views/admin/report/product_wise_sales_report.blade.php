@@ -160,12 +160,13 @@
 					</li>
 					<li class="d-flex align-items-center">
 						<div>
-							<select class="form-control custom-select form-control-select" id="">
-								<option value=""> Item Wise sales report</option>
+							<select class="form-control custom-select form-control-select" id="report_type">
+								<option value=""> Select Report Type</option>
+								<option value="item_wise_sales_report"> Item Wise sales report</option>
 							</select>
 						</div>
 						<div>
-							<button class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
+							<button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
 						</div>
 					</li>
 				</ul>
@@ -245,12 +246,41 @@
 
 $(function() {
 	
-	$('#download').on("click",function(){
+	/* $('#download_report').on("click",function(){
 		var start_date = $('input[name=start_date]').val();
 		//alert(start_date);
 		var end_date = $('input[name=end_date]').val();
 		var url = "{{route('admin.report.sales.product.download')}}";
 		$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
+	}) */
+
+	$('#download_report').on("click",function(){
+		var report_type = $('#report_type').val();
+		var start_date = $('input[name=start_date]').val();
+		var end_date = $('input[name=end_date]').val();
+		if(report_type == ''){
+			Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please select report type!',
+            })
+		}else if(start_date == '' && end_date== ''){
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'Please select date!',
+            })
+        }else{
+			console.log('sdfd');
+            var url = "{{route('admin.report.sales.product.item_wise')}}";
+			var href = url+'?start_date='+start_date+'&end_date='+end_date;
+
+			window.open(href);
+		    //$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
+			//window.location = window.location.href;
+        }
+        
+		
 	})
 	//Start date range picker
 	/* var start = moment().subtract(29, 'days');
