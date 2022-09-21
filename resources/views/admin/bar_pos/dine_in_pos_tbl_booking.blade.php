@@ -132,20 +132,18 @@
       $start_time = \Carbon\Carbon::parse($tbl_row['booking_time']);
       $now = \Carbon\Carbon::now();
       $duration = $start_time->diffInSeconds($now);
-      //echo $duration;die;
     @endphp
-  
-    
     var sec = '{{$duration}}';
-	var table_id = "{{$tbl_row['table_id']}}";
-	console.log(sec);
-    function pad(val) { return val > 9 ? val : "0" + val; }
-    setInterval(function () {
-      $('#countdown_'+table_id).html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
-    }, 1000);
-  
-    
+    var table_id = "{{$tbl_row['table_id']}}";
+    interval(sec,table_id);
   @endif
 @endforeach
+function pad(val) { return val > 9 ? val : "0" + val; };
+function interval(sec,table_id){
+      setInterval(function () {
+        document.getElementById('countdown_'+table_id).innerHTML = pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60);
+        //$('#countdown_'+table_id).html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
+      }, 1000);
+}
 </script> 
 @endsection 
