@@ -12,6 +12,11 @@
 }
 </style>
 @section('admin-content')
+
+@php
+$booking_total_quantity	= isset($data['barInwardStockResult']->total_qty)?$data['barInwardStockResult']->total_qty:0;
+$booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['barInwardStockResult']->pay_amount:0;
+@endphp
 <section class="tablePage">
   <div class="filterTable d-flex flex-wrap">
     <div class="filterTableLeft d-flex flex-wrap">
@@ -32,8 +37,11 @@
         <div class="ftMenuBtm">
           <ul id="food_category_sec">
             @if(count($data['subcategory'])>0)
+            @php($count=0)
             @foreach($data['subcategory'] as $key => $row)
-            <li><a href="javascript:;" data-id="{{$row->id}}" class="category_btn @if ($key === 0) active @endif"><img src="{{ url('assets/admin/images/food.svg') }}" alt=""> {{$row->name}}</a></li>
+            <li><a href="javascript:;" data-id="{{$row['id']}}" class="category_btn "><img src="{{ url('assets/admin/images/food.svg') }}" alt=""> {{$row['name']}}</a></li>
+            <!--@if ($count === 0) active @endif--> 
+            @php($count++)
             @endforeach
             @endif
           </ul>
@@ -53,41 +61,118 @@
       <div class="filterTableInner">
         <h4>{{$data['booking_info']->table->table_name}}</h4>
         <ul class="d-flex flex-wrap justify-content-between">
-          <li><span><img src="{{ url('assets/admin/images/user.png') }}" alt=""></span> Mr. Subho Saha</li>
-          <li><span><img src="{{ url('assets/admin/images/call.png') }}" alt=""></span> 9830012345</li>
-          <li><a href="javascript:;"><img src="{{ url('assets/admin/images/plus.png') }}" alt=""></a></li>
+          <li><span><img src="{{ url('assets/admin/images/user.png') }}" alt=""></span> {{$data['booking_info']->customer_name}}</li>
+          <li><span><img src="{{ url('assets/admin/images/call.png') }}" alt=""></span> {{$data['booking_info']->customer_phone}}</li>
+          <!--<li><a href="javascript:;"><img src="{{ url('assets/admin/images/plus.png') }}" alt=""></a></li>-->
         </ul>
-        <div class="table-responsive whiteBg ftiTable">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col">Sl</th>
-                <th scope="col" class="text-center">Mame</th>
-                <th scope="col" class="text-center">Size</th>
-                <th scope="col" class="text-center">Rate</th>
-                <th width="120" scope="col" class="text-center">Qty</th>
-                <th scope="col" class="text-center">Price</th>
-                <th scope="col" class="text-center"></th>
+        <form method="post" action="{{ route('admin.pos.bar_create') }}" id="pos_create_order-form" novalidate enctype="multipart/form-data">
+          @csrf
+          <input type="hidden" name="payment_method_type" id="payment_method_type-input" value="cash">
+          <input type="hidden" name="stock_type" value="{{$data['stock_type']}}">
+          <input type="hidden" name="floor_id" value="{{$data['booking_info']->floor_id}}">
+          <input type="hidden" name="table_id" value="{{$data['booking_info']->table_id}}">
+          <input type="hidden" name="waiter_id" value="{{$data['booking_info']->waiter_id}}">
+          <input type="hidden" name="table_booking_id" value="{{$data['booking_info']->id}}">
+          
+          
+          <input type="hidden" name="customer_id" value="{{$data['booking_info']->customer_id}}">
+          
+          
+          <div class="table-responsive whiteBg ftiTable">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col">Sl</th>
+                  <th scope="col" class="text-center">Mame</th>
+                  <th scope="col" class="text-center">Size</th>
+                  <th scope="col" class="text-center">Rate</th>
+                  <th width="120" scope="col" class="text-center">Qty</th>
+                  <th scope="col" class="text-center">Price</th>
+                  <th scope="col" class="text-center"></th>
+                </tr>
+              </thead>
+              <tbody id="table_cart_items_record_sec">
+              
+              @if(count($data['table_booking_cart_items'])>0)
+              @php($count=1)
+              @foreach($data['table_booking_cart_items'] as $key => $row)
+              <?php
+            	$item_total_amount=$row->product_mrp*$row->items_qty;
+             ?>
+              @if($row->product_type=='Food')
+              <tr id="sell_product_{{$row->branch_stock_product_id}}" data-id="{{$count}}">
+                <input type="hidden" name="product_id[]" value="{{$row->product_id}}">
+                <input type="hidden" name="size_price_id[]" value="0">
+                <input type="hidden" name="branch_stock_product_id[]" value="{{$row->branch_stock_product_id}}">
+                <input type="hidden" name="product_type[]" value="Food">
+                <input type="hidden" name="product_mrp[]" id="product_mrp_{{$row->branch_stock_product_id}}" value="{{$row->product_mrp}}">
+                <input type="hidden" name="product_total_amount[]" id="product_total_amount_{{$row->branch_stock_product_id}}" value="{{$item_total_amount}}">
+                <input type="hidden" name="product_price_id[]" id="product_price_id_{{$row->branch_stock_product_id}}" value="{{$row->size_price_id}}">
+                <input type="hidden" name="product_name[]" id="product_name_{{$row->branch_stock_product_id}}" value="{{$row->product->product_name}}">
+                <td>{{$count}}</td>
+                <td class="text-center">{{$row->product->product_name}}</td>
+                <td class="text-center">{{$row->size}}</td>
+                <td class="text-center">{{$row->product_mrp}}</td>
+                <td class="text-center"><div>
+                    <div class="priceControl d-flex">
+                      <button class="controls2" value="-">-</button>
+                      <input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_{{$row->branch_stock_product_id}}" value="{{$row->items_qty}}" data-max-lim="20" readonly="readonly">
+                      <button class="controls2" value="+">+</button>
+                    </div>
+                  </div></td>
+                <td class="text-center" id="product_total_price_{{$row->branch_stock_product_id}}">{{$item_total_amount}}</td>
+                <td><!--<a href="javascript:;" onclick="remove_item({{$count}});"><i class="fas fa-times-circle"></i></a>--></td>
               </tr>
-            </thead>
-            <tbody id="table_cart_items_record_sec">
-            </tbody>
-          </table>
-        </div>
-        <div class="table-responsive whiteBg" id="total_quantity_mrp_section" style="display:none;">
-          <table class="table">
-            <thead>
-              <tr>
-                <th scope="col" width="65%">QTY : <span id="total_quantity">0</span></th>
-                <th scope="col" class="text-right">Total:</th>
-                <th scope="col" class="text-right" id="total_mrp">0</th>
-                <input type="hidden" name="total_quantity" id="input-total_quantity" value="0">
-                <input type="hidden" name="total_mrp" id="input-total_mrp" value="0">
+              @else
+              <tr id="sell_product_{{$row->size_price_id}}" data-id="{{$count}}">
+                <input type="hidden" name="product_id[]" value="{{$row->product_id}}">
+                <input type="hidden" name="size_price_id[]" value="{{$row->size_price_id}}">
+                <input type="hidden" name="branch_stock_product_id[]" value="{{$row->branch_stock_product_id}}">
+                <input type="hidden" name="product_type[]" value="Liquor">
+                <input type="hidden" name="product_mrp[]" id="product_mrp_{{$row->size_price_id}}" value="{{$row->product_mrp}}">
+                <input type="hidden" name="product_total_amount[]" id="product_total_amount_{{$row->size_price_id}}" value="{{$item_total_amount}}">
+                <input type="hidden" name="product_price_id[]" id="product_price_id_{{$row->size_price_id}}" value="{{$row->size_price_id}}">
+                <input type="hidden" name="product_name[]" id="product_name_{{$row->size_price_id}}" value="{{$row->product->product_name}}">
+                <td>{{$count}}</td>
+                <td class="text-center">{{$row->product->product_name}}</td>
+                <td class="text-center">{{$row->size}}</td>
+                <td class="text-center">{{$row->product_mrp}}</td>
+                <td class="text-center"><div>
+                    <div class="priceControl d-flex">
+                      <button class="controls2" value="-">-</button>
+                      <input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_{{$row->size_price_id}}" value="{{$row->items_qty}}" data-max-lim="20" readonly="readonly">
+                      <button class="controls2" value="+">+</button>
+                    </div>
+                  </div></td>
+                <td class="text-center" id="product_total_price_{{$row->size_price_id}}">{{$item_total_amount}}</td>
+                <td><!--<a href="javascript:;" onclick="remove_item({{$count}});"><i class="fas fa-times-circle"></i></a>--></td>
               </tr>
-            </thead>
-          </table>
-        </div>
-        <div class="w-100 printBill" id="print_bill_section" style="display:none;">
+              @endif
+              @php($count++)
+              @endforeach
+              @endif
+                </tbody>
+              
+            </table>
+          </div>
+          <div class="table-responsive whiteBg" id="total_quantity_mrp_section" @if(count($data['table_booking_cart_items'])==0) style="display:none;" @endif >
+            <table class="table">
+              <thead>
+                <tr>
+                  <th scope="col" width="65%">QTY : <span id="total_quantity">{{$booking_total_quantity}}</span></th>
+                  <th scope="col" class="text-right">Total:</th>
+                  <th scope="col" class="text-right" id="total_mrp">{{$booking_total_mrp}}</th>
+                  <input type="hidden" name="total_quantity" id="input-total_quantity" value="{{$booking_total_quantity}}">
+                  <input type="hidden" name="total_mrp" id="input-total_mrp" value="{{$booking_total_mrp}}">
+                </tr>
+              </thead>
+            </table>
+          </div>
+          <div class="note_coin_count_sec" style="display:none"> </div>
+          <input type="hidden" name="tendered_amount" id="total_tendered_amount" value="0">
+          <input type="hidden" name="tendered_change_amount" id="total_tendered_change_amount" value="0">
+        </form>
+        <div class="w-100 printBill" id="print_bill_section" @if(count($data['table_booking_cart_items'])==0) style="display:none;" @endif>
           <ul class="d-flex mb-0">
             <li class="col"><a href="javascript:;" class="koPrintBtn">KO Print</a></li>
             <li class="col"><a href="javascript:;">Print Bill</a></li>
@@ -95,22 +180,47 @@
           </ul>
         </div>
         <form method="post" action="{{ route('admin.pos.print_ko_product') }}" class="needs-validation" id="ko_print-product-form" novalidate enctype="multipart/form-data">
-        @csrf
-        <input type="hidden" name="floor_id" value="{{$data['booking_info']->floor_id}}">
-        <input type="hidden" name="table_id" value="{{$data['booking_info']->table_id}}">
-        <input type="hidden" name="waiter_id" value="{{$data['booking_info']->waiter_id}}">
-        <input type="hidden" name="table_booking_id" value="{{$data['booking_info']->id}}">
-        
-        <div id="ko_print_sec">
-        <!--<div id="ko_print_product_107" data-id="1"><input type="hidden" name="product_id[]" value="859"><input type="hidden" name="size_price_id[]" value="107"><input type="hidden" name="branch_stock_product_id[]" value="12"><input type="hidden" name="product_type[]" value="liquor"><input type="hidden" name="product_name[]" value="Best Taste"><input type="hidden" name="product_size[]" value="30 ml"><input type="hidden" name="product_qty[]" id="ko_product_qty_107" value="1"></div>-->
-        <!--<input type="submit" value="dddd" />-->
-        </div>
-        </form>  
+          @csrf
+          <input type="hidden" name="floor_id" value="{{$data['booking_info']->floor_id}}">
+          <input type="hidden" name="table_id" value="{{$data['booking_info']->table_id}}">
+          <input type="hidden" name="waiter_id" value="{{$data['booking_info']->waiter_id}}">
+          <input type="hidden" name="table_booking_id" value="{{$data['booking_info']->id}}">
+          <input type="hidden" name="customer_id" value="{{$data['booking_info']->customer_id}}">
+          <div id="ko_print_sec"> @if(count($data['table_booking_cart_items'])>0)
+            @php($count=1)
+            @foreach($data['table_booking_cart_items'] as $key => $row)
+            @if($row->product_type=='Food')
+            <div id="ko_print_product_{{$row->branch_stock_product_id}}" data-id="{{$count}}">
+              <input type="hidden" name="product_id[]" value="{{$row->product_id}}">
+              <input type="hidden" name="size_price_id[]" value="0">
+              <input type="hidden" name="branch_stock_product_id[]" value="{{$row->branch_stock_product_id}}">
+              <input type="hidden" name="product_type[]" value="Food">
+              <input type="hidden" name="product_name[]" value="{{$row->product->product_name}}">
+              <input type="hidden" name="product_size[]" value="{{$row->size}}">
+              <input type="hidden" name="product_mrp[]" value="{{$row->product_mrp}}">
+              <input type="hidden" name="product_qty[]" id="ko_product_qty_{{$row->branch_stock_product_id}}" value="0">
+            </div>
+            @else
+            <div id="ko_print_product_{{$row->size_price_id}}" data-id="{{$count}}">
+              <input type="hidden" name="product_id[]" value="{{$row->product_id}}">
+              <input type="hidden" name="size_price_id[]" value="{{$row->size_price_id}}">
+              <input type="hidden" name="branch_stock_product_id[]" value="{{$row->branch_stock_product_id}}">
+              <input type="hidden" name="product_type[]" value="Liquor">
+              <input type="hidden" name="product_name[]" value="{{$row->product->product_name}}">
+              <input type="hidden" name="product_size[]" value="{{$row->size}}">
+              <input type="hidden" name="product_mrp[]" value="{{$row->product_mrp}}">
+              <input type="hidden" name="product_qty[]" id="ko_product_qty_{{$row->size_price_id}}" value="0">
+            </div>
+            @endif
+            
+            @php($count++)
+            @endforeach
+            @endif </div>
+        </form>
       </div>
     </div>
   </div>
 </section>
-
 <section class="payWrap"> <span class="payWrapCloseBtn paymentModalCloseBtn"><i class="fas fa-times-circle"></i></span>
   <div class="p-5">
     <div class="row">
@@ -201,8 +311,7 @@
                   <div class="mb-3 cashOptionTopBox">
                     <label for="rupee_due_amount_tendering" class="form-label">Due Ammout</label>
                     <span style="color: #1c0a6b;" id="rupee_due_amount_tendering">0</span> </div>
-                    <input type="hidden" id="rupee_due_amount_tendering-input" value="0">
-                  
+                  <input type="hidden" id="rupee_due_amount_tendering-input" value="0">
                 </li>
               </ul>
             </div>

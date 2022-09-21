@@ -39,6 +39,7 @@ use App\Models\SellInwardTenderedChangeAmount;
 use App\Models\SellStockProducts;
 use App\Models\Site_settings;
 use App\Models\Common;
+use App\Models\Customer;
 
 
 use App\Models\Warehouse;
@@ -46,7 +47,11 @@ use App\Models\TableBookingHistory;
 use App\Models\RestaurantFloor;
 use App\Models\FloorWiseTable;
 use App\Models\Waiter;
+use App\Models\TableBookingKoPrintInvoice;
 use App\Models\TableBookingKoPrintItems;
+
+use App\Models\BarInwardStock;
+use App\Models\BarInwardStockProducts;
 
 use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
@@ -151,7 +156,7 @@ class PurchaseOrderController extends Controller
 	
 	public function bar_dine_in_table_booking(Request $request)
     {
-        DB::beginTransaction();
+        
         try {
             $data = [];
 			$branch_id=1;
@@ -160,6 +165,7 @@ class PurchaseOrderController extends Controller
             $data['breadcrumb'] 	= ['Purchase Order', 'Add'];
             $data['floor_list'] 	= RestaurantFloor::where('branch_id',$branch_id)->get();
 			$data['waiter_list'] 	= Waiter::where('branch_id',$branch_id)->get();
+			
 			
 			$floor_id=isset($data['floor_list'][0]->id)?$data['floor_list'][0]->id:'';
 			$tables=[];
@@ -192,6 +198,21 @@ class PurchaseOrderController extends Controller
 						$customer_id	= isset($table_info->customer_id)?$table_info->customer_id:'';
 						$customer_name	= isset($table_info->customer_name)?$table_info->customer_name:'';
 						$customer_phone	= isset($table_info->customer_phone)?$table_info->customer_phone:'';
+						
+						
+						//echo '<pre>';print_r($customer_phone);exit;
+						
+						
+      
+						
+						
+						
+						//$barInwardStockResult	= BarInwardStock::where('table_booking_id',$booking_history_id)->where('branch_id',$branch_id)->first();
+						//$waiter_id		= isset($table_info->waiter_id)?$table_info->waiter_id:'';
+						
+						
+						
+						
 					}
 					
 					$tables[]=array(
@@ -209,6 +230,7 @@ class PurchaseOrderController extends Controller
 						'customer_id'		=> $customer_id,
 						'customer_name'		=> $customer_name,
 						'customer_phone'	=> $customer_phone,
+						
 					);
 					
 				}
@@ -216,9 +238,11 @@ class PurchaseOrderController extends Controller
 			
 			$data['tables'] 	= $tables;
 			
+			
+			//echo '<pre>';print_r($data);exit;
+			
             return view('admin.bar_pos.dine_in_pos_tbl_booking', compact('data'));
         } catch (\Exception $e) {
-            DB::rollback();
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
@@ -240,7 +264,45 @@ class PurchaseOrderController extends Controller
 			
 			//echo '<pre>';print_r($data['booking_info']);exit;
 			
-			$data['subcategory']	= Subcategory::where('food_type',1)->where('status',1)->orderBy('name', 'ASC')->get();
+			$subcategory_result		= Subcategory::where('food_type',1)->where('status',1)->orderBy('name', 'ASC')->get();
+			
+			$data['subcategory']	= [];
+			
+			if(count($subcategory_result)>0){
+				foreach($subcategory_result as $row){
+					$product_count=Product::select('*')->leftJoin('branch_stock_products', 'products.id', '=', 'branch_stock_products.product_id')->where('branch_stock_products.stock_type','bar')->where('products.subcategory_id',$row->id)->count();
+					if($product_count>0){
+						$data['subcategory'][]=array(
+							'id'	=> $row->id,
+							'name'	=> $row->name,
+							'product_count'=>$product_count
+						);
+					}	
+				}
+			}
+			
+			$data['table_booking_cart_items']	= [];
+			$data['barInwardStockResult']	= [];
+			
+			if(isset($table_booking_info)){
+				$sell_date=date('Y-m-d');
+				$barInwardStockResult	= BarInwardStock::where('table_booking_id',$table_booking_id)->where('branch_id',$branch_id)->where('floor_id',$table_booking_info->floor_id)->where('table_id',$table_booking_info->table_id)->where('waiter_id',$table_booking_info->waiter_id)->where('sell_date',$sell_date)->where('status',1)->orderBy('id', 'DESC')->first();
+				$data['barInwardStockResult']	= $barInwardStockResult;
+				
+				$bar_inward_stock_id	= isset($barInwardStockResult->id)?$barInwardStockResult->id:'';
+				
+				if($bar_inward_stock_id!=''){
+					$data['table_booking_cart_items']	= BarInwardStockProducts::where('inward_stock_id',$bar_inward_stock_id)->get();
+				}	
+				
+			}
+			
+			
+			
+			
+			//echo '<pre>';print_r($data['booking_info']);exit;
+
+			//echo '<pre>';print_r($data['subcategory']);exit;
 			
 			$stock_type				= Common::get_user_settings($where=['option_name'=>'stock_type'],$branch_id);
 			$data['stock_type'] 	= isset($stock_type)?$stock_type:'w';
@@ -249,6 +311,75 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
+	
+	public function bar_create(Request $request){
+		
+		$product_ids				= $request->product_id;
+		$size_price_ids				= $request->size_price_id;
+		$branch_stock_product_ids	= $request->branch_stock_product_id;
+		$product_type				= $request->product_type;
+		$product_mrp				= $request->product_mrp;
+		$product_total_amount		= $request->product_total_amount;
+		$product_price_id			= $request->product_price_id;
+		$product_qty				= $request->product_qty;
+		
+		$floor_id			= $request->floor_id;
+		$table_id			= $request->table_id;
+		$waiter_id			= $request->waiter_id;
+		$table_booking_id	= $request->table_booking_id;
+		
+		
+		$total_quantity			= $request->total_quantity;
+		$total_mrp				= $request->total_mrp;
+		$tendered_amount		= $request->tendered_amount;
+		$tendered_change_amount	= $request->tendered_change_amount;
+		
+		$branch_id		= 1;
+		$customer_id	= $request->customer_id;
+		$customer_info	= Customer::find($customer_id);
+		$customer_name	= isset($customer_info->customer_fname)?$customer_info->customer_fname:'';
+		$customer_name	.= isset($customer_info->customer_last_name)?' '.$customer_info->customer_last_name:'';
+		$customer_phone	= isset($customer_info->customer_mobile)?$customer_info->customer_mobile:'';
+		$sell_date		= date('Y-m-d');
+		
+		
+		$barInwardStockResult	= BarInwardStock::where('table_booking_id',$table_booking_id)->where('branch_id',$branch_id)->where('floor_id',$floor_id)->where('table_id',$table_id)->where('waiter_id',$waiter_id)->where('customer_id',$customer_id)->where('sell_date',$sell_date)->where('status',1)->orderBy('id', 'DESC')->first();
+		$bar_inward_stock_id	= isset($barInwardStockResult->id)?$barInwardStockResult->id:'';
+		if($bar_inward_stock_id!=''){
+			$barInwardStockData=array(
+				'sell_date' 			=> date('Y-m-d'),
+				'sell_time' 			=> date('H:i:s'),
+				'total_qty' 			=> $total_quantity,
+				'gross_amount' 			=> $total_mrp,
+				'pay_amount' 			=> $total_mrp,
+				'tendered_due_amount' 	=> $total_mrp,
+				'tendered_amount' 		=> $tendered_amount,
+				'tendered_change_amount'=> $tendered_change_amount,
+				'payment_status'		=> 2,
+				'status'				=> 2,
+			);
+			
+			BarInwardStock::where('id',$bar_inward_stock_id)->update($barInwardStockData);
+			
+			TableBookingHistory::where('id',$table_booking_id)->update(['status' => 1]);
+			FloorWiseTable::where('id',$table_id)->where('floor_id',$floor_id)->update(['booking_status' => 1]);
+			
+			for($i=0;count($product_ids)>$i;$i++){
+				/*$product_id 	= isset($product_ids['product_id'])?$product_ids['product_id']:0;
+				$product_qty 	= isset($product_qty['product_qty'])?$product_qty['product_qty']:0;
+				$product_size 	= isset($row['product_size'])?$row['product_size']:0;
+				$product_type 	= isset($row['product_type'])?$row['product_type']:0;
+				$product_mrp 	= isset($row['product_mrp'])?$row['product_mrp']:0;
+				$branch_stock_product_id 	= isset($row['branch_stock_product_id'])?$row['branch_stock_product_id']:0;
+				$size_price_id 	= isset($row['size_price_id'])?$row['size_price_id']:0;*/
+			}
+		}
+		
+		$return_data['success']	= 1;
+		echo json_encode($return_data);
+		
+		
+	}
 	
 	
 	public function download_print_ko_product(){
@@ -335,11 +466,18 @@ class PurchaseOrderController extends Controller
 		$product_name	= $request->product_name;
 		$product_type	= $request->product_type;
 		$product_mrp	= $request->product_mrp;
+		$branch_stock_product_ids	= $request->branch_stock_product_id;
+		$size_price_ids	= $request->size_price_id;
 		
 		$floor_id			= $request->floor_id;
 		$table_id			= $request->table_id;
 		$waiter_id			= $request->waiter_id;
 		$table_booking_id	= $request->table_booking_id;
+		
+		
+		$customer_id	= $request->customer_id;
+		
+		
 		
 		
 		//print_r($_POST);exit;
@@ -349,11 +487,14 @@ class PurchaseOrderController extends Controller
 		$data=[];
 		$data['items']=[];
 		$total_qty=0;
+		$gross_amount=0;
 		if(isset($product_ids)){
 			for($i=0;count($product_ids)>$i;$i++){
-				$qty = isset($product_qty[$i])?$product_qty[$i]:0;
+				$qty 	= isset($product_qty[$i])?$product_qty[$i]:0;
+				$amount = isset($product_mrp[$i])?$product_mrp[$i]:0;
 				if($qty>0){
 					$total_qty +=$qty;
+					$gross_amount +=$amount;
 					$data['items'][] = array(
 					
 						'product_id'	=> isset($product_ids[$i])?$product_ids[$i]:'',
@@ -362,6 +503,8 @@ class PurchaseOrderController extends Controller
 						'product_size'	=> isset($product_size[$i])?$product_size[$i]:'',
 						'product_type'	=> isset($product_type[$i])?$product_type[$i]:'',
 						'product_mrp'	=> isset($product_mrp[$i])?$product_mrp[$i]:'',
+						'branch_stock_product_id'	=> isset($branch_stock_product_ids[$i])?$branch_stock_product_ids[$i]:'',
+						'size_price_id'	=> isset($size_price_ids[$i])?$size_price_ids[$i]:'',
 					);
 				}	
 			}
@@ -369,15 +512,152 @@ class PurchaseOrderController extends Controller
 		
 		
 		
+		//print_r($data);exit;
+		
+		
+		
 		if(count($data['items'])>0){
 			$branch_id		= 1;
-			$customer_id	= 1;
-			$customer_name	= 'Sdev';
-			$customer_phone	= '7003438796';
-			//$order_no		= '123456';
 			
-			$n=TableBookingKoPrintItems::where('branch_id',$branch_id)->count();
+			$customer_info	= Customer::find($customer_id);
+			$customer_name	= isset($customer_info->customer_fname)?$customer_info->customer_fname:'';
+			$customer_name	.= isset($customer_info->customer_last_name)?' '.$customer_info->customer_last_name:'';
+			$customer_phone	= isset($customer_info->customer_mobile)?$customer_info->customer_mobile:'';
+			
+			$sell_date		= date('Y-m-d');
+			
+			$barInwardStockResult	= BarInwardStock::where('table_booking_id',$table_booking_id)->where('branch_id',$branch_id)->where('floor_id',$floor_id)->where('table_id',$table_id)->where('waiter_id',$waiter_id)->where('customer_id',$customer_id)->where('sell_date',$sell_date)->where('status',1)->orderBy('id', 'DESC')->first();
+			$bar_inward_stock_id	= isset($barInwardStockResult->id)?$barInwardStockResult->id:'';
+			
+			//print_r($bar_inward_stock_id);exit;
+			
+			if($bar_inward_stock_id!=''){
+				
+				$bar_items_qty	=0;
+				$bar_items_qty	+= isset($barInwardStockResult->total_qty)?$barInwardStockResult->total_qty:0;
+				$bar_items_qty	+= $total_qty;
+				
+				$bar_gross_amount		=0;
+				$bar_gross_amount		+= isset($barInwardStockResult->gross_amount)?$barInwardStockResult->gross_amount:0;
+				$bar_gross_amount		+= $gross_amount;
+				
+				
+				$barInwardStockData=array(
+					'sell_date' 			=> date('Y-m-d'),
+					'sell_time' 			=> date('H:i:s'),
+					'total_qty' 			=> $bar_items_qty,
+					'gross_amount' 			=> $bar_gross_amount,
+					'pay_amount' 			=> $bar_gross_amount
+				);
+				
+				TableBookingHistory::where('id',$table_booking_id)->update(['items_qty' => $bar_items_qty,'total_amount' => $bar_gross_amount]);
+				
+				//print_r($barInwardStockData);exit;
+				
+				BarInwardStock::where('id',$bar_inward_stock_id)->update($barInwardStockData);
+			}else{
+				$invoice_no='';
+				$n=BarInwardStock::where('branch_id',$branch_id)->count();
+				$invoice_no .=date('d');
+				$invoice_no .='/'.date('Y');
+				$invoice_no .='/'.str_pad($n + 1, 4, 0, STR_PAD_LEFT);
+				$invoice_no .='|'.date('d/m/Y');
+				
+				$barInwardStockData=array(
+					'branch_id' 			=> $branch_id,
+					'table_booking_id'		=> $table_booking_id,
+					'floor_id' 				=> $floor_id,	
+					'table_id' 				=> $table_id,
+					'waiter_id' 			=> $waiter_id,
+					'customer_id' 			=> $customer_id,
+					'invoice_no' 			=> $invoice_no,
+					'sell_date' 			=> date('Y-m-d'),
+					'sell_time' 			=> date('H:i:s'),
+					'total_qty' 			=> $total_qty,
+					'gross_amount' 			=> $gross_amount,
+					'pay_amount' 			=> $gross_amount,
+					'status' 				=> 1,
+					'payment_status' 		=> 1,
+					'created_at'			=> date('Y-m-d')
+				);
+				
+				$sellStock		= BarInwardStock::create($barInwardStockData);
+				$bar_inward_stock_id = $sellStock->id;
+				
+				TableBookingHistory::where('id',$table_booking_id)->update(['items_qty' => $total_qty,'total_amount' => $gross_amount]);
+			}
+			
+			//print_r($data['items']);exit;
+			foreach($data['items'] as $row){
+				$product_id 	= isset($row['product_id'])?$row['product_id']:0;
+				$product_qty 	= isset($row['product_qty'])?$row['product_qty']:0;
+				$product_size 	= isset($row['product_size'])?$row['product_size']:0;
+				$product_type 	= isset($row['product_type'])?$row['product_type']:0;
+				$product_mrp 	= isset($row['product_mrp'])?$row['product_mrp']:0;
+				$branch_stock_product_id 	= isset($row['branch_stock_product_id'])?$row['branch_stock_product_id']:0;
+				$size_price_id 	= isset($row['size_price_id'])?$row['size_price_id']:0;
+				
+				$ml=0;
+				if($size_price_id>0){
+					$product_size_arr=explode(' ',$product_size);
+					$ml=$product_size_arr[0];
+				}
+				
+				$barInwardStockResult	= BarInwardStockProducts::where('inward_stock_id',$bar_inward_stock_id)->where('product_id',$product_id)->where('size_price_id',$size_price_id)->first();
+				$bar_inward_stock_product_id	= isset($barInwardStockResult->id)?$barInwardStockResult->id:'';
+				
+				//print_r($barInwardStockResult);exit;
+				
+				if($bar_inward_stock_product_id!=''){
+					$items_qty	=0;
+					$items_qty	+= isset($barInwardStockResult->items_qty)?$barInwardStockResult->items_qty:0;
+					$items_qty	+= 1;
+					
+					$barInwardStockProductData=array(
+						'items_qty' => $items_qty
+					);
+					
+					BarInwardStockProducts::where('id',$bar_inward_stock_product_id)->update($barInwardStockProductData);
+				}else{
+					$barInwardStockProductData=array(
+						'inward_stock_id' 			=> $bar_inward_stock_id,
+						'product_id' 				=> $product_id,
+						'items_qty' 				=> $product_qty,
+						'size' 						=> $product_size,
+						'ml' 						=> $ml,
+						'product_type' 				=> $product_type,
+						'product_mrp' 				=> $product_mrp,
+						'branch_stock_product_id' 	=> $branch_stock_product_id,
+						'size_price_id' 			=> $size_price_id
+					);
+					//print_r($barInwardStockProductData);exit;
+					BarInwardStockProducts::create($barInwardStockProductData);
+				}
+			}
+			
+			$n=TableBookingKoPrintInvoice::where('branch_id',$branch_id)->count();
 			$order_no=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+			
+			$barKoInwardStockData=array(
+				'table_booking_id'		=> $table_booking_id,
+				'branch_id' 			=> $branch_id,
+				'order_no' 				=> $order_no,
+				'floor_id' 				=> $floor_id,	
+				'table_id' 				=> $table_id,
+				'waiter_id' 			=> $waiter_id,
+				'customer_id' 			=> $customer_id,
+				'customer_name' 		=> $customer_name,
+				'customer_phone' 		=> $customer_phone,
+				'booking_date' 			=> date('Y-m-d'),
+				'booking_time' 			=> date('H:i:s'),
+				'total_qty' 			=> $total_qty,
+				'total_amount' 			=> $gross_amount,
+			);
+			
+			$koSellStock	= TableBookingKoPrintInvoice::create($barKoInwardStockData);
+			$ko_invoice_id 	= $koSellStock->id;
+			
+			//$ko_invoice_id = 1;
 			
 			foreach($data['items'] as $row){	
 				$product_id 	= isset($row['product_id'])?$row['product_id']:0;
@@ -386,42 +666,19 @@ class PurchaseOrderController extends Controller
 				$product_type 	= isset($row['product_type'])?$row['product_type']:0;
 				$product_mrp 	= isset($row['product_mrp'])?$row['product_mrp']:0;
 				
-				
-				
 				$koPrintItemsData=array(
-					'branch_id' 			=> $branch_id,
-					'order_no' 				=> $order_no,	
-					'floor_id' 				=> $floor_id,
-					'table_id' 				=> $table_id,
-					'waiter_id' 			=> $waiter_id,
-					'product_id' 			=> $product_id,
+					'ko_invoice_id' 		=> $ko_invoice_id,
+					'product_id' 			=> $product_id,	
 					'items_qty' 			=> $product_qty,
 					'size' 					=> $product_size,
 					'product_type' 			=> $product_type,
 					'product_mrp' 			=> $product_mrp,
-					'booking_date' 			=> date('Y-m-d'),
-					'booking_time' 			=> date('H:i:s'),
-					'customer_id' 			=> $customer_id,
-					'customer_name' 		=> $customer_name,
-					'customer_phone'		=> $customer_phone,
-					'created_at'			=> date('Y-m-d')
 				);
+				
 				TableBookingKoPrintItems::insert($koPrintItemsData);
-				
-				
-				
-				
-				
 			}
 			
-			print_r($koPrintItemsData);exit;
-			
-			
-			
-			
-			
-			
-			
+			//print_r($data);exit;
 			
 			$return_data['status']	= 1;
 			//Session::set('print_ko_items', $data);

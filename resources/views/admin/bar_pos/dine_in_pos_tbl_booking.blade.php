@@ -97,6 +97,18 @@
             
             </select>
           </div>
+          
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Customer Name:</label>
+            <input type="text" class="form-control admin-input" id="customer_name" name="customer_name" value="" required="" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="message-text" class="col-form-label">Customer Phone:</label>
+            <input type="text" class="form-control admin-input" id="customer_phone" name="customer_phone" value="" required="" autocomplete="off">
+          </div>
+          
+          
+          
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -113,6 +125,7 @@
 @section('scripts') 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/bar_pos.js') }}"></script> 
+<script>
 @foreach($data['tables'] as $key => $tbl_row)
   @if ($tbl_row['status'] == 2) 
     @php 
@@ -121,15 +134,18 @@
       $duration = $start_time->diffInSeconds($now);
       //echo $duration;die;
     @endphp
-  <script>
+  
     
     var sec = '{{$duration}}';
+	var table_id = "{{$tbl_row['table_id']}}";
+	console.log(sec);
     function pad(val) { return val > 9 ? val : "0" + val; }
     setInterval(function () {
-      $('#countdown_1').html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
+      $('#countdown_'+table_id).html(pad(parseInt(sec / 3600, 10)) + ':' + pad(parseInt(sec / 60, 10) % 60) + ':' + pad(++sec % 60));
     }, 1000);
-  </script> 
+  
     
   @endif
 @endforeach
+</script> 
 @endsection 

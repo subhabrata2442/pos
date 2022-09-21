@@ -1,3 +1,177 @@
+/*PAYMENT*/
+$(document).on('click', '.tendered_number_btn', function() {
+    var number = $(this).data('id');
+    if (!$("#tendered_amount").val()) {
+        $("#tendered_amount").val(0);
+    }
+
+    var tendered_amount = $("#tendered_amount").val();
+
+    if (number == '.') {
+        var tendered_amount = parseFloat($("#tendered_amount").val());
+        var amount = tendered_amount + number;
+        if (tendered_amount > 0) {
+            amount = tendered_amount + number;
+        }
+        $("#tendered_amount").val(amount).trigger("keyup");
+    } else if (number == -1) {
+        if (tendered_amount.length != 1) {
+            var amount = parseFloat($("#tendered_amount").val().substring(0, $("#tendered_amount").val().length - 1));
+            $("#tendered_amount").val(amount).trigger("keyup");
+        } else {
+            $("#tendered_amount").val(0).trigger("keyup");
+        }
+    } else {
+        var amount = number;
+        if (tendered_amount > 0) {
+            amount = tendered_amount + number;
+        }
+        $("#tendered_amount").val(amount).trigger("keyup");
+    }
+
+    $('#tendered_amount').focus();
+});
+
+$(document).on('click', '.tendered_plus_number_btn', function() {
+    var number = $(this).data('id');
+    if (!$("#tendered_amount").val()) {
+        $("#tendered_amount").val(0);
+    }
+
+    var tendered_amount = parseFloat($("#tendered_amount").val());
+
+    if (number == '.') {
+        var amount = tendered_amount + number;
+        if (tendered_amount > 0) {
+            amount = tendered_amount + number;
+        }
+        $("#tendered_amount").val(amount).trigger("keyup");
+    } else if (number == -1) {
+        if (tendered_amount.length != 1) {
+            var amount = parseFloat($("#tendered_amount").val().substring(0, $("#tendered_amount").val().length - 1));
+            $("#tendered_amount").val(amount).trigger("keyup");
+        } else {
+            $("#tendered_amount").val(0).trigger("keyup");
+        }
+    } else {
+        var amount = number;
+        if (tendered_amount > 0) {
+            amount = tendered_amount + number;
+        }
+        $("#tendered_amount").val(amount).trigger("keyup");
+    }
+    $('#tendered_amount').focus();
+});
+
+$(document).on('click', '.tendered_number_reset', function() {
+    $("#tendered_amount").val("0").trigger("keyup");
+    $('#tendered_amount').focus();
+});
+$(document).on('keyup', '#tendered_amount', function() {
+    var due_amount_tendering = parseFloat($("#due_amount_tendering").val());
+    var tendered_amount = parseFloat($("#tendered_amount").val());
+
+    $("#tendered_change_amount").val((tendered_amount - due_amount_tendering).toFixed(2));
+
+
+    console.log(tendered_amount);
+});
+
+$(document).on('click', '#calculate_cash_payment_btn', function() {
+    var due_amount_tendering = $('#due_amount_tendering').val();
+    var tendered_change_amount = $('#tendered_change_amount').val();
+    var tendered_amount = $('#tendered_amount').val();
+	
+    if (tendered_change_amount > 0) {
+        $('#rupee_due_amount_tendering-input').val(tendered_change_amount);
+        $('#rupee_due_amount_tendering').html(tendered_change_amount);
+        /*$('.tab_sec').hide();
+
+        $('.payWrapLeft').hide();
+        $('.payWrapRight').addClass('tabMenuHideWrapRight');
+        $('#rupee_payment_sec').show();*/
+		
+		$('.note_coin_count_sec').append('<input type="hidden" name="rupee_type[]" value="coin"><input type="hidden" name="note[]" value="1"><input type="hidden" name="note_qty[]" value="' + tendered_change_amount + '">');
+		
+		var tendered_change_amount = $('#tendered_change_amount').val();
+        var tendered_amount = $('#tendered_amount').val();
+        $('#total_tendered_amount').val(tendered_amount);
+        $('#total_tendered_change_amount').val(tendered_change_amount);
+        $("#pos_create_order-form").submit();
+		
+		
+		
+    } else {
+
+        if (due_amount_tendering > tendered_amount) {
+            toastr.error("Make Full Payment");
+        } else {
+            $('.note_coin_count_sec').html('<input type="hidden" name="rupee_type[]" value="note"><input type="hidden" name="note[]" value="' + tendered_amount + '"><input type="hidden" name="note_qty[]" value="1">');
+
+            var tendered_change_amount = $('#tendered_change_amount').val();
+            var tendered_amount = $('#tendered_amount').val();
+            $('#total_tendered_amount').val(tendered_amount);
+            $('#total_tendered_change_amount').val(tendered_change_amount);
+
+
+
+            $("#pos_create_order-form").submit();
+        }
+    }
+});
+
+$(document).ready(function() {
+    $("#pos_create_order-form").validate({
+        rules: {},
+        messages: {},
+        errorElement: "em",
+        errorPlacement: function(error, element) {},
+        highlight: function(element, errorClass, validClass) {},
+        unhighlight: function(element, errorClass, validClass) {},
+        submitHandler: function(form) {
+            var formData = new FormData($(form)[0]);
+            $.ajax({
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: $('#pos_create_order-form').attr('action'),
+                dataType: 'json',
+                data: formData,
+                success: function(data) {
+                    $(".payWrap").removeClass('active');
+                },
+                beforeSend: function() {
+                    $('#ajax_loader').fadeIn();
+                },
+                complete: function() {
+                    $('#ajax_loader').fadeOut();
+                    Swal.fire({
+                        title: 'Order successfully submitted.',
+                        icon: 'success',
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        allowOutsideClick: false
+                    }).then((result) => {
+
+                        if (result.isConfirmed) {
+							var redirect_url = prop.url + '/admin/pos/bar_dine_in_table_booking';
+							window.location.replace(redirect_url)
+	
+                            //var redirect_url = prop.url + '/admin/pos/bar_dine_in_table_booking';
+                            //window.open(redirect_url, "_blank");
+                            //location.reload();
+
+                        } else if (result.isDenied) {}
+                    });
+                }
+            });
+        }
+    });
+});
+
+
+
 /*TABLE BOOKING*/
 $(document).ready(function() {
     $(".payBtn").on('click', function(e) {
@@ -160,7 +334,7 @@ $(document).on('click', '.item_btn', function() {
                     var {
                         value: color
                     } = Swal.fire({
-                        title: 'Select ML Size',
+                        title: 'Select Size',
                         input: 'radio',
                         inputOptions: inputOptions,
                         inputValidator: (value) => {
@@ -300,7 +474,7 @@ $(document).on('click', '.item_btn', function() {
                                                         '</div>' +
                                                         '</div></td>' +
                                                         '<td class="text-center" id="product_total_price_' + size_price_id + '">' + product_mrp + '</td>' +
-                                                        '<td><a href="javascript:;" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
+                                                        '<td><a href="javascript:;" class="remove_item_btn" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
                                                         '</tr>';
 
                                                     $("#table_cart_items_record_sec").append(html);
@@ -472,7 +646,7 @@ $(document).on('click', '.item_btn', function() {
                                 '</div>' +
                                 '</div></td>' +
                                 '<td class="text-center" id="product_total_price_' + product_id + '">' + product_mrp + '</td>' +
-                                '<td><a href="javascript:;" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
+                                '<td><a href="javascript:;" class="remove_item_btn" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
                                 '</tr>';
 
                             $("#table_cart_items_record_sec").append(html);
@@ -742,6 +916,8 @@ $(document).ready(function() {
 			var floor_id	= $('#floor_id').val();
 			var table_id	= $('#table_id').val();
 			var waiter_id	= $('#waiter_id').val();
+			var customer_name	= $('#customer_name').val();
+			var customer_phone	= $('#customer_phone').val();
 			
 			$.ajax({
 				url: prop.ajaxurl,
@@ -750,6 +926,8 @@ $(document).ready(function() {
 					floor_id: floor_id,
 					waiter_id: waiter_id,
 					tbl_id: table_id,
+					customer_name: customer_name,
+					customer_phone: customer_phone,
 					action: 'set_table_booking',
 					_token: prop.csrf_token
 				},
@@ -799,7 +977,7 @@ $(document).ready(function() {
                     //$(".payWrap").removeClass('active');
                     $('#ajax_loader').fadeOut();
                     if (data.status == 1) {
-
+						$('.remove_item_btn').hide();
                         $("#ko_print_sec div").each(function() {
                             var ko_product_id = $(this).attr('id').split('_')[3];
                             $('#ko_product_qty_' + ko_product_id).val(0);
