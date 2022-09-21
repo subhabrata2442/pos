@@ -155,12 +155,11 @@ $(document).ready(function() {
                     }).then((result) => {
 
                         if (result.isConfirmed) {
+							var redirect_url = prop.url + '/admin/pos/print_bar_invoice/download';
+							window.open(redirect_url, "_blank");
+							
 							var redirect_url = prop.url + '/admin/pos/bar_dine_in_table_booking';
-							window.location.replace(redirect_url)
-	
-                            //var redirect_url = prop.url + '/admin/pos/bar_dine_in_table_booking';
-                            //window.open(redirect_url, "_blank");
-                            //location.reload();
+							window.location.replace(redirect_url);
 
                         } else if (result.isDenied) {}
                     });

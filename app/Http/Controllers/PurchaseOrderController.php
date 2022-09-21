@@ -238,7 +238,7 @@ class PurchaseOrderController extends Controller
 			
 			$data['tables'] 	= $tables;
 			
-			
+			//phpinfo();exit;
 			//echo '<pre>';print_r($data);exit;
 			
             return view('admin.bar_pos.dine_in_pos_tbl_booking', compact('data'));
@@ -459,6 +459,112 @@ class PurchaseOrderController extends Controller
 		}
 		exit;
     }
+	public function print_bar_invoice(){
+		
+		$lastSellInwardStock=BarInwardStock::orderBy('id','DESC')->take(1)->get();
+		
+		//echo '<pre>';print_r($lastSellInwardStock);exit;
+		
+		
+		
+		if(count($lastSellInwardStock)>0){
+			 $data=[];
+			 
+			 $invoice_no=isset($lastSellInwardStock[0]->invoice_no)?$lastSellInwardStock[0]->invoice_no:'';
+			 $invoice_date		= isset($lastSellInwardStock[0]->sell_date)?$lastSellInwardStock[0]->sell_date:'';
+			 $total_qty			= isset($lastSellInwardStock[0]->total_qty)?$lastSellInwardStock[0]->total_qty:'';
+			 $pay_amount		= isset($lastSellInwardStock[0]->pay_amount)?$lastSellInwardStock[0]->pay_amount:'';
+			 $table_booking_id	= isset($lastSellInwardStock[0]->table_booking_id)?$lastSellInwardStock[0]->table_booking_id:'';
+			 
+			 $tableBookingHistoryResult=TableBookingHistory::where('id',$table_booking_id)->first();
+			 
+			 //echo '<pre>';print_r($tableBookingHistoryResult);exit;
+			 
+			 
+			 $sellStockProducts	= BarInwardStockProducts::where('inward_stock_id',$lastSellInwardStock[0]->id)->get();
+			 
+			$customer_info	= Customer::find($lastSellInwardStock[0]->customer_id);
+			$customer_name	= isset($customer_info->customer_fname)?$customer_info->customer_fname:'';
+			$customer_name	.= isset($customer_info->customer_last_name)?' '.$customer_info->customer_last_name:'';
+			$customer_phone	= isset($customer_info->customer_mobile)?$customer_info->customer_mobile:'';
+			
+			
+			 $data['shop_details'] = [
+				'name' 		=> 'BAZIMAT F.L.(OFF) SHOP',
+				'address1'	=> 'West Chowbaga , Kolkata-700105',
+				'address2' 	=> 'West Bengal India',
+				'phone'		=> '8770663036',
+			];
+			
+			$data['customer_details'] = [
+				'name'		=> $customer_name,
+            	'mobile'	=> $customer_phone,
+            	'address'	=> 'Kolkata, West Bengal, India',
+        	];
+			
+			$data['invoice_details'] = [
+				'invoice_no'	=> $invoice_no,
+				'invoice_date'	=> $invoice_date,
+				'gstin'			=> '',
+				'place'			=> 'West Bengal',
+				'branch'		=> 'K.P.Shaw Bottling Pvt.Ltd.',
+				'cashier_name'	=> 'Mrs Roy Suchandra',
+				'bill_no'		=> $tableBookingHistoryResult->bill_no,
+				'table_no'		=> $tableBookingHistoryResult->table->table_name,
+				'booking_date'	=> $tableBookingHistoryResult->booking_date,
+				'booking_time'	=> date("h:i A",strtotime($tableBookingHistoryResult->booking_time)),
+			];
+			$data['items']=[];
+			
+			//echo '<pre>';print_r($data);exit;
+			
+			
+			if(count($sellStockProducts)>0){
+				foreach($sellStockProducts as $row){
+					$total_cost=$row->items_qty*$row->product_mrp;
+					$data['items'][] = array(
+						'product_name'	=> $row->product->product_name,
+						'qty'			=> $row->items_qty,
+						'size'			=> $row->size,
+						'mrp'			=> number_format($row->product_mrp,2),
+						'final_price'	=> number_format($total_cost,2),
+					);
+				}
+			}
+			
+			
+			
+			$data['total'] =[
+				'total_qty'		=> $total_qty,
+            	'total_price'	=> number_format($pay_amount,2)
+			]; 
+			
+			
+			
+			$data['gst'] =[
+				'gst_val' =>'0',
+				'taxable_amt'=> '0',
+				'cgst_rate'=> '0',
+				'cgst_amt'=> '0',
+				'sgst_rate'=> '0',
+				'sgst_amt'=> '0',
+				'total_amt'=> number_format($pay_amount,2),
+			]; 
+			//echo '<pre>';print_r($data);exit;
+			$data['total_amt_in_word']	= ucwords(Media::getIndianCurrency($pay_amount));
+			$data['payment_method'] 	= 'Cash';
+			//echo '<pre>';print_r($data);exit;
+			$pdf = PDF::loadView('admin.pdf.bar_invoice', $data);
+			return $pdf->stream($invoice_no.'-invoice.pdf');
+			//return $pdf->download($invoice_no.'-invoice.pdf');
+			
+			//echo '<pre>';print_r($data['total_amt_in_word']);exit;
+			
+		}
+    }
+	
+	
+	
 	public function print_ko_product(Request $request){
 		$product_ids	= $request->product_id;
 		$product_qty	= $request->product_qty;

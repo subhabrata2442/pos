@@ -61,7 +61,7 @@ $booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['ba
       <div class="filterTableInner">
         <h4>{{$data['booking_info']->table->table_name}}</h4>
         <ul class="d-flex flex-wrap justify-content-between">
-          <li><span><img src="{{ url('assets/admin/images/user.png') }}" alt=""></span> {{$data['booking_info']->customer_name}}</li>
+          <li><span><img src="{{ url('assets/admin/images/user.png') }}" alt=""></span> Bill No. #{{$data['booking_info']->bill_no}}</li>
           <li><span><img src="{{ url('assets/admin/images/call.png') }}" alt=""></span> {{$data['booking_info']->customer_phone}}</li>
           <!--<li><a href="javascript:;"><img src="{{ url('assets/admin/images/plus.png') }}" alt=""></a></li>-->
         </ul>
