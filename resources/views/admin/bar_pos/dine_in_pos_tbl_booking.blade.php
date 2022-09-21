@@ -83,6 +83,8 @@
         <div class="modal-body">
           <input type="hidden" id="table_id" name="table_id" />
           <input type="hidden" id="floor_id" name="floor_id" />
+          <input type="hidden" id="customer_name" name="customer_name" />
+          
           
           <div class="form-group">
             <label for="message-text" class="col-form-label">Waiter:</label>
@@ -98,13 +100,13 @@
             </select>
           </div>
           
-          <div class="form-group">
+          <!--<div class="form-group">
             <label for="message-text" class="col-form-label">Customer Name:</label>
             <input type="text" class="form-control admin-input" id="customer_name" name="customer_name" value="" required="" autocomplete="off">
-          </div>
+          </div>-->
           <div class="form-group">
             <label for="message-text" class="col-form-label">Customer Phone:</label>
-            <input type="text" class="form-control admin-input" id="customer_phone" name="customer_phone" value="" required="" autocomplete="off">
+            <input type="text" class="form-control admin-input" id="customer_phone" name="customer_phone" value="" autocomplete="off">
           </div>
           
           

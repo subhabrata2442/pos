@@ -126,20 +126,16 @@ class AjaxController extends Controller {
 		$customer_name	= $request->customer_name;
 		$customer_phone	= $request->customer_phone;
 		
-		
-		$customer_result=Customer::where('customer_name',$customer_name)->where('customer_mobile',$customer_phone)->first();
-		$customer_id	= isset($customer_result->id)?$customer_result->id:'';
-		
-		if($customer_id==''){
-			$customer_arr=explode(' ',$customer_name);
-			
-			$customerData = Customer::create([
-				'customer_fname' 		=> isset($customer_arr[0])?$customer_arr[0]:'',
-				'customer_last_name' 	=> isset($customer_arr[1])?$customer_arr[1]:'',
-				'customer_name' 		=> $customer_name,
-				'customer_mobile' 		=> $customer_phone,
+		$customer_id=0;
+		if($customer_phone!=''){
+			$customer_result=Customer::where('customer_mobile',$customer_phone)->first();
+			$customer_id	= isset($customer_result->id)?$customer_result->id:'';
+			if($customer_id==''){
+				$customerData = Customer::create([
+				'customer_mobile' 		=> $customer_phone
 			]);
 			$customer_id=$customerData->id;
+			}
 		}
 		
 		$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('id',$tbl_id)->where('status',1)->orderBy('id', 'DESC')->first();
@@ -149,7 +145,12 @@ class AjaxController extends Controller {
 		$booking_url='';
 		if($booking_status!=''){
 			if($booking_status==1){
+				$branch_id=1;
+				$n=TableBookingHistory::where('branch_id',$branch_id)->count();
+				$order_no=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
 				$tableBooking = TableBookingHistory::create([
+					'bill_no'		=> $order_no,
+					'branch_id'		=> $branch_id,
 					'floor_id' 		=> $floor_id,
 					'table_id' 		=> $tbl_id,
 					'waiter_id'		=> $waiter_id,
