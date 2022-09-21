@@ -18,5 +18,12 @@ class BranchStockProducts extends Model
     {
 		return $this->hasOne(Size::class,'id', 'size_id'); 
     }
+  public function product(){
+    return $this->hasOne(Product::class,'id','product_id');
+  }  
+
+  public function stockProduct(){
+    return $this->hasOne(BranchStockProductSellPrice::class,'stock_id','id');
+  }
 
 }

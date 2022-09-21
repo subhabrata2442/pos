@@ -18,6 +18,8 @@ use PDF;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use App\Helper\Media;
+use App\Models\BranchStockProducts;
+use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Customer;
 use App\Models\SellInwardStock;
@@ -998,5 +1000,55 @@ class ReportController extends Controller
         $return_data['result']	= $result;
 		$return_data['status']	= 1;
 		echo json_encode($return_data);	
+    }
+
+    public function inventory(Request $request){
+        try{
+            $data = [];
+            $queryStockProduct = BranchStockProducts::query();
+            $queryStockProduct->where('stock_type','counter');
+            if(!is_null($request['product_id'])) {
+                $queryStockProduct->where('product_id',$request['product_id']);
+            }
+            if(!is_null($request['brand'])) {
+                $queryStockProduct->whereHas('product',function($q) use ($request){
+                    return $q->where('brand_id',$request['brand']);
+                });
+            }
+            if(!is_null($request['category'])) {
+                $queryStockProduct->whereHas('product',function($q) use ($request){
+                    return $q->where('category_id',$request['category']);
+                });
+            }
+            if(!is_null($request['sub_category'])) {
+                $queryStockProduct->whereHas('product',function($q) use ($request){
+                    return $q->where('subcategory_id',$request['sub_category']);
+                });
+            }
+            if(!is_null($request['size'])) {
+                
+                $queryStockProduct->where('size_id',$request['size']);
+                
+            }
+            $allStockProduct = $queryStockProduct->with('stockProduct')->get();
+            $stockProducts = $queryStockProduct->paginate(10);
+            $data['heading']    = 'Sales List';
+            $data['breadcrumb'] = ['Sales', '', 'List'];
+            $data['products']   = $stockProducts;
+            $allStockProductArr = $allStockProduct->toArray();
+            //echo array_sum(array_column($allStockProduct->stockProduct->toArray(), 'c_qty'));die;
+            //echo "<pre>";print_r($allStockProductArr[0]['stock_product']);die;
+            //dd($all_product);
+            //$data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
+            $data['total_qty']  = 0;
+            $data['total_cost'] = 0;
+            $data['categories'] = Category::all();
+            $data['sizes']      = Size::all();
+            $data['sub_categories']      = Subcategory::all();
+            $data['brands']      = Brand::all();
+            return view('admin.report.inventory', compact('data'));
+        }catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
     }
 }
