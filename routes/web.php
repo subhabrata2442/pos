@@ -78,6 +78,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		
 		Route::match(['GET', 'POST'], '/print_ko_products', [PurchaseOrderController::class, 'print_ko_product'])->name('print_ko_product');
 		Route::match(['GET'], '/print_ko_products/download', [PurchaseOrderController::class, 'download_print_ko_product']);
+		Route::match(['POST'], '/bar_create', [PurchaseOrderController::class, 'bar_create'])->name('bar_create');
 		
 		
 		Route::match(['GET'], '/print_invoice', [PurchaseOrderController::class, 'print_invoice'])->name('print_invoice');

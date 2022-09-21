@@ -30,6 +30,7 @@ use App\Models\RestaurantFloor;
 use App\Models\FloorWiseTable;
 use App\Models\TableBookingHistory;
 use App\Models\BarProductSizePrice;
+use App\Models\Customer;
 
 use Illuminate\Http\Request;
 use DataTables;
@@ -122,6 +123,25 @@ class AjaxController extends Controller {
 		$tbl_id		= $request->tbl_id;
 		$waiter_id	= $request->waiter_id;
 		
+		$customer_name	= $request->customer_name;
+		$customer_phone	= $request->customer_phone;
+		
+		
+		$customer_result=Customer::where('customer_name',$customer_name)->where('customer_mobile',$customer_phone)->first();
+		$customer_id	= isset($customer_result->id)?$customer_result->id:'';
+		
+		if($customer_id==''){
+			$customer_arr=explode(' ',$customer_name);
+			
+			$customerData = Customer::create([
+				'customer_fname' 		=> isset($customer_arr[0])?$customer_arr[0]:'',
+				'customer_last_name' 	=> isset($customer_arr[1])?$customer_arr[1]:'',
+				'customer_name' 		=> $customer_name,
+				'customer_mobile' 		=> $customer_phone,
+			]);
+			$customer_id=$customerData->id;
+		}
+		
 		$table_result	= FloorWiseTable::where('floor_id',$floor_id)->where('id',$tbl_id)->where('status',1)->orderBy('id', 'DESC')->first();
 		$booking_status	= isset($table_result->booking_status)?$table_result->booking_status:'';
 		
@@ -133,6 +153,9 @@ class AjaxController extends Controller {
 					'floor_id' 		=> $floor_id,
 					'table_id' 		=> $tbl_id,
 					'waiter_id'		=> $waiter_id,
+					'customer_id'	=> $customer_id,
+					'customer_name'	=> $customer_name,
+					'customer_phone'=> $customer_phone,
 					'booking_date' 	=> date('Y-m-d'),
 					'booking_time' 	=> date('H:i:s')
 				]);
@@ -159,10 +182,14 @@ class AjaxController extends Controller {
 		
 		$result=[];
 		foreach($subcategory_result as $key=>$row){
-			$result[]=array(
-				'subcategory_id'	=> $row->id,
-				'name'				=> $row->name,
-			);
+			$product_count=Product::select('*')->leftJoin('branch_stock_products', 'products.id', '=', 'branch_stock_products.product_id')->where('branch_stock_products.stock_type','bar')->where('products.subcategory_id',$row->id)->count();
+			
+			if($product_count>0){
+				$result[]=array(
+					'subcategory_id'	=> $row->id,
+					'name'				=> $row->name
+				);
+			}
 		}
 		
 		$return_data['result']	= $result;
@@ -191,6 +218,10 @@ class AjaxController extends Controller {
 					$product_id		= $row->id;
 					
 					$branch_stock_product_result	= BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->get();
+					
+					//print_r($branch_stock_product_result);exit;
+					
+					
 					$branch_stock_product_id		= isset($branch_stock_product_result[0]->id)?$branch_stock_product_result[0]->id:'';
 					$product_size_id				= isset($branch_stock_product_result[0]->size_id)?$branch_stock_product_result[0]->size_id:'';
 					

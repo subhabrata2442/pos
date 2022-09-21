@@ -162,22 +162,11 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
     if (tendered_change_amount > 0) {
         $('#rupee_due_amount_tendering-input').val(tendered_change_amount);
         $('#rupee_due_amount_tendering').html(tendered_change_amount);
-        /*$('.tab_sec').hide();
+        $('.tab_sec').hide();
 
         $('.payWrapLeft').hide();
         $('.payWrapRight').addClass('tabMenuHideWrapRight');
-        $('#rupee_payment_sec').show();*/
-		
-		$('.note_coin_count_sec').append('<input type="hidden" name="rupee_type[]" value="coin"><input type="hidden" name="note[]" value="1"><input type="hidden" name="note_qty[]" value="' + tendered_change_amount + '">');
-		
-		var tendered_change_amount = $('#tendered_change_amount').val();
-        var tendered_amount = $('#tendered_amount').val();
-        $('#total_tendered_amount').val(tendered_amount);
-        $('#total_tendered_change_amount').val(tendered_change_amount);
-         $("#pos_create_order-form").submit();
-		
-		
-		
+        $('#rupee_payment_sec').show();
     } else {
 
         if (due_amount_tendering > tendered_amount) {
