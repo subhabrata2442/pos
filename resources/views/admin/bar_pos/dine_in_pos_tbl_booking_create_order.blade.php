@@ -89,11 +89,23 @@
         </div>
         <div class="w-100 printBill" id="print_bill_section" style="display:none;">
           <ul class="d-flex mb-0">
-            <li class="col"><a href="javascript:;">KO Print</a></li>
+            <li class="col"><a href="javascript:;" class="koPrintBtn">KO Print</a></li>
             <li class="col"><a href="javascript:;">Print Bill</a></li>
             <li class="col"><a href="javascript:;" class="payBtn">Pay</a></li>
           </ul>
         </div>
+        <form method="post" action="{{ route('admin.pos.print_ko_product') }}" class="needs-validation" id="ko_print-product-form" novalidate enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="floor_id" value="{{$data['booking_info']->floor_id}}">
+        <input type="hidden" name="table_id" value="{{$data['booking_info']->table_id}}">
+        <input type="hidden" name="waiter_id" value="{{$data['booking_info']->waiter_id}}">
+        <input type="hidden" name="table_booking_id" value="{{$data['booking_info']->id}}">
+        
+        <div id="ko_print_sec">
+        <!--<div id="ko_print_product_107" data-id="1"><input type="hidden" name="product_id[]" value="859"><input type="hidden" name="size_price_id[]" value="107"><input type="hidden" name="branch_stock_product_id[]" value="12"><input type="hidden" name="product_type[]" value="liquor"><input type="hidden" name="product_name[]" value="Best Taste"><input type="hidden" name="product_size[]" value="30 ml"><input type="hidden" name="product_qty[]" id="ko_product_qty_107" value="1"></div>-->
+        <!--<input type="submit" value="dddd" />-->
+        </div>
+        </form>  
       </div>
     </div>
   </div>
@@ -432,84 +444,7 @@
 <script>
 	var stock_type	= "{{$data['stock_type']}}";
 </script> 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/bar_pos.js') }}"></script> 
-<script>
-  var timer2 = "5:01";
-  var interval = setInterval(function() {
-
-
-    var timer = timer2.split(':');
-    //by parsing integer, I avoid all extra string processing
-    var minutes = parseInt(timer[0], 10);
-    var seconds = parseInt(timer[1], 10);
-    --seconds;
-    minutes = (seconds < 0) ? --minutes : minutes;
-    seconds = (seconds < 0) ? 59 : seconds;
-    seconds = (seconds < 10) ? '0' + seconds : seconds;
-    //minutes = (minutes < 10) ?  minutes : minutes;
-    $('.countdown').html(minutes + ':' + seconds);
-    if (minutes < 0) clearInterval(interval);
-    //check if both minutes and seconds are 0
-    if ((seconds <= 0) && (minutes <= 0)) clearInterval(interval);
-    timer2 = minutes + ':' + seconds;
-  }, 1000);
-</script> 
-<script>
-  var qty = 0, maxlim;
-  $('.priceControl .controls2').on('click', function () {
-      qty = $(this).siblings('.qtyInput2').val();
-      maxlim = $(this).siblings('.qtyInput2').attr('data-max-lim');
-      console.log(maxlim);
-      if (($(this).val() == '+') && (parseInt(maxlim) > qty)) {
-          qty++;
-      } else if ($(this).val() == '-' && qty > 1) {
-          qty--;
-      }
-      $(this).siblings('.qtyInput2').val(qty);
-
-  });
-</script> 
-<script type="text/javascript">
-  document.addEventListener("DOMContentLoaded", function () {
-      var qsearch, select, ul, li, a, i;
-      qsearch = document.getElementById("qsearch");
-      select = document.getElementById("select-box-category");
-      ul = document.getElementById("categories-box");
-      document.querySelector('body').addEventListener("click",
-          function () {
-              ul.style.display = 'none';
-          });
-      select.addEventListener('click', function (e) {
-          e.stopPropagation();
-          if (ul.style.display === 'none') {
-              ul.style.display = 'block';
-          } else {
-              ul.style.display = 'none';
-          }
-      });
-      li = ul.getElementsByTagName("li");
-      for (i = 0; i < li.length; i++) {
-          a = li[i];
-          a.addEventListener("click", function () {
-              qsearch.value = this.getAttribute(
-                  "data-q");
-              select.innerHTML = this.innerHTML;
-          });
-      }
-  });
-
-  window.onload = function () {
-      var form = document.getElementById("search_mini_form");
-      form.onsubmit = function () {
-          var search = document.getElementById("search");
-          var qsearch = document.getElementById("qsearch");
-          var csearch = qsearch.value ? '&cat=' + qsearch.value :
-              '';
-          window.location = form.action + '/?q=' + search.value +
-              csearch;
-          return false;
-      };
-  };
-</script> 
 @endsection 

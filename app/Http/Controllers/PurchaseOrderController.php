@@ -46,9 +46,11 @@ use App\Models\TableBookingHistory;
 use App\Models\RestaurantFloor;
 use App\Models\FloorWiseTable;
 use App\Models\Waiter;
+use App\Models\TableBookingKoPrintItems;
 
 use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
+use Session;
 
 class PurchaseOrderController extends Controller
 {
@@ -236,7 +238,7 @@ class PurchaseOrderController extends Controller
 			$table_booking_info		= TableBookingHistory::where('id',$table_booking_id)->first();
 			$data['booking_info']	= $table_booking_info;
 			
-			//echo '<pre>';print_r($data['booking_info']->table->table_name);exit;
+			//echo '<pre>';print_r($data['booking_info']);exit;
 			
 			$data['subcategory']	= Subcategory::where('food_type',1)->where('status',1)->orderBy('name', 'ASC')->get();
 			
@@ -246,6 +248,189 @@ class PurchaseOrderController extends Controller
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
+    }
+	
+	
+	public function download_print_ko_product(){
+		$print_ko_items=Session::get('print_ko_items');
+		
+		//echo '<pre>';print_r($print_ko_items);exit;
+		
+		
+		$data=[];
+		$data['items']=[];
+		$total_qty=0;
+		if(isset($print_ko_items)){
+			
+			foreach($print_ko_items['items'] as $row){
+				$qty = isset($row['product_qty'])?$row['product_qty']:0;
+				if($qty>0){
+					$total_qty +=$qty;
+					$data['items'][] = array(
+						'product_name'	=> isset($row['product_name'])?$row['product_name']:'',
+						'product_qty'	=> $qty,
+						'product_size'	=> isset($row['product_size'])?$row['product_size']:'',
+						'product_type'	=> isset($row['product_type'])?$row['product_type']:'',
+					);
+				}	
+			}
+		}
+		
+		//echo '<pre>';print_r($data);exit;
+		
+		
+		if(count($data['items'])>0){
+			$data['shop_details'] = [
+				'name' 		=> 'BAZIMAT F.L.(OFF) SHOP',
+				'address1'	=> 'West Chowbaga , Kolkata-700105',
+				'address2' 	=> 'West Bengal India',
+				'phone'		=> '8770663036',
+			];
+			$data['customer_details'] = [
+				'name'		=> 'Subha',
+            	'mobile'	=> '7003923969',
+            	'address'	=> 'India',
+        	];
+			$invoice_no		= date('Ymd').'01';
+			$invoice_date	= date('Y-m-d H:i a');
+			$data['invoice_details'] = [
+				'invoice_no'	=> $invoice_no,
+				'invoice_date'	=> $invoice_date,
+				'gstin'			=> '',
+				'place'			=> 'West Bengal',
+				'branch'		=> 'K.P.Shaw Bottling Pvt.Ltd.',
+				'cashier_name'	=> 'Mrs Roy Suchandra',
+			];
+			
+			$data['total'] =[
+				'total_qty'		=> $total_qty,
+            	'total_disc'	=> 0,
+            	'total_price'	=> 0
+			]; 
+			
+			$data['gst'] =[
+				'gst_val' =>'0',
+				'taxable_amt'=> '0',
+				'cgst_rate'=> '0',
+				'cgst_amt'=> '0',
+				'sgst_rate'=> '0',
+				'sgst_amt'=> '0',
+				'total_amt'=> 0,
+			]; 
+			
+			//echo '<pre>';print_r($data);exit;
+			$data['total_amt_in_word']		= '';;
+			$data['total_discount_amount']	= 0;
+			$data['payment_method'] 		= 'Cash';
+			$pdf = PDF::loadView('admin.pdf.ko_print_invoice', $data);
+			//$pdf->Output($invoice_no.'-invoice.pdf','D'); 
+			return $pdf->stream($invoice_no.'-invoice.pdf');
+		}
+		exit;
+    }
+	public function print_ko_product(Request $request){
+		$product_ids	= $request->product_id;
+		$product_qty	= $request->product_qty;
+		$product_size	= $request->product_size;
+		$product_name	= $request->product_name;
+		$product_type	= $request->product_type;
+		$product_mrp	= $request->product_mrp;
+		
+		$floor_id			= $request->floor_id;
+		$table_id			= $request->table_id;
+		$waiter_id			= $request->waiter_id;
+		$table_booking_id	= $request->table_booking_id;
+		
+		
+		//print_r($_POST);exit;
+		
+		
+		
+		$data=[];
+		$data['items']=[];
+		$total_qty=0;
+		if(isset($product_ids)){
+			for($i=0;count($product_ids)>$i;$i++){
+				$qty = isset($product_qty[$i])?$product_qty[$i]:0;
+				if($qty>0){
+					$total_qty +=$qty;
+					$data['items'][] = array(
+					
+						'product_id'	=> isset($product_ids[$i])?$product_ids[$i]:'',
+						'product_name'	=> isset($product_name[$i])?$product_name[$i]:'',
+						'product_qty'	=> $qty,
+						'product_size'	=> isset($product_size[$i])?$product_size[$i]:'',
+						'product_type'	=> isset($product_type[$i])?$product_type[$i]:'',
+						'product_mrp'	=> isset($product_mrp[$i])?$product_mrp[$i]:'',
+					);
+				}	
+			}
+		}
+		
+		
+		
+		if(count($data['items'])>0){
+			$branch_id		= 1;
+			$customer_id	= 1;
+			$customer_name	= 'Sdev';
+			$customer_phone	= '7003438796';
+			//$order_no		= '123456';
+			
+			$n=TableBookingKoPrintItems::where('branch_id',$branch_id)->count();
+			$order_no=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+			
+			foreach($data['items'] as $row){	
+				$product_id 	= isset($row['product_id'])?$row['product_id']:0;
+				$product_qty 	= isset($row['product_qty'])?$row['product_qty']:0;
+				$product_size 	= isset($row['product_size'])?$row['product_size']:0;
+				$product_type 	= isset($row['product_type'])?$row['product_type']:0;
+				$product_mrp 	= isset($row['product_mrp'])?$row['product_mrp']:0;
+				
+				
+				
+				$koPrintItemsData=array(
+					'branch_id' 			=> $branch_id,
+					'order_no' 				=> $order_no,	
+					'floor_id' 				=> $floor_id,
+					'table_id' 				=> $table_id,
+					'waiter_id' 			=> $waiter_id,
+					'product_id' 			=> $product_id,
+					'items_qty' 			=> $product_qty,
+					'size' 					=> $product_size,
+					'product_type' 			=> $product_type,
+					'product_mrp' 			=> $product_mrp,
+					'booking_date' 			=> date('Y-m-d'),
+					'booking_time' 			=> date('H:i:s'),
+					'customer_id' 			=> $customer_id,
+					'customer_name' 		=> $customer_name,
+					'customer_phone'		=> $customer_phone,
+					'created_at'			=> date('Y-m-d')
+				);
+				TableBookingKoPrintItems::insert($koPrintItemsData);
+				
+				
+				
+				
+				
+			}
+			
+			print_r($koPrintItemsData);exit;
+			
+			
+			
+			
+			
+			
+			
+			
+			$return_data['status']	= 1;
+			//Session::set('print_ko_items', $data);
+			session(['print_ko_items' => $data]);
+		}else{
+			$return_data['status']	= 0;
+		}
+		
+		echo json_encode($return_data);
     }
 	
 	public function pos_type()

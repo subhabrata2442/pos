@@ -122,149 +122,419 @@ $(document).on('click', '.category_btn', function() {
 $(document).on('click', '.item_btn', function() {
     var product_id = $(this).data('id');
     var food_type = $('input[name="food_type"]:checked').val();
-    $.ajax({
-        url: prop.ajaxurl,
-        type: 'post',
-        data: {
-            product_id: product_id,
-            food_type: food_type,
-            action: 'get_bar_product_byId',
-            _token: prop.csrf_token
-        },
-        dataType: 'json',
-        beforeSend: function() {
-            $('#ajax_loader').fadeIn();
-        },
-        complete: function() {
-            $('#ajax_loader').fadeOut();
-        },
-        success: function(response) {
-            if (response.product_result != '') {
-                var html = '';
-                var item_detail = response.product_result;
-                var product_name = '';
-                if (item_detail.brand_name != null || item_detail.brand_name != undefined) {
-                    product_name = item_detail.brand_name;
-                }
-                var product_size = '';
-                if (item_detail.size != null || item_detail.size != undefined) {
-                    product_size = item_detail.size;
-                }
 
 
-                var product_id = item_detail.branch_stock_product_id;
-
-                var item_prices_length = item_detail.item_prices.length;
-                var w_stock = item_detail.item_prices[0].w_qty;
-                var c_stock = item_detail.item_prices[0].c_qty;
-                var product_mrp = item_detail.item_prices[0].product_mrp;
-                var product_price_id = item_detail.item_prices[0].price_id;
-
-                var item_row = 0;
-                if ($('#table_cart_items_record_sec tr').length == 0) {
-                    item_row++;
-                } else {
-                    var max = 0;
-                    $("#table_cart_items_record_sec tr").each(function() {
-                        var value = parseInt($(this).data('id'));
-                        max = (value > max) ? value : max;
-                    });
-                    item_row = max + 1;
-                }
-
-                if (stock_type == 'w') {
-                    stock = w_stock;
-                } else {
-                    stock = c_stock;
-                }
-
-                if (stock > 0) {
-                    var same_item = 0;
-                    $("#table_cart_items_record_sec tr").each(function() {
-                        var row_product_id = $(this).attr('id').split('_')[2];
-                        if (row_product_id == product_id) {
-                            same_item = 1;
-
-                            var qty = $('#product_qty_' + product_id).val();
-                            var item_qty = Number(qty) + 1;
-
-                            if (Number(item_qty) > Number(stock)) {
-                                $('#product_qty_' + product_id).val(stock);
-                                toastr.error("Entered Qty should not be greater than Stock");
-                                return false;
-                            } else {
-                                $('#product_qty_' + product_id).val(item_qty);
-                                var unit_price = $("#product_mrp_" + product_id).val();
-                                var total_selling_cost = Number(unit_price) * Number(item_qty);
-                                var total_amount = Number(total_selling_cost)
-                                $("#product_total_price_" + product_id).html(Number(total_amount).toFixed(2));
-                                $("#product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
-                            }
-
-                            total_cal()
-                        }
-                    });
-
-                    if (same_item == 0) {
-                        html += '<tr id="sell_product_' + product_id + '" data-id="' + item_row + '">' +
-                            '<input type="hidden" name="product_id[]" value="' + product_id + '">' +
-                            '<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
-                            '<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
-                            '<input type="hidden" name="product_mrp[]" id="product_mrp_' + product_id + '" value="' + product_mrp + '">' +
-                            '<input type="hidden" name="product_total_amount[]" id="product_total_amount_' + product_id + '" value="' + product_mrp + '">' +
-                            '<input type="hidden" name="product_price_id[]" id="product_price_id_' + product_id + '" value="' + product_price_id + '">' +
-                            '<input type="hidden" name="product_name[]" id="product_name_' + product_id + '" value="' + product_name + '">' +
-                            '<td>' + item_row + '</td>' +
-                            '<td class="text-center">' + product_name + '</td>' +
-                            '<td class="text-center">' + product_size + '</td>' +
-                            '<td class="text-center">' + product_mrp + '</td>' +
-                            '<td class="text-center"><div>' +
-                            '<div class="priceControl d-flex">' +
-                            '<button class="controls2" value="-">-</button>' +
-                            '<input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_' + product_id + '" value="1" data-max-lim="20">' +
-                            '<button class="controls2" value="+">+</button>' +
-                            '</div>' +
-                            '</div></td>' +
-                            '<td class="text-center" id="product_total_price_' + product_id + '">' + product_mrp + '</td>' +
-							'<td><a href="javascript:;" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
-                            '</tr>';
-
-                        $("#table_cart_items_record_sec").append(html);
-                        total_cal()
-
+    if (food_type == 'liquor') {
+        $.ajax({
+            url: prop.ajaxurl,
+            type: 'post',
+            data: {
+                product_id: product_id,
+                food_type: food_type,
+                action: 'get_bar_product_mlPrice',
+                _token: prop.csrf_token
+            },
+            dataType: 'json',
+            beforeSend: function() {
+                $('#ajax_loader').fadeIn();
+            },
+            complete: function() {
+                $('#ajax_loader').fadeOut();
+            },
+            success: function(response) {
+                var product_result_length = response.product_result.length;
+                var product_ml = {};
+                if (product_result_length > 0) {
+                    for (var i = 0; product_result_length > i; i++) {
+                        var item_detail = response.product_result[i];
+                        product_ml[item_detail.product_price_id] = item_detail.size;
                     }
 
+                    /* inputOptions can be an object or Promise */
+                    const inputOptions = new Promise((resolve) => {
+                        setTimeout(() => {
+                            resolve(product_ml)
+                        }, 1000)
+                    })
+
+                    var {
+                        value: color
+                    } = Swal.fire({
+                        title: 'Select ML Size',
+                        input: 'radio',
+                        inputOptions: inputOptions,
+                        inputValidator: (value) => {
+                            if (!value) {
+                                return 'You need to choose something!'
+                            } else {
+                                $.ajax({
+                                    url: prop.ajaxurl,
+                                    type: 'post',
+                                    data: {
+                                        product_id: product_id,
+                                        food_type: food_type,
+                                        size_id: value,
+                                        action: 'get_bar_product_byId',
+                                        _token: prop.csrf_token
+                                    },
+                                    dataType: 'json',
+                                    beforeSend: function() {
+                                        $('#ajax_loader').fadeIn();
+                                    },
+                                    complete: function() {
+                                        $('#ajax_loader').fadeOut();
+                                    },
+                                    success: function(response) {
+                                        if (response.product_result != '') {
+                                            var html = '';
+                                            var item_detail = response.product_result;
+                                            var product_name = '';
+                                            if (item_detail.brand_name != null || item_detail.brand_name != undefined) {
+                                                product_name = item_detail.brand_name;
+                                            }
+                                            var product_size = '';
+                                            if (item_detail.size != null || item_detail.size != undefined) {
+                                                product_size = item_detail.size;
+                                            }
+
+
+                                            var product_id = item_detail.product_id;
+                                            var size_price_id = item_detail.size_price_id;
+                                            var branch_stock_product_id = item_detail.branch_stock_product_id;
+
+                                            var item_prices_length = item_detail.item_prices.length;
+                                            var product_mrp = item_detail.item_prices[0].product_mrp;
+                                            var product_price_id = item_detail.item_prices[0].price_id;
+
+                                            var item_row = 0;
+                                            if ($('#table_cart_items_record_sec tr').length == 0) {
+                                                item_row++;
+                                            } else {
+                                                var max = 0;
+                                                $("#table_cart_items_record_sec tr").each(function() {
+                                                    var value = parseInt($(this).data('id'));
+                                                    max = (value > max) ? value : max;
+                                                });
+                                                item_row = max + 1;
+                                            }
+
+                                            stock = 1;
+
+                                            var ko_print_html = '';
+
+                                            if (stock > 0) {
+
+                                                var same_k_item = 0;
+
+                                                $("#ko_print_sec div").each(function() {
+                                                    var ko_product_id = $(this).attr('id').split('_')[3];
+                                                    if (ko_product_id == size_price_id) {
+                                                        same_k_item = 1;
+
+                                                        var ko_product_qty = $('#ko_product_qty_' + size_price_id).val();
+                                                        var ko_item_qty = Number(ko_product_qty) + 1;
+                                                        $('#ko_product_qty_' + size_price_id).val(ko_item_qty);
+                                                    }
+                                                });
+
+                                                if (same_k_item == 0) {
+
+                                                    ko_print_html += '<div id="ko_print_product_' + size_price_id + '" data-id="' + item_row + '">' +
+                                                        '<input type="hidden" name="product_id[]" value="' + product_id + '">' +
+                                                        '<input type="hidden" name="size_price_id[]" value="' + size_price_id + '">' +
+                                                        '<input type="hidden" name="branch_stock_product_id[]" value="' + branch_stock_product_id + '">' +
+                                                        '<input type="hidden" name="product_type[]" value="Liquor">' +
+                                                        '<input type="hidden" name="product_name[]" value="' + product_name + '">' +
+                                                        '<input type="hidden" name="product_size[]" value="' + product_size + '">' +
+														'<input type="hidden" name="product_mrp[]" value="' + product_mrp + '">' +
+                                                        '<input type="hidden" name="product_qty[]" id="ko_product_qty_' + size_price_id + '" value="1">' +
+                                                        '</tr>';
+                                                    $("#ko_print_sec").append(ko_print_html);
+                                                }
+
+                                                var same_item = 0;
+                                                $("#table_cart_items_record_sec tr").each(function() {
+                                                    var row_product_id = $(this).attr('id').split('_')[2];
+                                                    if (row_product_id == size_price_id) {
+                                                        same_item = 1;
+
+                                                        var qty = $('#product_qty_' + size_price_id).val();
+                                                        var item_qty = Number(qty) + 1;
+
+                                                        /*if (Number(item_qty) > Number(stock)) {
+                                                            $('#product_qty_' + product_id).val(stock);
+                                                            toastr.error("Entered Qty should not be greater than Stock");
+                                                            return false;
+                                                        } else {*/
+                                                        $('#product_qty_' + size_price_id).val(item_qty);
+                                                        var unit_price = $("#product_mrp_" + size_price_id).val();
+                                                        var total_selling_cost = Number(unit_price) * Number(item_qty);
+                                                        var total_amount = Number(total_selling_cost)
+                                                        $("#product_total_price_" + size_price_id).html(Number(total_amount).toFixed(2));
+                                                        $("#product_total_amount_" + size_price_id).val(Number(total_amount).toFixed(2));
+                                                        //}
+
+                                                        total_cal()
+                                                    }
+                                                });
+
+                                                if (same_item == 0) {
+                                                    html += '<tr id="sell_product_' + size_price_id + '" data-id="' + item_row + '">' +
+                                                        '<input type="hidden" name="product_id[]" value="' + product_id + '">' +
+                                                        '<input type="hidden" name="size_price_id[]" value="' + size_price_id + '">' +
+                                                        '<input type="hidden" name="branch_stock_product_id[]" value="' + branch_stock_product_id + '">' +
+                                                        '<input type="hidden" name="product_type[]" value="liquor">' +
+                                                        '<input type="hidden" name="product_mrp[]" id="product_mrp_' + size_price_id + '" value="' + product_mrp + '">' +
+                                                        '<input type="hidden" name="product_total_amount[]" id="product_total_amount_' + size_price_id + '" value="' + product_mrp + '">' +
+                                                        '<input type="hidden" name="product_price_id[]" id="product_price_id_' + size_price_id + '" value="' + product_price_id + '">' +
+                                                        '<input type="hidden" name="product_name[]" id="product_name_' + size_price_id + '" value="' + product_name + '">' +
+                                                        '<td>' + item_row + '</td>' +
+                                                        '<td class="text-center">' + product_name + '</td>' +
+                                                        '<td class="text-center">' + product_size + '</td>' +
+                                                        '<td class="text-center">' + product_mrp + '</td>' +
+                                                        '<td class="text-center"><div>' +
+                                                        '<div class="priceControl d-flex">' +
+                                                        '<button class="controls2" value="-">-</button>' +
+                                                        '<input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_' + size_price_id + '" value="1" data-max-lim="20" readonly="readonly">' +
+                                                        '<button class="controls2" value="+">+</button>' +
+                                                        '</div>' +
+                                                        '</div></td>' +
+                                                        '<td class="text-center" id="product_total_price_' + size_price_id + '">' + product_mrp + '</td>' +
+                                                        '<td><a href="javascript:;" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
+                                                        '</tr>';
+
+                                                    $("#table_cart_items_record_sec").append(html);
+                                                    total_cal()
+
+                                                }
+
+                                            } else {
+                                                toastr.error("Stock not available for this Product");
+                                            }
+                                        } else {
+                                            toastr.error("Food items not available!");
+                                        }
+
+                                    }
+                                });
+                            }
+                        }
+                    });
                 } else {
                     toastr.error("Stock not available for this Product");
                 }
-            } else {
-                toastr.error("Food items not available!");
             }
+        });
+    } else {
 
-        }
-    });
+        $.ajax({
+            url: prop.ajaxurl,
+            type: 'post',
+            data: {
+                product_id: product_id,
+                food_type: food_type,
+                action: 'get_bar_product_byId',
+                _token: prop.csrf_token
+            },
+            dataType: 'json',
+            beforeSend: function() {
+                $('#ajax_loader').fadeIn();
+            },
+            complete: function() {
+                $('#ajax_loader').fadeOut();
+            },
+            success: function(response) {
+                if (response.product_result != '') {
+                    var html = '';
+                    var item_detail = response.product_result;
+                    var product_name = '';
+                    if (item_detail.brand_name != null || item_detail.brand_name != undefined) {
+                        product_name = item_detail.brand_name;
+                    }
+                    var product_size = '';
+                    if (item_detail.size != null || item_detail.size != undefined) {
+                        product_size = item_detail.size;
+                    }
+
+
+                    var product_id = item_detail.branch_stock_product_id;
+
+                    //var product_id = item_detail.product_id;
+                    var size_price_id = item_detail.size_price_id;
+                    //var branch_stock_product_id = item_detail.branch_stock_product_id;
+
+
+
+
+                    var item_prices_length = item_detail.item_prices.length;
+                    var w_stock = item_detail.item_prices[0].w_qty;
+                    var c_stock = item_detail.item_prices[0].c_qty;
+                    var product_mrp = item_detail.item_prices[0].product_mrp;
+                    var product_price_id = item_detail.item_prices[0].price_id;
+
+                    var item_row = 0;
+                    if ($('#table_cart_items_record_sec tr').length == 0) {
+                        item_row++;
+                    } else {
+                        var max = 0;
+                        $("#table_cart_items_record_sec tr").each(function() {
+                            var value = parseInt($(this).data('id'));
+                            max = (value > max) ? value : max;
+                        });
+                        item_row = max + 1;
+                    }
+
+                    if (stock_type == 'w') {
+                        stock = w_stock;
+                    } else {
+                        stock = c_stock;
+                    }
+
+                    var ko_print_html = '';
+                    if (stock > 0) {
+                        var same_item = 0;
+
+                        var same_k_item = 0;
+                        $("#ko_print_sec div").each(function() {
+                            var ko_product_id = $(this).attr('id').split('_')[3];
+                            if (ko_product_id == product_id) {
+                                same_k_item = 1;
+
+                                var ko_product_qty = $('#ko_product_qty_' + product_id).val();
+                                var ko_item_qty = Number(ko_product_qty) + 1;
+                                $('#ko_product_qty_' + product_id).val(ko_item_qty);
+                            }
+                        });
+                        if (same_k_item == 0) {
+
+                            ko_print_html += '<div id="ko_print_product_' + product_id + '" data-id="' + item_row + '">' +
+                                '<input type="hidden" name="product_id[]" value="' + item_detail.product_id + '">' +
+                                '<input type="hidden" name="size_price_id[]" value="' + size_price_id + '">' +
+                                '<input type="hidden" name="branch_stock_product_id[]" value="' + item_detail.branch_stock_product_id + '">' +
+                                '<input type="hidden" name="product_type[]" value="Food">' +
+                                '<input type="hidden" name="product_name[]" value="' + product_name + '">' +
+                                '<input type="hidden" name="product_size[]" value="' + product_size + '">' +
+								'<input type="hidden" name="product_mrp[]" value="' + product_mrp + '">' +
+                                '<input type="hidden" name="product_qty[]" id="ko_product_qty_' + product_id + '" value="1">' +
+                                '</tr>';
+                            $("#ko_print_sec").append(ko_print_html);
+                        }
+
+
+
+
+                        $("#table_cart_items_record_sec tr").each(function() {
+                            var row_product_id = $(this).attr('id').split('_')[2];
+                            if (row_product_id == product_id) {
+                                same_item = 1;
+
+                                var qty = $('#product_qty_' + product_id).val();
+                                var item_qty = Number(qty) + 1;
+
+                                if (Number(item_qty) > Number(stock)) {
+                                    $('#product_qty_' + product_id).val(stock);
+                                    toastr.error("Entered Qty should not be greater than Stock");
+                                    return false;
+                                } else {
+                                    $('#product_qty_' + product_id).val(item_qty);
+                                    var unit_price = $("#product_mrp_" + product_id).val();
+                                    var total_selling_cost = Number(unit_price) * Number(item_qty);
+                                    var total_amount = Number(total_selling_cost)
+                                    $("#product_total_price_" + product_id).html(Number(total_amount).toFixed(2));
+                                    $("#product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
+                                }
+
+                                total_cal()
+                            }
+                        });
+
+                        if (same_item == 0) {
+                            html += '<tr id="sell_product_' + product_id + '" data-id="' + item_row + '">' +
+                                '<input type="hidden" name="product_id[]" value="' + item_detail.product_id + '">' +
+                                '<input type="hidden" name="size_price_id[]" value="' + size_price_id + '">' +
+                                '<input type="hidden" name="branch_stock_product_id[]" value="' + item_detail.branch_stock_product_id + '">' +
+                                '<input type="hidden" name="product_type[]" value="food">' +
+                                '<input type="hidden" id="product_w_stock_' + product_id + '" value="' + w_stock + '">' +
+                                '<input type="hidden" id="product_c_stock_' + product_id + '" value="' + c_stock + '">' +
+                                '<input type="hidden" name="product_mrp[]" id="product_mrp_' + product_id + '" value="' + product_mrp + '">' +
+                                '<input type="hidden" name="product_total_amount[]" id="product_total_amount_' + product_id + '" value="' + product_mrp + '">' +
+                                '<input type="hidden" name="product_price_id[]" id="product_price_id_' + product_id + '" value="' + product_price_id + '">' +
+                                '<input type="hidden" name="product_name[]" id="product_name_' + product_id + '" value="' + product_name + '">' +
+                                '<td>' + item_row + '</td>' +
+                                '<td class="text-center">' + product_name + '</td>' +
+                                '<td class="text-center">' + product_size + '</td>' +
+                                '<td class="text-center">' + product_mrp + '</td>' +
+                                '<td class="text-center"><div>' +
+                                '<div class="priceControl d-flex">' +
+                                '<button class="controls2" value="-">-</button>' +
+                                '<input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_' + product_id + '" value="1" data-max-lim="20" readonly="readonly">' +
+                                '<button class="controls2" value="+">+</button>' +
+                                '</div>' +
+                                '</div></td>' +
+                                '<td class="text-center" id="product_total_price_' + product_id + '">' + product_mrp + '</td>' +
+                                '<td><a href="javascript:;" onclick="remove_item(' + item_row + ');"><i class="fas fa-times-circle"></i></a></td>' +
+                                '</tr>';
+
+                            $("#table_cart_items_record_sec").append(html);
+                            total_cal()
+
+                        }
+
+                    } else {
+                        toastr.error("Stock not available for this Product");
+                    }
+                } else {
+                    toastr.error("Food items not available!");
+                }
+
+            }
+        });
+    }
 });
 
 $(document).on('click', '.priceControl .controls2', function() {
-	var product_id 	= $(this).siblings('.product_qty').attr('id').split('product_qty_')[1];
-	var qty 		= $('#product_qty_'+product_id).val();
-	var maxlim 		= $('#product_qty_'+product_id).attr('data-max-lim');
-	
-	if (($(this).val() == '+') && (parseInt(maxlim) > qty)) {
-		qty++;
-	} else if ($(this).val() == '-' && qty > 1) {
-		qty--;
-	}
-	$('#product_qty_'+product_id).val(qty);
-	
-	
-	 var unit_price = $("#product_mrp_" + product_id).val(); 
-	 var total_selling_cost = Number(unit_price) * Number(qty);
-     var total_amount = Number(total_selling_cost)
-     $("#product_total_price_" + product_id).html(Number(total_amount).toFixed(2));
-	 $("#product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
-	
-	total_cal()
+    var product_id = $(this).siblings('.product_qty').attr('id').split('product_qty_')[1];
+    var qty = $('#product_qty_' + product_id).val();
+    var maxlim = $('#product_qty_' + product_id).attr('data-max-lim');
+
+
+    var ko_product_qty = $('#ko_product_qty_' + product_id).val();
+
+    if ($(this).val() == '+') {
+        var ko_item_qty = Number(ko_product_qty) + 1;
+        $('#ko_product_qty_' + product_id).val(ko_item_qty);
+    } else if ($(this).val() == '-') {
+        if (ko_product_qty > 1) {
+            var ko_item_qty = Number(ko_product_qty) - 1;
+            $('#ko_product_qty_' + product_id).val(ko_item_qty);
+        } else {
+            $('#ko_print_product_' + product_id).remove();
+        }
+
+        if (qty == 1) {
+            $('#sell_product_' + product_id).remove();
+            total_cal()
+            return false;
+        }
+    }
+
+
+
+    if (($(this).val() == '+') && (parseInt(maxlim) > qty)) {
+        qty++;
+    } else if ($(this).val() == '-' && qty > 1) {
+        qty--;
+    }
+    $('#product_qty_' + product_id).val(qty);
+
+
+    var unit_price = $("#product_mrp_" + product_id).val();
+    var total_selling_cost = Number(unit_price) * Number(qty);
+    var total_amount = Number(total_selling_cost)
+    $("#product_total_price_" + product_id).html(Number(total_amount).toFixed(2));
+    $("#product_total_amount_" + product_id).val(Number(total_amount).toFixed(2));
+
+    total_cal()
 });
 
 
@@ -299,6 +569,7 @@ $(document).on('keyup', '.product_qty', function() {
 
 function remove_item(row) {
     $("#table_cart_items_record_sec").find("tr[data-id='" + row + "']").remove();
+	$("#ko_print_sec").find("div[data-id='" + row + "']").remove();
     total_cal();
 }
 
@@ -499,5 +770,68 @@ $(document).ready(function() {
 				}
 			});
 		}
+    });
+});
+
+
+$(document).on('click', '.koPrintBtn', function() {
+	 $('form#ko_print-product-form').submit();
+});
+$(document).ready(function() {
+    $("#ko_print-product-form").validate({
+        rules: {},
+        messages: {},
+        errorElement: "em",
+        errorPlacement: function(error, element) {},
+        highlight: function(element, errorClass, validClass) {},
+        unhighlight: function(element, errorClass, validClass) {},
+        submitHandler: function(form) {
+            var formData = new FormData($(form)[0]);
+            $.ajax({
+                type: "POST",
+                cache: false,
+                contentType: false,
+                processData: false,
+                url: $('#ko_print-product-form').attr('action'),
+                dataType: 'json',
+                data: formData,
+                success: function(data) {
+                    //$(".payWrap").removeClass('active');
+                    $('#ajax_loader').fadeOut();
+                    if (data.status == 1) {
+
+                        $("#ko_print_sec div").each(function() {
+                            var ko_product_id = $(this).attr('id').split('_')[3];
+                            $('#ko_product_qty_' + ko_product_id).val(0);
+                        });
+
+
+                        Swal.fire({
+                            title: 'Order successfully submitted.',
+                            icon: 'success',
+                            showDenyButton: false,
+                            showCancelButton: false,
+                            allowOutsideClick: false
+                        }).then((result) => {
+
+                            if (result.isConfirmed) {
+                                var redirect_url = prop.url + '/admin/pos/print_ko_products/download';
+                                window.open(redirect_url, "_blank");
+                                //location.reload();
+
+                            } else if (result.isDenied) {}
+                        });
+                    } else {
+                        toastr.error("KO Items not available!");
+                    }
+                },
+                beforeSend: function() {
+                    $('#ajax_loader').fadeIn();
+                },
+                complete: function() {
+                    $('#ajax_loader').fadeOut();
+                }
+            });
+        }
     });
 });
