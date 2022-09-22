@@ -1732,8 +1732,8 @@ class PurchaseOrderController extends Controller
 		if(count($invoice_product_result)>0){
 			foreach($invoice_product_result as $row){
 				$gross_total_amount+= $row['total_cost'];
-				$gross_sp_fee_amount+= $row['sp_fee'];
-				$gross_round_off_amount+= $row['round_off'];
+				$gross_sp_fee_amount+= $row['sp_fee']*$row['qty'];
+				$gross_round_off_amount+= $row['round_off']*$row['qty'];
 			}
 		}
 		
