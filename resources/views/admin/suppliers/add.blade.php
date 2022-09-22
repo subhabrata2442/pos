@@ -38,7 +38,7 @@
                     <label for="sup_code" class="form-label">Address Line 1</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_address1" name="supplier_address1" value="{{ old('supplier_address1') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_address1" name="supplier_address1" value="{{ old('supplier_address1') }}"  autocomplete="off">
                     @error('supplier_address1')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -50,7 +50,7 @@
                     <label for="sup_code" class="form-label">Address Line 2</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_address2" name="supplier_address2" value="{{ old('supplier_address2') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_address2" name="supplier_address2" value="{{ old('supplier_address2') }}"  autocomplete="off">
                     @error('supplier_address2')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -62,7 +62,7 @@
                     <label for="supplier_company_area" class="form-label">Landmark / Area</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_company_area" name="supplier_company_area" value="{{ old('supplier_company_area') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_company_area" name="supplier_company_area" value="{{ old('supplier_company_area') }}"  autocomplete="off">
                     @error('supplier_company_area')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -74,7 +74,7 @@
                     <label for="supplier_company_zipcode" class="form-label">Pin / Zip Code</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_company_zipcode" name="supplier_company_zipcode" value="{{ old('supplier_company_zipcode') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_company_zipcode" name="supplier_company_zipcode" value="{{ old('supplier_company_zipcode') }}" autocomplete="off">
                     @error('supplier_company_zipcode')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -86,7 +86,7 @@
                     <label for="supplier_country_id" class="form-label">Country</label>
                   </li>
                   <li class="vall">
-                    <select name="supplier_country_id" id="supplier_country_id" class="form-control form-inputtext" required>
+                    <select name="supplier_country_id" id="supplier_country_id" class="form-control form-inputtext">
                       <option value="">Select Country</option>
                       <option selected="" value="102">India</option>
                     </select>
@@ -103,7 +103,7 @@
                     <label class="form-label">Phone No</label>
                   </li>
                   <li class="vall">
-                    <input type="text" maxlength="100" name="supplier_company_mobile_no" id="supplier_company_mobile_no" value="" class="form-control form-inputtext" required placeholder="" >
+                    <input type="text" maxlength="100" name="supplier_company_mobile_no" id="supplier_company_mobile_no" value="" class="form-control form-inputtext" placeholder="" >
                   </li>
                 </ul>
               </div>
@@ -113,7 +113,7 @@
                     <label for="email" class="form-label">Email</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_email" name="supplier_email" value="{{ old('supplier_email') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_email" name="supplier_email" value="{{ old('supplier_email') }}" autocomplete="off">
                     @error('supplier_email')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -125,7 +125,7 @@
                     <label for="email" class="form-label">Business Type</label>
                   </li>
                   <li class="vall">
-                    <select name="supplier_business_type" id="supplier_business_type" class="form-control form-inputtext" required>
+                    <select name="supplier_business_type" id="supplier_business_type" class="form-control form-inputtext">
                       <option value="">Select Type</option>
                       <option value="registered">Registered</option>
                       <option value="unregistered">Unregistered</option>
@@ -141,7 +141,7 @@
                     <label for="supplier_gstin_no" class="form-label">GSTIN Number</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_gstin_no" name="supplier_gstin_no" value="{{ old('supplier_gstin_no') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_gstin_no" name="supplier_gstin_no" value="{{ old('supplier_gstin_no') }}" autocomplete="off">
                     @error('supplier_gstin_no')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -153,7 +153,7 @@
                     <label for="email" class="form-label">PAN Number</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_pan_no" name="supplier_pan_no" value="{{ old('supplier_pan_no') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_pan_no" name="supplier_pan_no" value="{{ old('supplier_pan_no') }}" autocomplete="off">
                     @error('supplier_pan_no')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -180,7 +180,7 @@
                     <label for="supplier_state_id" class="form-label">City</label>
                   </li>
                   <li class="vall">
-                    <input type="text" class="form-control admin-input" id="supplier_company_city" name="supplier_company_city" value="{{ old('supplier_company_city') }}" required autocomplete="off">
+                    <input type="text" class="form-control admin-input" id="supplier_company_city" name="supplier_company_city" value="{{ old('supplier_company_city') }}" autocomplete="off">
                     @error('supplier_company_city')
                     <div class="error admin-error">{{ $message }}</div>
                     @enderror </li>
@@ -292,14 +292,6 @@ $(document).ready(function() {
     $("#supplier-form").validate({
         rules: {
             supplier_company_name: "required",
-            supplier_email: "required",
-            supplier_first_name: "required",
-            supplier_last_name: "required",
-            supplier_due_days: "required",
-            supplier_due_date: "required",
-            supplier_company_address: "required",
-            supplier_company_area: "required",
-            about: "supplier_company_zipcode",
         },
         messages: {
             //promo: "Required",
