@@ -1036,7 +1036,8 @@ class ReportController extends Controller
             $data['breadcrumb'] = ['Sales', '', 'List'];
             $data['products']   = $stockProducts;
             $allStockProductArr = $allStockProduct->toArray();
-            //echo array_sum(array_column($allStockProduct->stockProduct->toArray(), 'c_qty'));die;
+            echo "<pre>";print_r(array_sum($allStockProductArr['stock_product'],'c_qty'));die();
+            //echo "<pre>";print_r($allStockProductArr[0]['stock_product']);die;
             //echo "<pre>";print_r($allStockProductArr[0]['stock_product']);die;
             //dd($all_product);
             //$data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
