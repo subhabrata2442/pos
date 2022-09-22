@@ -83,10 +83,8 @@ class SupplierController extends Controller
     {
         try {
             if ($request->isMethod('post')) {
-				
                 $validator = Validator::make($request->all(), [
                     'supplier_company_name' => 'required',
-                    
                 ]);
                 if ($validator->fails()) {
                     $errors=$validator->errors()->all();
