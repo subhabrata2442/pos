@@ -63,10 +63,11 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-        <div class="supplierDetails relative customPb">
-          <div class="" id="supplier_details_sec">
-          </div>
-          <div class="shippingNoteArea">
+          <div class="supplierDetails relative customPb">
+            <div class="" id="supplier_details_sec">
+              <h4>Warehouse Details :</h4>
+            </div>
+            <div class="shippingNoteArea">
               <div class="noteAreaInner">
                 <textarea name="shipping_note" id="shipping_note" cols="30" rows="10" placeholder="Shipping Note" style="height: 51px;"></textarea>
               </div>
@@ -90,14 +91,12 @@
                   </div>
                 </div>
               </div>
-              
-              
             </div>
-        </div>
+          </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-          <div class="supplierDetails relative pb-54"> 
-          <h4>Payment Details</h4>
+          <div class="supplierDetails relative pb-54">
+            <h4>Payment Details</h4>
             
             <!--<div class="noteAreaInner">
               <textarea name="additional_note" id="additional_note" cols="30" rows="10" placeholder="Additional Note"></textarea>
@@ -127,40 +126,33 @@
                   <input type="text" name="payment_ref_no" id="payment_ref_no" class="form-control input-1" placeholder="Ref No">
                 </li>
               </ul>
-              
             </div>
-            <div class="uploadDiv">
-              <a href="javascript:;" class="uploadBtnMd"><i class="fas fa-upload"></i> Click Here To Upload Attachment</a>
+            <div class="uploadDiv"> <a href="javascript:;" class="uploadBtnMd"><i class="fas fa-upload"></i> Click Here To Upload Attachment</a>
               <p></p>
             </div>
-            
-            
-            
-            
             @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
-              
+            
             @else
-              <div class="noteAreaInner">
-                <ul class="d-flex flex-wrap justify-content-between">
-                  <li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>
-                  <li>
-                    <button type="submit" class="btn btn-primary">Submit <i class="fas fa-paper-plane"></i></button>
-                  </li>
-                </ul>
-              </div>
-            @endif
-          </div>
+            <div class="noteAreaInner">
+              <ul class="d-flex flex-wrap justify-content-between">
+                <li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>
+                <li>
+                  <button type="submit" class="btn btn-primary">Submit <i class="fas fa-paper-plane"></i></button>
+                </li>
+              </ul>
+            </div>
+            @endif </div>
         </div>
       </div>
     </div>
   </div>
 </form>
 @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
-  <form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
-@else
-<!--style="display:none"-->
 <form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
-@endif
+@else 
+<!--style="display:none"-->
+<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data" style="display:none">
+  @endif
   <input type="hidden" name="supplier_id" id="supplier_id" value="{{$data['supplier']->id ?? ''}}">
   <input type="hidden" name="warehouse_id" id="warehouse_id">
   <input type="hidden" name="invoice_no" id="input-supplier_invoice_no" />
@@ -174,31 +166,27 @@
   <input type="hidden" name="additional_note" id="input-supplier_additional_note" />
   <input type="hidden" name="invoice_stock" id="input-invoice_stock" />
   <input type="hidden" name="invoice_stock_type" id="input-invoice_stock_type" />
-  
   <input type="hidden" name="tcs_amt" id="input-tcs_amt" />
   <input type="hidden" name="special_purpose_fee_amt" id="input-special_purpose_fee_amt" />
   <input type="hidden" name="round_off_value_amt" id="input-round_off_value_amt" />
   <input type="hidden" name="gross_total_amount" id="input-gross_total_amount" />
-  
-  
-  
   <div class="col-12 mb-3">
-    <div class="commonBox purcheseDetails vTop">
-      @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
+    <div class="commonBox purcheseDetails vTop"> @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
       
       @else
-        <div class="arrowUpDown open_supplier_form"> <span class="arrowUp"><i class="fas fa-arrow-alt-circle-up"></i></span> </div>
+      <div class="arrowUpDown open_supplier_form"> <span class="arrowUp"><i class="fas fa-arrow-alt-circle-up"></i></span> </div>
       @endif
-     
       <div class="table-responsive">
         <table class="table table-bordered">
           <tbody>
             <tr>
-              <td><h5>Supplier Name</h5><span class="d-block" id="supplier_company_name"></span></td>
-              <td><h5>Purchase Date</h5><span class="d-block" id="supplier_invoice_purchase_date"></span></td>
-              <td><h5>Inward Date</h5><span class="d-block" id="supplier_invoice_inward_date"></span></td>
-              <td rowspan="2" class="p-0">
-                <table class="table mb-0 tableBorderless">
+              <td><h5>Supplier Name</h5>
+                <span class="d-block" id="supplier_company_name"></span></td>
+              <td><h5>Purchase Date</h5>
+                <span class="d-block" id="supplier_invoice_purchase_date"></span></td>
+              <td><h5>Inward Date</h5>
+                <span class="d-block" id="supplier_invoice_inward_date"></span></td>
+              <td rowspan="2" class="p-0"><table class="table mb-0 tableBorderless">
                   <tr>
                     <td><strong>Total Cost</strong></td>
                     <td class="text-right"><span id="sub_total">0.00</span></td>
@@ -223,13 +211,15 @@
                     <td class="font-18"><strong>Total</strong></td>
                     <td class="text-right font-18"><strong id="gross_total_amount">0.00</strong></td>
                   </tr>
-                </table>
-              </td>
+                </table></td>
             </tr>
             <tr>
-              <td><h5>Invoice Number</h5><span class="d-block" id="supplier_invoice_no"></span></td>
-              <td><h5>Transport Pass No.</h5><span class="d-block" id="supplier_transport_pass_no"></span></td>
-              <td><h5>Quantity :</h5><span id="qty_total">0</span></td>
+              <td><h5>Invoice Number</h5>
+                <span class="d-block" id="supplier_invoice_no"></span></td>
+              <td><h5>Transport Pass No.</h5>
+                <span class="d-block" id="supplier_transport_pass_no"></span></td>
+              <td><h5>Quantity :</h5>
+                <span id="qty_total">0</span></td>
             </tr>
           </tbody>
         </table>
@@ -237,7 +227,7 @@
     </div>
   </div>
   <div class="col-12">
-    <div class="commonBox">
+    <div class="commonBox"> 
       <!--<div class="enterBarcode mb-3">
         <div class="row">
           <div class="col">
@@ -276,7 +266,6 @@
                 <th>Round Off</th>
                 <th>SP Fee</th>
                 <th>Offer Price</th>
-                
                 <th>MRP</th>
                 <th>Total Cost</th>
               </tr>
@@ -289,23 +278,24 @@
     </div>
   </div>
   @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
-    {{-- <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
-      <div class="commonBox">
-        <div class="form-group relative formBox m-0">
-          <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Update <i class="fas fa-paper-plane ml-2"></i></button>
-        </div>
-      </div>
-    </div> --}}
-  @else
-    <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
-      <div class="commonBox">
-        <div class="form-group relative formBox m-0">
-          <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Save <i class="fas fa-paper-plane ml-2"></i></button>
-        </div>
+  {{--
+  <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+    <div class="commonBox">
+      <div class="form-group relative formBox m-0">
+        <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Update <i class="fas fa-paper-plane ml-2"></i></button>
       </div>
     </div>
+  </div>
+  --}}
+  @else
+  <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+    <div class="commonBox">
+      <div class="form-group relative formBox m-0">
+        <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Save <i class="fas fa-paper-plane ml-2"></i></button>
+      </div>
+    </div>
+  </div>
   @endif
-  
 </form>
 <div class="modal fade" id="paymentDetailModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -417,8 +407,8 @@ $(document).on('change','#upload_invoice_pdf',function(){
 	$("#invoice_upload-form").submit()
 });
 </script> 
-@if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
-  <script>
+@if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit') 
+<script>
     $(document).ready(function() {
       
       var id = "{{$data['inward_stock_id']}}";
@@ -605,6 +595,6 @@ $(document).on('change','#upload_invoice_pdf',function(){
         }
       });
     });
-  </script>
+  </script> 
 @endif
 @endsection 
