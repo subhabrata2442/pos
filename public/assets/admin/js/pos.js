@@ -686,7 +686,9 @@ $(document).ready(function() {
                     });
                 }
             });
-        }
+        }else{
+			$("#product_search_result").empty();
+		}
     });
 });
 

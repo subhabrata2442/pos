@@ -225,9 +225,9 @@ $(document).ready(function() {
                             '<td class="number greenBg" contenteditable="true" id="bl_' + product_id + '">' + item_bl + '</td>' +
                             '<td class="number greenBg" contenteditable="true" id="lpl_' + product_id + '">' + item_lpl + '</td>' +
                             '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="unit_cost_' + product_id + '"></td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="retailer_margin_' + product_id + '"></td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="round_off_' + product_id + '"></td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="sp_fee_' + product_id + '"></td>' +
+                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="retailer_margin_' + product_id + '">'+retailer_margin+'</td>' +
+                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="round_off_' + product_id + '">'+round_off+'</td>' +
+                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="sp_fee_' + product_id + '">'+sp_fee+'</td>' +
                             '<td onkeypress="return check_character(event);" class="number greenBg p_offer_price" contenteditable="true" id="offer_price_' + product_id + '"></td>' +
                             '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
                             '<td id="total_cost_' + product_id + '">' + total_cost + '</td>' +

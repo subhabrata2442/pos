@@ -86,11 +86,7 @@ class SupplierController extends Controller
 				
                 $validator = Validator::make($request->all(), [
                     'supplier_company_name' => 'required',
-                    'supplier_email' => 'required',
-                    'supplier_owner_name' => 'required',
-                    'supplier_pan_no' => 'required',
-                    'supplier_company_city' => 'required',
-                    'supplier_address1' => 'required',
+                    
                 ]);
                 if ($validator->fails()) {
                     $errors=$validator->errors()->all();

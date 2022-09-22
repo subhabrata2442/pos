@@ -19,11 +19,11 @@
           </ul>
         </div>
         <span><i class="fas fa-barcode"></i></span> </div>
-      <div class="selectSale">
+      <!--<div class="selectSale">
         <label class="switch">
           <input type="checkbox" id="sell_type">
           <span class="slider round"></span> <span class="absolute-no">Return</span> </label>
-      </div>
+      </div>-->
     </div>
     <form method="post" action="{{ route('admin.pos.create') }}" id="pos_create_order-form" novalidate enctype="multipart/form-data">
       @csrf
