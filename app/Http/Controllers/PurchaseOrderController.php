@@ -1642,6 +1642,20 @@ class PurchaseOrderController extends Controller
 								if($in_cases!=''){
 									$in_cases=round(trim($in_cases));
 								}
+								$rrs_amt			= $retailer_margin+$round_off+$sp_fee;
+								$retail_item_val	= $product_mrp-$rrs_amt;
+								$total_cost			= $retail_item_val*$total_qty;
+								$unit_mrp			= $product_mrp-$retailer_margin;
+								
+								
+								//echo $total_cases.'-'.$item_bottle_case_qty.'-'.$loose_qty;exit;
+								
+								//(($total_cases*$item_bottle_case_qty)+$loose_qty)
+								
+								
+								
+								
+								
 								
 								$invoice_product_result[]=array(
 									'product_id'		=> $product_id,
@@ -1668,8 +1682,15 @@ class PurchaseOrderController extends Controller
 									'lpl'				=> trim($brand_liquor_data[$index_6]),
 									'product_mrp'		=> trim($product_mrp),
 									'unit_cost'			=> trim($unit_mrp),
-									'total_cost'		=> trim($brand_liquor_data[$index_7])
+									'rrs_amt'			=> trim($rrs_amt),
+									'retail_item_val'	=> trim($retail_item_val),
+									'total_cost'		=> trim($total_cost)
 								);
+								
+								
+								//echo '<pre>';print_r($invoice_product_result);exit;
+								
+								
 							}else{
 								$product_slugs[]=$product_slug;
 								$total_cost	= trim($brand_liquor_data[$index_7]);
@@ -1703,7 +1724,25 @@ class PurchaseOrderController extends Controller
 			}
 		}
 		
+		
+		
+		$gross_total_amount=0;
+		$gross_sp_fee_amount=0;
+		$gross_round_off_amount=0;
+		if(count($invoice_product_result)>0){
+			foreach($invoice_product_result as $row){
+				$gross_total_amount+= $row['total_cost'];
+				$gross_sp_fee_amount+= $row['sp_fee'];
+				$gross_round_off_amount+= $row['round_off'];
+			}
+		}
+		
+		$tcs_amt = ($gross_total_amount / 100) * 1;
+		$total_amount = ($gross_total_amount + $tcs_amt + $gross_sp_fee_amount + $gross_round_off_amount );
+		
+		
 		/*echo '<pre>';
+		print_r($gross_total_amount);
 		print_r($product_slugs);
 		print_r($invoice_product_result);
 		print_r($new_product_result);
@@ -1720,6 +1759,12 @@ class PurchaseOrderController extends Controller
 			$return_data['tp_no']			= $tp_no;
 			$return_data['invoice_no']		= $invoice_no;
 			$return_data['invoice_date']	= $invoice_date;
+			$return_data['tcs_amt']			= $tcs_amt;
+			
+			$return_data['gross_total_amount']		= $gross_total_amount;
+			$return_data['gross_sp_fee_amount']		= $gross_sp_fee_amount;
+			$return_data['gross_round_off_amount']	= $gross_round_off_amount;
+			$return_data['total_amount']			= round($total_amount);
 			
 			
 			

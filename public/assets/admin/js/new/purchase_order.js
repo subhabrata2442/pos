@@ -59,6 +59,23 @@ $(document).ready(function() {
 
                     var invoice_no = json.invoice_no;
                     $('#invoice_no').val(invoice_no);
+					
+					var tcs_amt = json.tcs_amt;
+                    $('#tcs_amt').html('₹'+tcs_amt.toFixed(decimalpoints));
+					
+					var special_purpose_fee_amt = json.gross_sp_fee_amount;
+                    $('#special_purpose_fee_amt').html('₹'+special_purpose_fee_amt.toFixed(decimalpoints));
+					
+					var round_off_value_amt = json.gross_round_off_amount;
+                    $('#round_off_value_amt').html('₹'+round_off_value_amt.toFixed(decimalpoints));
+					
+					var gross_total_amount = json.total_amount;
+                    $('#gross_total_amount').html('₹'+gross_total_amount.toFixed(decimalpoints));
+					
+					$('#input-tcs_amt').val(tcs_amt);
+					$('#input-special_purpose_fee_amt').val(special_purpose_fee_amt);
+					$('#input-round_off_value_amt').val(round_off_value_amt);
+					$('#input-gross_total_amount').val(gross_total_amount);
 
 
 
@@ -192,6 +209,9 @@ $(document).ready(function() {
                         var bottle_per_case = item_detail.bottle_case;
                         var loose_qty = item_detail.loose_qty;
                         var in_case = item_detail.in_cases;
+						var unit_cost = item_detail.unit_cost;
+						var rrs_amt = item_detail.rrs_amt;
+						var retail_item_amt = item_detail.retail_item_val;
 
                         var is_new = 'new_item';
                         if (item_detail.product_id > 0) {
@@ -208,28 +228,31 @@ $(document).ready(function() {
                             '<input type="hidden" name="item_scan_time_' + product_id + '" id="item_scan_time_' + product_id + '" value="' + scan_time + '">' +
                             '<input type="hidden" name="inward_item_detail_id_' + product_id + '" id="inward_item_detail_id_' + product_id + '" value="">' +
                             '<input type="hidden" name="stock_transfers_detail_id_' + product_id + '" id="stock_transfers_detail_id_' + product_id + '" value="">' +
-                            '<td><a href="javascript:;" onclick="remove(' + item_row + ');"><i class="fas fa-times"></i></a></td>' +
+							'<input type="hidden" name="rrs_amt_' + product_id + '" id="rrs_amt_' + product_id + '" value="'+rrs_amt+'">' +
+							
+                            '<td></td>' +
                             '<td id="product_barcode_' + product_id + '">' + product_barcode + '</td>' +
                             '<td id="product_case_qty_' + product_id + '">' + bottle_case + '</td>' +
                             '<td id="product_bottle_case_' + product_id + '">' + bottle_per_case + '</td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="product_loose_qty_' + product_id + '">' + loose_qty + '</td>' +
+                            '<td onkeypress="return check_character(event);" class="number" id="product_loose_qty_' + product_id + '">' + loose_qty + '</td>' +
 
-                            '<td onkeypress="return check_character(event);" class="number greenBg p_product_qty" contenteditable="true" id="product_qty_' + product_id + '">' + qty + '</td>' +
+                            '<td onkeypress="return check_character(event);" class="number p_product_qty" id="product_qty_' + product_id + '">' + qty + '</td>' +
                             '<td onkeypress="return check_character(event);" class="number greenBg p_free_qty" contenteditable="true" style="color: black;" id="free_qty_' + product_id + '">0</td>' +
                             '<td>' + item_category + '</td>' +
                             '<td>' + item_sub_category + '</td>' +
                             '<td><a id="inwardproduct_popup_' + product_id + '"><span class="informative" id="brand_name_' + product_id + '">' + item_brand_name + '</span></a></td>' +
                             '<td contenteditable="true" id="batch_no_' + product_id + '">' + item_batch_no + '</td>' +
                             '<td id="measure_' + product_id + '">' + item_measure + '</td>' +
-                            '<td class="number greenBg" contenteditable="true" id="strength_' + product_id + '">' + strength + '</td>' +
-                            '<td class="number greenBg" contenteditable="true" id="bl_' + product_id + '">' + item_bl + '</td>' +
-                            '<td class="number greenBg" contenteditable="true" id="lpl_' + product_id + '">' + item_lpl + '</td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="unit_cost_' + product_id + '"></td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="retailer_margin_' + product_id + '">'+retailer_margin+'</td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="round_off_' + product_id + '">'+round_off+'</td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="sp_fee_' + product_id + '">'+sp_fee+'</td>' +
+                            '<td class="number" id="strength_' + product_id + '">' + strength + '</td>' +
+                            '<td class="number" contenteditable="true" id="bl_' + product_id + '">' + item_bl + '</td>' +
+                            '<td class="number" contenteditable="true" id="lpl_' + product_id + '">' + item_lpl + '</td>' +
+                            '<td onkeypress="return check_character(event);" class="number" id="unit_cost_' + product_id + '">'+unit_cost+'</td>' +
+							'<td onkeypress="return check_character(event);" class="number" id="retail_item_amt_' + product_id + '">'+retail_item_amt+'</td>' +
+                            '<td onkeypress="return check_character(event);" class="number" id="retailer_margin_' + product_id + '">'+retailer_margin+'</td>' +
+                            '<td onkeypress="return check_character(event);" class="number" id="round_off_' + product_id + '">'+round_off+'</td>' +
+                            '<td onkeypress="return check_character(event);" class="number" id="sp_fee_' + product_id + '">'+sp_fee+'</td>' +
                             '<td onkeypress="return check_character(event);" class="number greenBg p_offer_price" contenteditable="true" id="offer_price_' + product_id + '"></td>' +
-                            '<td onkeypress="return check_character(event);" class="number greenBg" contenteditable="true" id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
+                            '<td onkeypress="return check_character(event);" class="number" id="product_mrp_' + product_id + '">' + product_mrp + '</td>' +
                             '<td id="total_cost_' + product_id + '">' + total_cost + '</td>' +
                             '</tr>';
                     }
@@ -909,6 +932,11 @@ $(document).on('click', '#inwardStockSubmitBtm', function() {
     inward_stock_info['payment_ref_no'] = $("#payment_ref_no").val();
     inward_stock_info['invoice_stock'] = $("#input-invoice_stock").val();
     inward_stock_info['invoice_stock_type'] = $("#input-invoice_stock_type").val();
+	
+	inward_stock_info['tcs_amt'] = $("#input-tcs_amt").val();
+	inward_stock_info['special_purpose_fee_amt'] = $("#input-special_purpose_fee_amt").val();
+	inward_stock_info['round_off_value_amt'] = $("#input-round_off_value_amt").val();
+	inward_stock_info['total_amount'] = $("#input-gross_total_amount").val();
 
 
 

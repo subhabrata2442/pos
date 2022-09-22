@@ -847,8 +847,6 @@ class AjaxController extends Controller {
 	public function ajaxpost_add_inward_stock($request) {
 		$inward_stock	= $request->inward_stock;
 		
-		//print_r($inward_stock);exit;
-		
 		$purchaseStockData=array(
 			'supplier_id'  		=> $inward_stock['supplier_id'],
 			'warehouse_id'  	=> $inward_stock['warehouse_id'],
@@ -865,12 +863,16 @@ class AjaxController extends Controller {
 			//'due_days'  		=> isset($inward_stock['due_days'])?$inward_stock['due_days']:'',
 			//'due_date'  		=> isset($inward_stock['due_date'])?$inward_stock['due_date']:'',
 			'total_qty'  		=> $inward_stock['total_qty'],
-			'gross_amount'  	=> $inward_stock['gross_amount'],
+			'gross_amount'  	=> $inward_stock['sub_total'],
 			'tax_amount'  		=> $inward_stock['tax_amount'],
 			'sub_total'  		=> $inward_stock['sub_total'],
 			'shipping_note'  	=> $inward_stock['shipping_note'],
 			'additional_note'  	=> $inward_stock['additional_note'],
-			'created_at'		=> date('Y-m-d')	
+			'tcs_amt'  			=> $inward_stock['tcs_amt'],
+			's_p_fee_amt'  		=> $inward_stock['special_purpose_fee_amt'],
+			'round_off_amt'  	=> $inward_stock['round_off_value_amt'],
+			'total_amount'  	=> $inward_stock['total_amount'],
+			'created_at'		=> date('Y-m-d')
 		);
 		
 		//print_r($purchaseStockData);exit;
@@ -1191,6 +1193,8 @@ class AjaxController extends Controller {
 						'round_off'  				=> $inward_stock['product_detail'][$i]['round_off'],
 						'sp_fee'  					=> $inward_stock['product_detail'][$i]['sp_fee'],
 						'batch_no'  				=> $inward_stock['product_detail'][$i]['batch_no'],
+						'unit_cost'  				=> $inward_stock['product_detail'][$i]['unit_cost'],
+						'exc_unit_cost'  			=> $inward_stock['product_detail'][$i]['retail_item_amt'],	
 						'base_price'  				=> isset($inward_stock['product_detail'][$i]['base_price'])?$inward_stock['product_detail'][$i]['base_price']:0,
 						'base_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['base_discount_percent'])?$inward_stock['product_detail'][$i]['base_discount_percent']:0,
 						'base_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['base_discount_amount'])?$inward_stock['product_detail'][$i]['base_discount_amount']:0,

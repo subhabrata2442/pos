@@ -38,7 +38,7 @@
               <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Purchase Date</li>
                 <li class="invAreaVal">
-                  <input type="date" name="purchase_date" id="purchase_date" class="form-control input-1" required="required">
+                  <input type="date" name="purchase_date" id="purchase_date" class="form-control input-1">
                 </li>
               </ul>
               <ul class="d-flex align-items-center">
@@ -63,80 +63,37 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-        <div class="supplierDetails relative customPb">
-          <div class="" id="supplier_details_sec">
+          <div class="supplierDetails" id="supplier_details_sec">
+            <h4>Warehouse Details :</h4>
+            <p> Contact : <br>
+              Email : <br>
+            </p>
           </div>
-          <div class="shippingNoteArea">
-              <div class="noteAreaInner">
-                <textarea name="shipping_note" id="shipping_note" cols="30" rows="10" placeholder="Shipping Note" style="height: 51px;"></textarea>
-              </div>
-              <div class="row">
-                <div class="col-6">
-                  <div class="noteAreaInner">
-                    <select class="form-control custom-select form-control-select" id="invoice_stock" required="required">
-                      <option value="">Select Stock</option>
-                      <option value="counter">Counter Stock</option>
-                      <option value="bar">Bar Stock</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="col-6">
-                  <div class="noteAreaInner">
-                    <select class="form-control custom-select form-control-select" id="invoice_stock_type" required="required">
-                      <option value="">Select Stock Type</option>
-                      <option value="warehouse">Warehouse</option>
-                      <option value="counter">counter</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-              
-              
-            </div>
-        </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-          <div class="supplierDetails relative pb-54"> 
-          <h4>Payment Details</h4>
-            
-            <!--<div class="noteAreaInner">
+          <div class="noteArea"> 
+            <div class="noteAreaInner">
+              <textarea name="shipping_note" id="shipping_note" cols="30" rows="10" placeholder="Shipping Note" style="height: 51px;"></textarea>
+            </div>
+            <div class="noteAreaInner">
               <textarea name="additional_note" id="additional_note" cols="30" rows="10" placeholder="Additional Note"></textarea>
-            </div>-->
-            <div class="invArea mb-3">
-              <ul class="d-flex align-items-center">
-                <li class="invAreaInf">Payment Mode</li>
-                <li class="invAreaVal">
-                  <select class="form-control custom-select form-control-select" id="payment_method" name="payment_method" required="required">
-                    <option value="">Select payment method</option>
-                    <option value="ocr">Credit/Debit Card</option>
-                    <option value="cheque">Cheque</option>
-                    <option value="net_banking">Net Banking</option>
-                    <option value="cash">Cash</option>
-                  </select>
-                </li>
-              </ul>
-              <ul class="d-flex align-items-center">
-                <li class="invAreaInf">Payment Date</li>
-                <li class="invAreaVal">
-                  <input type="date" name="payment_date" id="payment_date" class="form-control input-1" required="required">
-                </li>
-              </ul>
-              <ul class="d-flex align-items-center">
-                <li class="invAreaInf">Reference No</li>
-                <li class="invAreaVal">
-                  <input type="text" name="payment_ref_no" id="payment_ref_no" class="form-control input-1" placeholder="Ref No">
-                </li>
-              </ul>
-              
             </div>
-            <div class="uploadDiv">
-              <a href="javascript:;" class="uploadBtnMd"><i class="fas fa-upload"></i> Click Here To Upload Attachment</a>
-              <p></p>
+            <div class="noteAreaInner">
+              <select class="form-control custom-select form-control-select" id="invoice_stock" required="required">
+                <option value="">Select Stock</option>
+                <option value="counter">Counter Stock</option>
+                <option value="bar">Bar Stock</option>
+              </select>
+            </div>
+            <div class="noteAreaInner">
+              <select class="form-control custom-select form-control-select" id="invoice_stock_type" required="required">
+                <option value="">Select Stock Type</option>
+                <option value="warehouse">Warehouse</option>
+                <option value="counter">counter</option>
+              </select>
             </div>
             
-            
-            
-            
+            <!--<div class="noteAreaInner"><a href="javascript:;" class="downloadTemplate"><i class="fas fa-download"></i> Download Inward Template</a></div>-->
             @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
               
             @else
@@ -183,7 +140,7 @@
   
   
   <div class="col-12 mb-3">
-    <div class="commonBox purcheseDetails vTop">
+    <div class="commonBox purcheseDetails">
       @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
       
       @else
@@ -194,42 +151,38 @@
         <table class="table table-bordered">
           <tbody>
             <tr>
-              <td><h5>Supplier Name</h5><span class="d-block" id="supplier_company_name"></span></td>
-              <td><h5>Purchase Date</h5><span class="d-block" id="supplier_invoice_purchase_date"></span></td>
-              <td><h5>Inward Date</h5><span class="d-block" id="supplier_invoice_inward_date"></span></td>
-              <td rowspan="2" class="p-0">
-                <table class="table mb-0 tableBorderless">
-                  <tr>
-                    <td><strong>Total Cost</strong></td>
-                    <td class="text-right"><span id="sub_total">0.00</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>T.C.S (1%) :</strong></td>
-                    <td class="text-right"><span id="tcs_amt">0.00</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Special Purpose Fee :</strong></td>
-                    <td class="text-right"><span id="special_purpose_fee_amt">0.00</span></td>
-                  </tr>
-                  <tr>
-                    <td><strong>Round off Value :</strong><span class="d-block text-left mt-0"><small>(To be remitted by Govermemt)</small></span></td>
-                    <td class="text-right"><span id="round_off_value_amt">0.00</span></td>
-                  </tr>
-                  <!--<tr>
-                    <td><strong>Round off :</strong></td>
-                      <td class="text-right">0.22</td>
-                  </tr>-->
-                  <tr>
-                    <td class="font-18"><strong>Total</strong></td>
-                    <td class="text-right font-18"><strong id="gross_total_amount">0.00</strong></td>
-                  </tr>
-                </table>
-              </td>
+              <td>Supplier Name <span class="d-block" id="supplier_company_name"></span></td>
+              <td>Purchase Date<span class="d-block" id="supplier_invoice_purchase_date"></span></td>
+              <td>Inward Date <span class="d-block" id="supplier_invoice_inward_date"></span></td>
+              <td><div class="row noteAreaInner">
+                  <div class="col-6">
+                    <select class="form-control custom-select form-control-select" id="payment_method" name="payment_method">
+                      <option value="">Select payment method</option>
+                      <option value="ocr">Credit/Debit Card</option>
+                      <option value="cheque">Cheque</option>
+                      <option value="net_banking">Net Banking</option>
+                      <option value="cash">Cash</option>
+                    </select>
+                  </div>
+                  <div class="col-6">
+                    <input type="date" name="payment_date" id="payment_date" class="form-control input-1">
+                  </div>
+                </div>
+                <div class="noteAreaInner m-0">
+                  <input type="text" name="payment_ref_no" id="payment_ref_no" class="form-control input-1" placeholder="Ref No">
+                </div></td>
             </tr>
             <tr>
-              <td><h5>Invoice Number</h5><span class="d-block" id="supplier_invoice_no"></span></td>
-              <td><h5>Transport Pass No.</h5><span class="d-block" id="supplier_transport_pass_no"></span></td>
-              <td><h5>Quantity :</h5><span id="qty_total">0</span></td>
+              <td>Invoice Number<span class="d-block" id="supplier_invoice_no"></span></td>
+              <td>Transport Pass No.<span class="d-block" id="supplier_transport_pass_no"></span></td>
+              <td>Quantity : <span id="qty_total">0</span></td>
+              <td>SubTotal Price : <span id="sub_total"></span></td>
+            </tr>
+            <tr>
+              <td>T.C.S.<span class="d-block" id="tcs_amt">0</span></td>
+              <td>Special Purpose Fee :<span class="d-block" id="special_purpose_fee_amt">0</span></td>
+              <td>Round Off value (to be remitted to Govt.)<span id="round_off_value_amt">0</span></td>
+              <td>Total Price : <span id="gross_total_amount"></span></td>
             </tr>
           </tbody>
         </table>
