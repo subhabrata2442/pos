@@ -10,6 +10,8 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\WaiterController;
 use App\Http\Controllers\ManageTableController;
+use App\Http\Controllers\PosController;
+
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -70,8 +72,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::match(['GET'], '/pos_payment_method', [PurchaseOrderController::class, 'pos_payment_method'])->name('pos_payment_method');
 		
 		
-		Route::match(['GET'], '/create_order', [PurchaseOrderController::class, 'pos_create'])->name('pos_create');
-		Route::match(['POST'], '/create', [PurchaseOrderController::class, 'create'])->name('create');
+		Route::match(['GET'], '/create_order', [PosController::class, 'pos_create'])->name('pos_create');
+		Route::match(['POST'], '/create', [PosController::class, 'create'])->name('create');
 		
 		Route::match(['GET'], '/bar_dine_in_table_booking', [PurchaseOrderController::class, 'bar_dine_in_table_booking'])->name('bar_dine_in_table_booking');
 		Route::match(['GET'], '/bar_dine_in_table_booking/create_order/{id}', [PurchaseOrderController::class, 'bar_dine_in_table_booking_create_order'])->name('bar_dine_in_table_booking_create_order');

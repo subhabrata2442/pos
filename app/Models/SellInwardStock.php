@@ -24,5 +24,12 @@ class SellInwardStock extends Model
     public function customer(){
         return $this->hasOne(Customer::class,'id','customer_id');
     }
+	
+	public function top_selling_products($branch_id){
+		print_r($branch_id);exit;
+	}
+	
+	
+	
 
 }
