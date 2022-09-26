@@ -351,7 +351,7 @@ td.wdel:hover a i {
     display: table-cell;
     vertical-align: middle;
     font-size: .8vw;
-    height: 6vw;
+    height: 8.55vw;
     width: 100%;
     transition: all ease-in-out .4s;
     border-radius: 6px;
@@ -426,7 +426,7 @@ td.wdel:hover a i {
     display: block;
     color: #ffffff;
     margin: 0 auto 5px;
-    font-size: 1.5vw;
+    font-size: 2.5vw;
 }
 
 .sidebar-widget ul li.payPrint a {
@@ -1138,6 +1138,7 @@ span .loader {
     font-size: .94vw;
     color: #3c3c3c;
     font-weight: bold;
+    margin: .7vw 0;
 }
 
 .customerDetailsMid ul li a {
@@ -1212,7 +1213,7 @@ p {
 
 .tableFixHead {
     overflow: auto;
-    height: 20.19vw;
+    height: 29.19vw;
     margin-bottom: 1vw;
     border: #e1e1e1 1px solid;
     border-radius: 6px;

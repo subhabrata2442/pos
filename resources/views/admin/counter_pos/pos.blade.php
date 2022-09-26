@@ -163,7 +163,7 @@
         <li class="col-3"><a href="javascript:;"><span><i class="fas fa-wallet"></i></span>Reset Bill</a></li>
         <li class="col-3"><a href="javascript:;"><span><i class="fas fa-luggage-cart"></i></span>Today Sale</a></li>
         <li class="payPrint col-6"><a href="javascript:;" class="payBtn"><span><i class="fas fa-money-check"></i></span>pay</a></li>
-        <li class="payPrint col-6"><a href="{{ route('admin.pos.print_invoice') }}" target="_blank"><span><i class="fas fa-print"></i></span>Print</a></li>
+        <li class="payPrint col-6"><a href="javascript:;" id="print_off_counter_bill"><span><i class="fas fa-print"></i></span>Print</a></li>
       </ul>
     </div>
   </div>
@@ -677,6 +677,9 @@
     </div>
   </div>
 </section>
+
+<iframe src="" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
+
 @endsection
 
 @section('scripts') 

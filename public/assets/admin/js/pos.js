@@ -1,4 +1,36 @@
 $(document).ready(function() {
+	$("#search_product").focus();
+});
+
+$(document).on('click', '#print_off_counter_bill', function() {
+    $.ajax({
+        url: base_url + '/admin/pos/print_off_counter_invoice',
+        type: 'get',
+        data: {
+            _token: prop.csrf_token
+        },
+        dataType: 'json',
+        success: function(response) {
+            if (response.success == '1') {
+                $('#off_counter_invoice-frame').attr('src', response.invoice_url);
+                setTimeout(function() {
+                    print()
+                }, 500);
+            } else {
+                toastr.error("Something went wrong. Please try later.");
+            }
+        }
+    });
+});
+
+function print() {
+	var frame = document.getElementById('off_counter_invoice-frame');
+	frame.contentWindow.focus();
+	frame.contentWindow.print();
+}
+
+
+$(document).ready(function() {
     $(".payBtn").on('click', function(e) {
         $('.payWrapLeft').show();
         $('.payWrapRight').removeClass('tabMenuHideWrapRight');

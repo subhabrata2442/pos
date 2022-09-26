@@ -146,6 +146,19 @@ class PurchaseOrderController extends Controller
 			$data['total_discount_amount']	= number_format($total_discount_amount,2);
 			$data['payment_method'] 	= 'Cash';
 			$pdf = PDF::loadView('admin.pdf.invoice', $data);
+			
+			/*$pdf = PDF::loadView('admin.pdf.invoice', 
+        $data, 
+        [], 
+        [ 
+          'title' => 'Certificate', 
+          'format' => 'A4-L',
+          'orientation' => 'L'
+        ]);*/
+			
+			//$customPaper = array(0,0,567.00,283.80);
+			$pdf = PDF::loadView('admin.pdf.invoice', $data)->setPaper($customPaper, 'landscape');
+			
 			return $pdf->stream($invoice_no.'-invoice.pdf');
 			//return $pdf->download($invoice_no.'-invoice.pdf');
 			

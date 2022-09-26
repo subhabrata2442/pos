@@ -67,19 +67,23 @@ class ProductController extends Controller
 			$j = 0;
 			$brand_data=[];
 			foreach ($importData_arr as $importData) {
-				$category				= $importData[0];
-				$type 					= $importData[1];
-				$size 					= $importData[3];
-				$strength				= $importData[4];
-				$retailer_margin 		= $importData[5];
-				$unit_price				= $importData[6];
-				$special_purpose_fee	= $importData[7];
-				$mrp					= $importData[8];
-				$unit_qty				= $importData[9];
+				$barcode1				= $importData[0];
+				$barcode2				= $importData[1];
+				$barcode3				= $importData[2];
+				$brand_code				= $importData[3];
+				$category				= $importData[4];
+				$type 					= $importData[5];
+				$brand_name 			= $importData[6];
+				$size 					= $importData[7];
+				$strength				= $importData[8];
+				$retailer_margin 		= $importData[9];
+				$unit_price				= $importData[10];
+				$special_purpose_fee	= $importData[11];
+				$mrp					= $importData[12];
+				$unit_qty				= $importData[13];
 				
 				
 				if($category!=''){
-					$brand_name		= trim($importData[2]);
 					$brand_slug 	= $this->create_slug($brand_name);
 					
 					$category_title=trim($category);
@@ -100,13 +104,16 @@ class ProductController extends Controller
 					if(count($size_result)>0){
 						$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
 					}else{
+						$size_arr=explode(' ',$size);
 						$feature_data=array(
 							'name'  		=> $size,
+							'ml'  			=> isset($size_arr[0])?trim($size_arr[0]):0,
 							'created_at'	=> date('Y-m-d')
 						);
 						$feature=Size::create($feature_data);
 						$size_id=$feature->id;
 					}
+					
 					
 					$type_result=Subcategory::where('name',$type)->where('food_type',1)->get();
 					if(count($type_result)>0){
@@ -121,6 +128,7 @@ class ProductController extends Controller
 						$subcategory_id=$feature->id;
 					}
 					
+					
 					$brand_result=Brand::where('slug',$brand_slug)->get();
 					if(count($brand_result)>0){
 						$brand_id=isset($brand_result[0]->id)?$brand_result[0]->id:0;
@@ -134,30 +142,45 @@ class ProductController extends Controller
 						$brand_id=$feature->id;
 					}
 					
-					
 					$product_result=Product::where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
-
+					
+	
 					$n=Product::count();
 					$product_barcode=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
 					
+					if($barcode1!=''){
+						$product_barcode=$barcode1;
+					}
+					
 					if(count($product_result)>0){
 						$product_id=$product_result[0]->id;
+						$product_data=array(
+							'product_barcode'	=> $product_barcode,
+							'barcode2'			=> $barcode2,
+							'barcode3'			=> $barcode3,
+							'category_id' 		=> $category_id,
+							'brand_id' 			=> $brand_id,
+							'subcategory_id' 	=> $subcategory_id	
+						);
+						Product::where('id', $product_id)->update($product_data);
+							
 					}else{
 						$product = Product::create([
 							'product_name' 		=> $brand_name,
 							'slug' 				=> $brand_slug,	
 							'product_barcode'	=> $product_barcode,
+							'barcode2'			=> $barcode2,
+							'barcode3'			=> $barcode3,
 							'default_qty' 		=> 1,
-							//'cost_rate' 		=> $mrp,
-							//'offer_price' 	=> $mrp,
-							//'product_mrp' 	=> $mrp,
 							'category_id' 		=> $category_id,
 							'brand_id' 			=> $brand_id,
 							'subcategory_id' 	=> $subcategory_id
 						]);
 						$product_id=$product->id;
 					}
+					
 					$product_size_result=ProductRelationshipSize::where('product_id',$product_id)->where('size_id',$size_id)->get();
+					//echo '<pre>';print_r($product_size_result);exit;
 					if(count($product_size_result)>0){
 						$size_cost_data=array(
 							'cost_rate'  			=> $mrp,
@@ -168,9 +191,10 @@ class ProductController extends Controller
 							'special_purpose_fee'  	=> $special_purpose_fee,
 							'free_discount_percent' => 0,
 							'free_discount_amount'  => 0,
-							//'created_at'			=> date('Y-m-d')
+							'bottle_case'			=> $unit_qty
 						);
-						//ProductRelationshipSize::where('id', $product_size_result[0]->id)->update($size_cost_data);
+						//echo '<pre>';print_r($size_cost_data);exit;
+						ProductRelationshipSize::where('id', $product_size_result[0]->id)->update($size_cost_data);
 					}else{
 						$size_cost_data=array(
 							'product_id'  			=> $product_id,
@@ -183,15 +207,21 @@ class ProductController extends Controller
 							'special_purpose_fee'  	=> $special_purpose_fee,
 							'free_discount_percent' => 0,
 							'free_discount_amount'  => 0,
+							'bottle_case'			=> $unit_qty,
 							'created_at'			=> date('Y-m-d')
 						);
 						ProductRelationshipSize::create($size_cost_data);
 					}
 					
+					//echo '<pre>';print_r($size_cost_data);exit;
+					
 					$current_year=date('Y');
 					$product_result=MasterProducts::where('product_name',$brand_name)->where('year',$current_year)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->get();
 					if(count($product_result)>0){
 						$master_data=array(
+							'product_barcode'		=> $product_barcode,
+							'barcode2'				=> $barcode2,
+							'barcode3'				=> $barcode3,
 							'product_name'  		=> $brand_name,
 							'slug'					=> $brand_slug,
 							'mrp'  					=> $mrp,
@@ -206,9 +236,13 @@ class ProductController extends Controller
 							'qty'  					=> $unit_qty,
 							'updated_at'			=> date('Y-m-d')
 						);
+						//echo '<pre>';print_r($master_data);exit;
 						MasterProducts::where('id', $product_result[0]->id)->update($master_data);
 					}else{
 						$master_data=array(
+							'product_barcode'		=> $product_barcode,
+							'barcode2'				=> $barcode2,
+							'barcode3'				=> $barcode3,
 							'product_name'  		=> $brand_name,
 							'slug'					=> $brand_slug,
 							'mrp'  					=> $mrp,
@@ -226,6 +260,8 @@ class ProductController extends Controller
 						);
 						MasterProducts::create($master_data);
 					}
+					//echo '<pre>';print_r($product_result);exit;
+					
 					
 					//echo $j.'</br>';
 					
