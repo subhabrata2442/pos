@@ -670,7 +670,7 @@
     </div>
   </div>
 </section>
-<iframe src="" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
+<iframe src="http://127.0.0.1:8000/uploads/off_counter/26-2022-001226-09-2022-invoice.pdf?v=1664260563" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
 @endsection
 
 @section('scripts') 
@@ -679,7 +679,7 @@ var stock_type	= "{{$data['stock_type']}}";
 </script> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/pos.js') }}"></script> 
-<!--<script type="text/javascript" src="{{ url('assets/admin/js/fullscreen/jquery.fullscreen.min.js') }}"></script> -->
+<script type="text/javascript" src="{{ url('assets/admin/js/fullscreen/jquery.fullscreen.min.js') }}"></script> 
 <script>
 
 $(function () {

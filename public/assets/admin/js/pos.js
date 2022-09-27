@@ -30,6 +30,8 @@ $(function() {
 
 
 $(document).on('click', '#print_off_counter_bill', function() {
+	print();
+	return false;
     $.ajax({
         url: base_url + '/admin/pos/print_off_counter_invoice',
         type: 'get',
@@ -55,7 +57,7 @@ function print() {
 	frame.contentWindow.focus();
 	frame.contentWindow.print();
 	
-	alert('dd');
+	
 }
 
 
