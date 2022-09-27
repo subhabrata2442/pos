@@ -54,6 +54,8 @@ function print() {
 	var frame = document.getElementById('off_counter_invoice-frame');
 	frame.contentWindow.focus();
 	frame.contentWindow.print();
+	
+	alert('dd');
 }
 
 

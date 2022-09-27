@@ -1348,24 +1348,22 @@ p {
  margin-bottom: .1vw;
 }
 .fullscreen_wrap a {
-    display: block;
-    padding: 0 1vw;
-    color: #fff;
-    font-size: 1vw;
-    line-height: 2.7vw;
-    border-radius: 5px;
-    font-weight: bold;
-    letter-spacing: .05vw;
-    text-transform: uppercase;
+	display: block;
+	padding: 0 1vw;
+	color: #fff;
+	font-size: 1vw;
+	line-height: 2.7vw;
+	border-radius: 5px;
+	font-weight: bold;
+ letter-spacing: .05vw;
+	text-transform: uppercase;
 }
 .fullscreen_wrap .requestfullscreen a {
-	 background: #d2b949;  
+	background: #d2b949;
 }
 .fullscreen_wrap .exitfullscreen a {
-	 background: #d64f35;  
+	background: #d64f35;
 }
-
-
-.fullscreen_wrap{
-	padding-left:15px;
-	}
+.fullscreen_wrap {
+	padding-left: 15px;
+}
