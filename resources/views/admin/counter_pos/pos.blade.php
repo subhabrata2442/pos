@@ -679,7 +679,7 @@ var stock_type	= "{{$data['stock_type']}}";
 </script> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/pos.js') }}"></script> 
-<script type="text/javascript" src="{{ url('assets/admin/js/fullscreen/jquery.fullscreen.min.js') }}"></script> 
+<!--<script type="text/javascript" src="{{ url('assets/admin/js/fullscreen/jquery.fullscreen.min.js') }}"></script> -->
 <script>
 
 $(function () {
