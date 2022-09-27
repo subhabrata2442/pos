@@ -30,8 +30,9 @@ $(function() {
 
 
 $(document).on('click', '#print_off_counter_bill', function() {
-	print();
-	return false;
+	 print();
+	 return false;
+	
     $.ajax({
         url: base_url + '/admin/pos/print_off_counter_invoice',
         type: 'get',
@@ -739,7 +740,7 @@ $(document).ready(function() {
                     for (var i = 0; i < len; i++) {
                         //response.result[i]['product_barcode'] + '-' + 
                         var id = response.result[i]['id'];
-                        var name = response.result[i]['product_name'] + ' ' + response.result[i]['product_size'];
+                        var name = response.result[i]['product_name'] + ' ' + response.result[i]['product_size']+ ' / ' + response.result[i]['product_barcode'];
                         $("#product_search_result").append("<li value='" + id + "'>" + name + "</li>");
                     }
                     // binding click event to li

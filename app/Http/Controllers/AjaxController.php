@@ -374,7 +374,7 @@ class AjaxController extends Controller {
 		
 		//print_r($searchValues);exit;
 		
-		$res=MasterProducts::query()->where('product_name', 'LIKE', "%{$search}%")->take(20)->get();
+		$res=MasterProducts::query()->where('product_name', 'LIKE', "%{$search}%")->orWhere('product_barcode', 'LIKE', "%{$search}%")->take(20)->get();
 		$result=[];
 		
 		foreach($res as $row){
@@ -385,6 +385,8 @@ class AjaxController extends Controller {
 				'product_size'		=> $row->size->name,
 			);
 		}
+		
+		//print_r($result);exit;
 		
 		$return_data['result']	= $result;
 		$return_data['status']	= 1;

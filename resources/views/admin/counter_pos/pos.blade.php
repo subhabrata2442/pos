@@ -670,7 +670,7 @@
     </div>
   </div>
 </section>
-<iframe src="http://127.0.0.1:8000/uploads/off_counter/26-2022-001226-09-2022-invoice.pdf?v=1664260563" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
+<iframe src="{{$data['invoice_url']}}" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
 @endsection
 
 @section('scripts') 

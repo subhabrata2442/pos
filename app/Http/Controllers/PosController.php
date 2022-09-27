@@ -61,8 +61,7 @@ require_once '../mpdf/vendor/autoload.php';
 class PosController extends Controller
 {
 	
-	
-	public function print_invoice(){
+	public function print_invoice_old(){
 		
 		$lastSellInwardStock=SellInwardStock::orderBy('id','DESC')->take(1)->get();
 		$invoice_url='';
@@ -181,6 +180,126 @@ class PosController extends Controller
 		
     }
 	
+	public function print_invoice(){
+		
+		$lastSellInwardStock=SellInwardStock::orderBy('id','DESC')->take(1)->get();
+		$invoice_url='';
+		if(count($lastSellInwardStock)>0){
+			 $data=[];
+			 
+			 $invoice_no=isset($lastSellInwardStock[0]->invoice_no)?$lastSellInwardStock[0]->invoice_no:'';
+			 $invoice_date=isset($lastSellInwardStock[0]->sell_date)?$lastSellInwardStock[0]->sell_date:'';
+			 $invoice_time=isset($lastSellInwardStock[0]->sell_time)? date('h:i a',strtotime($lastSellInwardStock[0]->sell_time)):'';
+			 $bill_no=isset($lastSellInwardStock[0]->bill_no)? $lastSellInwardStock[0]->bill_no:'';
+			 $branch_id=isset($lastSellInwardStock[0]->branch_id)? $lastSellInwardStock[0]->branch_id:'';
+			 
+			 
+			 $total_qty			= isset($lastSellInwardStock[0]->total_qty)?$lastSellInwardStock[0]->total_qty:'';
+			 $discount_amount	= isset($lastSellInwardStock[0]->discount_amount)?$lastSellInwardStock[0]->discount_amount:'';
+			 $special_discount	= isset($lastSellInwardStock[0]->special_discount_amt)?$lastSellInwardStock[0]->special_discount_amt:'';
+			 $pay_amount		= isset($lastSellInwardStock[0]->pay_amount)?$lastSellInwardStock[0]->pay_amount:'';
+			 
+			 $gross_total_amount= isset($lastSellInwardStock[0]->gross_total_amount)?$lastSellInwardStock[0]->gross_total_amount:'';
+			 
+			 $total_discount_amount=0;
+			 if($discount_amount!=''){
+				 $total_discount_amount +=$discount_amount;
+			 }
+			 if($special_discount!=''){
+				 $total_discount_amount +=$special_discount;
+			 }
+			 
+			 $sellStockProducts=SellStockProducts::where('inward_stock_id',$lastSellInwardStock[0]->id)->get();
+			 
+			 //echo '<pre>';print_r($sellStockProducts);exit;
+			 
+			 
+			 $data['shop_details'] = [
+				'name' 		=> 'BAZIMAT F.L.(OFF) SHOP',
+				'address1'	=> 'West Chowbaga , Kolkata-700105',
+				'address2' 	=> 'West Bengal India',
+				'phone'		=> '8770663036',
+			];
+			
+			$data['customer_details'] = [
+				'name'		=> 'Subha',
+            	'mobile'	=> '7003923969',
+            	'address'	=> 'India',
+        	];
+			
+			$data['invoice_details'] = [
+				'invoice_no'	=> $invoice_no,
+				'bill_no'		=> $bill_no,
+				'invoice_date'	=> $invoice_date,
+				'invoice_time'	=> $invoice_time,
+				'gstin'			=> '',
+				'place'			=> 'West Bengal',
+				'branch'		=> 'K.P.Shaw Bottling Pvt.Ltd.',
+				'cashier_name'	=> 'Mrs Roy Suchandra',
+			];
+			$data['items']=[];
+			
+			if(count($sellStockProducts)>0){
+				foreach($sellStockProducts as $row){
+					$product_name=strtolower($row->product_name);
+					$data['items'][] = array(
+						'product_name'	=> ucfirst($product_name),
+						'qty'			=> $row->product_qty,
+						'mrp'			=> number_format($row->product_mrp,2),
+						'offer_price'	=> number_format($row->offer_price,2),
+						'disc_price'	=> number_format($row->discount_amount,2),
+						'final_price'	=> number_format($row->total_cost,2),
+					);
+				}
+			}
+			
+			$data['total'] =[
+				'total_qty'		=> number_format($total_qty,2),
+            	'total_disc'	=> number_format($discount_amount,2),
+            	'total_price'	=> number_format($gross_total_amount,2)
+			]; 
+			
+			$data['gst'] =[
+				'gst_val' =>'0',
+				'taxable_amt'=> '0',
+				'cgst_rate'=> '0',
+				'cgst_amt'=> '0',
+				'sgst_rate'=> '0',
+				'sgst_amt'=> '0',
+				'total_amt'=> number_format($pay_amount,2),
+			];
+			
+			//echo '<pre>';print_r($data);exit;
+			$data['total_amt_in_word']	= ucwords(Media::getIndianCurrency($pay_amount));
+			$data['total_discount_amount']	= number_format($total_discount_amount,2);
+			$data['payment_method'] 	= 'Cash';
+			
+			
+			$mpdf = new \Mpdf\Mpdf();
+			$mpdf->WriteHTML((string)view('admin.pdf.invoice', $data));
+			//$mpdf->Output();
+			//exit;
+			
+			$bill_no=Common::create_slug($bill_no.' '.$branch_id.' '.$invoice_no);
+			
+			$mpdf->Output('uploads/off_counter/'.$bill_no.'-invoice.pdf', 'F');
+			
+			//$invoice_url=asset('uploads/off_counter/'.$invoice_no.'-invoice.pdf?v='.time());
+			//$return_data['invoice_url']	= $invoice_url;
+			//$return_data['success']	= 1;
+		}else{
+			//$return_data['success']	= 0;
+		}
+		
+		//echo json_encode($return_data);
+		
+		/*
+		$return_data['invoice_url']	= $invoice_url;
+		echo json_encode($return_data);*/
+		
+		
+    }
+	
 	
     public function pos_create(Request $request)
     {
@@ -246,9 +365,25 @@ class PosController extends Controller
 			}
 			
 			
+			$lastSellInwardStock=SellInwardStock::orderBy('id','DESC')->take(1)->get();
+			$invoice_url='';
+			if(count($lastSellInwardStock)>0){
+				$invoice_no=isset($lastSellInwardStock[0]->invoice_no)?$lastSellInwardStock[0]->invoice_no:'';
+				$bill_no=isset($lastSellInwardStock[0]->bill_no)? $lastSellInwardStock[0]->bill_no:'';
+				$branch_id=isset($lastSellInwardStock[0]->branch_id)? $lastSellInwardStock[0]->branch_id:'';
+				
+				$bill_no=Common::create_slug($bill_no.' '.$branch_id.' '.$invoice_no);
+				$invoice_url=asset('uploads/off_counter/'.$bill_no.'-invoice.pdf?v='.time());
+				
+			}
+			
+			$data['invoice_url']=$invoice_url;
+			
+			
+			
 			//echo '<pre>';print_r($data['top_selling_product_result']);exit;
 			
-			//print_r('dd');exit;
+			//print_r($invoice_url);exit;
 			
             return view('admin.counter_pos.pos', compact('data'));
         } catch (\Exception $e) {
@@ -277,16 +412,22 @@ class PosController extends Controller
 		
 		
 		$invoice_no='';
-		$n=SellInwardStock::count();
+		$n=SellInwardStock::where('branch_id',$branch_id)->count();
 		$invoice_no .=date('d');
 		$invoice_no .='/'.date('Y');
 		$invoice_no .='/'.str_pad($n + 1, 4, 0, STR_PAD_LEFT);
 		$invoice_no .='|'.date('d/m/Y');
 		
+		$bill_no=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+		
+		
+		$product_barcode=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+		
 		$sellStockData=array(
 			'branch_id' 				=> $branch_id,
 			'supplier_id' 				=> $supplier_id,
 			'customer_id' 				=> $customer_id,
+			'bill_no' 					=> $bill_no,
 			'invoice_no' 				=> $invoice_no,
 			'sell_date' 				=> date('Y-m-d'),
 			'sell_time' 				=> date('H:i'),
@@ -414,6 +555,8 @@ class PosController extends Controller
 			//print_r($tenderedChangeAmount);exit;
 			SellInwardTenderedChangeAmount::create($tenderedChangeAmount);
 		}
+		
+		$this->print_invoice();
 		
 		
 		$return_data['success']	= 1;
