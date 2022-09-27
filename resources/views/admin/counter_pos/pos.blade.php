@@ -9,7 +9,7 @@
 }
  
 </style>
-<div class="row" id="fullscreen">
+<div class="row">
   <div class="col-lg-8 col-md-8">
     <div class="d-flex align-items-center justify-content-between cbName">
       <div class="enterProduct d-flex align-items-center justify-content-between">
@@ -19,6 +19,12 @@
           </ul>
         </div>
         <span><i class="fas fa-barcode"></i></span> </div>
+      <div class="fullscreen_wrap">
+        <ul>
+          <li class="requestfullscreen"><a href="javascript:;">Fullscreen</a></li>
+          <li class="exitfullscreen" style="display: none"><a href="javascript:;">Exit fullscreen</a></li>
+        </ul>
+      </div>
       <!--<div class="selectSale">
         <label class="switch">
           <input type="checkbox" id="sell_type">

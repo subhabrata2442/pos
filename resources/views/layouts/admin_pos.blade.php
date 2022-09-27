@@ -18,7 +18,7 @@
 <script src="{{ url('assets/admin/js/app.js') }}"></script>
 </head>
 
-<body class="hold-transition dark_mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapse">
+<body class="hold-transition dark_mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapse" id="fullscreen">
 <x-preloader />
 <x-ajaxloader />
 <div class="wrapper"> @include('admin.includes.posheader')

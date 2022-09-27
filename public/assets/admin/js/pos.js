@@ -2,6 +2,33 @@ $(document).ready(function() {
 	$("#search_product").focus();
 });
 
+$(function() {
+
+    // open in fullscreen
+    $('#fullscreen .requestfullscreen').click(function() {
+        $('#fullscreen').fullscreen();
+        return false;
+    });
+
+    // exit fullscreen
+    $('#fullscreen .exitfullscreen').click(function() {
+        $.fullscreen.exit();
+        return false;
+    });
+    // document's event
+    $(document).bind('fscreenchange', function(e, state, elem) {
+        // if we currently in fullscreen mode
+        if ($.fullscreen.isFullScreen()) {
+            $('#fullscreen .requestfullscreen').hide();
+            $('#fullscreen .exitfullscreen').show();
+        } else {
+            $('#fullscreen .requestfullscreen').show();
+            $('#fullscreen .exitfullscreen').hide();
+        }
+    });
+});
+
+
 $(document).on('click', '#print_off_counter_bill', function() {
     $.ajax({
         url: base_url + '/admin/pos/print_off_counter_invoice',
@@ -14,7 +41,7 @@ $(document).on('click', '#print_off_counter_bill', function() {
             if (response.success == '1') {
                 $('#off_counter_invoice-frame').attr('src', response.invoice_url);
                 setTimeout(function() {
-                    print()
+                    print();
                 }, 500);
             } else {
                 toastr.error("Something went wrong. Please try later.");
