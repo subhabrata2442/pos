@@ -237,7 +237,7 @@ class ProductController extends Controller
 							'round_off'  			=> $unit_price,
 							'special_purpose_fee'  	=> $special_purpose_fee,
 							'qty'  					=> $unit_qty,
-							'updated_at'			=> date('Y-m-d')
+							'updated_at'			=> date('Y-m-d'),
 						);
 						//echo '<pre>';print_r($master_data);exit;
 						MasterProducts::where('id', $product_result[0]->id)->update($master_data);
