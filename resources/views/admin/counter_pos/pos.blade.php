@@ -9,9 +9,8 @@
 }
  
 </style>
-<div class="row">
+<div class="row" id="fullscreen">
   <div class="col-lg-8 col-md-8">
-  
     <div class="d-flex align-items-center justify-content-between cbName">
       <div class="enterProduct d-flex align-items-center justify-content-between">
         <div class="enterProductInner d-flex">
@@ -24,14 +23,13 @@
         <label class="switch">
           <input type="checkbox" id="sell_type">
           <span class="slider round"></span> <span class="absolute-no">Return</span> </label>
-      </div>-->
-      <input type="button" id="fullscreen_btn" value="Fullscreen" onclick="requestFullScreen(document.body)">
+      </div>--> 
+      <!--<input type="button" id="fullscreen_btn" value="Fullscreen" onclick="requestFullScreen(document.body)">--> 
     </div>
     <form method="post" action="{{ route('admin.pos.create') }}" id="pos_create_order-form" novalidate enctype="multipart/form-data">
       @csrf
       <input type="hidden" name="payment_method_type" id="payment_method_type-input" value="cash">
       <input type="hidden" name="stock_type" value="{{$data['stock_type']}}">
-      
       <div class="w-100">
         <div class="tableFixHead table-1">
           <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -105,17 +103,12 @@
             <input type="hidden" name="special_discount_percent" id="selling_special_discount_percent-input" value="0">
             <input type="hidden" name="special_discount_amt" id="selling_special_discount_amt-input" value="0">
             <input type="hidden" name="charge_amt" id="charge_amt-input" value="0">
-            
             <input type="hidden" name="tendered_amount" id="total_tendered_amount" value="0">
             <input type="hidden" name="tendered_change_amount" id="total_tendered_change_amount" value="0">
           </div>
         </div>
       </div>
-      
-      <div class="note_coin_count_sec" style="display:none">
-      </div>
-      
-      
+      <div class="note_coin_count_sec" style="display:none"> </div>
     </form>
   </div>
   <div class="col-lg-4 col-md-4">
@@ -173,18 +166,11 @@
     <div class="topsellingProduct">
       <h4>Top Selling Products</h4>
       <ul class="row">
-      
-       
         @foreach($data['top_selling_product_result'] as $row)
         <li><a href="javascript:;" data-id="{{$row['product_id']}}" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>{{$row['product_name']}} {{$row['product_size']}}</span></a></li>
-        @endforeach
-       
+        @endforeach 
         
-        
-        
-        
-        
-       <!-- <li><a href="javascript:;" data-id="742" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>SEAGRAMS IMPERIAL BLUE CLASSIC GRAIN WHISKY (750  ml)</span></a></li>
+        <!-- <li><a href="javascript:;" data-id="742" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>SEAGRAMS IMPERIAL BLUE CLASSIC GRAIN WHISKY (750  ml)</span></a></li>
         <li><a href="javascript:;" data-id="663" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>OFFICER'S CHOICE DELUXE WHISKY (750  ml)</span></a></li>
         <li><a href="javascript:;" data-id="632" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>Mc Dowells No.1 Luxury Premium Whisky (750  ml)</span></a></li>
         <li><a href="javascript:;" data-id="306" class="addTopSellingProduct"><img src="{{ url('assets/admin/images/1.png') }}" alt=""><span>Old Monk Lemon Rum (750  ml)</span></a></li>
@@ -444,8 +430,7 @@
                   <div class="mb-3 cashOptionTopBox">
                     <label for="rupee_due_amount_tendering" class="form-label">Due Ammout</label>
                     <span style="color: #1c0a6b;" id="rupee_due_amount_tendering">0</span> </div>
-                    <input type="hidden" id="rupee_due_amount_tendering-input" value="0">
-                  
+                  <input type="hidden" id="rupee_due_amount_tendering-input" value="0">
                 </li>
               </ul>
             </div>
@@ -679,108 +664,20 @@
     </div>
   </div>
 </section>
-
-
 <iframe src="" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
-
 @endsection
 
 @section('scripts') 
 <script>
 var stock_type	= "{{$data['stock_type']}}";
-</script>
+</script> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/pos.js') }}"></script> 
+<script type="text/javascript" src="{{ url('assets/admin/js/fullscreen/jquery.fullscreen.min.js') }}"></script> 
 <script>
-
-/*function requestFullScreen(element) {
-	alert(element);
-    // Supports most browsers and their versions.
-    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
-
-    if (requestMethod) { // Native full screen.
-        requestMethod.call(element);
-    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
-        var wscript = new ActiveXObject("WScript.Shell");
-        if (wscript !== null) {
-            wscript.SendKeys("{F11}");
-        }
-    }
-}*/
-
-function requestFullScreen(elt) {
-    console.log("Requesting fullscreen for", elt);
-    if (elt.requestFullscreen) {
-        elt.requestFullscreen();
-    } else if (elt.msRequestFullscreen) {
-        elt.msRequestFullscreen();
-    } else if (elt.mozRequestFullScreen) {
-        elt.mozRequestFullScreen();
-    } else if (elt.webkitRequestFullscreen) {
-        elt.webkitRequestFullscreen();
-    } else {
-        console.error("Fullscreen not available");
-    }
-}
-
-
-
-function toggleFullScreen(elem) {
-    // ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
-    if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
-        if (elem.requestFullScreen) {
-            elem.requestFullScreen();
-        } else if (elem.mozRequestFullScreen) {
-            elem.mozRequestFullScreen();
-        } else if (elem.webkitRequestFullScreen) {
-            elem.webkitRequestFullScreen(Element.ALLOW_KEYBOARD_INPUT);
-        } else if (elem.msRequestFullscreen) {
-            elem.msRequestFullscreen();
-        }
-    } else {
-        if (document.cancelFullScreen) {
-            document.cancelFullScreen();
-        } else if (document.mozCancelFullScreen) {
-            document.mozCancelFullScreen();
-        } else if (document.webkitCancelFullScreen) {
-            document.webkitCancelFullScreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
-    }
-}
-
-
-function toggleFullScreen() {
-  if (!document.fullscreenElement &&    // alternative standard method
-      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
-    if (document.documentElement.requestFullscreen) {
-      document.documentElement.requestFullscreen();
-    } else if (document.documentElement.msRequestFullscreen) {
-      document.documentElement.msRequestFullscreen();
-    } else if (document.documentElement.mozRequestFullScreen) {
-      document.documentElement.mozRequestFullScreen();
-    } else if (document.documentElement.webkitRequestFullscreen) {
-      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
-    }
-  } else {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    }
-  }
-}
-
-toggleFullScreen();
 
 $(function () {
 	  $('[data-toggle="tooltip"]').tooltip();
-	  //$("#fullscreen_btn").trigger("click");
   });
-</script>
+</script> 
 @endsection 
