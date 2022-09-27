@@ -11,6 +11,7 @@
 </style>
 <div class="row">
   <div class="col-lg-8 col-md-8">
+  
     <div class="d-flex align-items-center justify-content-between cbName">
       <div class="enterProduct d-flex align-items-center justify-content-between">
         <div class="enterProductInner d-flex">
@@ -24,6 +25,7 @@
           <input type="checkbox" id="sell_type">
           <span class="slider round"></span> <span class="absolute-no">Return</span> </label>
       </div>-->
+      <input type="button" id="fullscreen_btn" value="Fullscreen" onclick="requestFullScreen(document.body)">
     </div>
     <form method="post" action="{{ route('admin.pos.create') }}" id="pos_create_order-form" novalidate enctype="multipart/form-data">
       @csrf
@@ -677,7 +679,7 @@
     </div>
   </div>
 </section>
-<input type="button" value="click to toggle fullscreen" onclick="toggleFullScreen(document.body)">
+
 
 <iframe src="" id="off_counter_invoice-frame" width="400" height="400" style="display:none;"></iframe>
 
@@ -690,6 +692,39 @@ var stock_type	= "{{$data['stock_type']}}";
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/pos.js') }}"></script> 
 <script>
+
+/*function requestFullScreen(element) {
+	alert(element);
+    // Supports most browsers and their versions.
+    var requestMethod = element.requestFullScreen || element.webkitRequestFullScreen || element.mozRequestFullScreen || element.msRequestFullScreen;
+
+    if (requestMethod) { // Native full screen.
+        requestMethod.call(element);
+    } else if (typeof window.ActiveXObject !== "undefined") { // Older IE.
+        var wscript = new ActiveXObject("WScript.Shell");
+        if (wscript !== null) {
+            wscript.SendKeys("{F11}");
+        }
+    }
+}*/
+
+function requestFullScreen(elt) {
+    console.log("Requesting fullscreen for", elt);
+    if (elt.requestFullscreen) {
+        elt.requestFullscreen();
+    } else if (elt.msRequestFullscreen) {
+        elt.msRequestFullscreen();
+    } else if (elt.mozRequestFullScreen) {
+        elt.mozRequestFullScreen();
+    } else if (elt.webkitRequestFullscreen) {
+        elt.webkitRequestFullscreen();
+    } else {
+        console.error("Fullscreen not available");
+    }
+}
+
+
+
 function toggleFullScreen(elem) {
     // ## The below if statement seems to work better ## if ((document.fullScreenElement && document.fullScreenElement !== null) || (document.msfullscreenElement && document.msfullscreenElement !== null) || (!document.mozFullScreen && !document.webkitIsFullScreen)) {
     if ((document.fullScreenElement !== undefined && document.fullScreenElement === null) || (document.msFullscreenElement !== undefined && document.msFullscreenElement === null) || (document.mozFullScreen !== undefined && !document.mozFullScreen) || (document.webkitIsFullScreen !== undefined && !document.webkitIsFullScreen)) {
@@ -714,8 +749,38 @@ function toggleFullScreen(elem) {
         }
     }
 }
-  $(function () {
-    $('[data-toggle="tooltip"]').tooltip()
-  })
+
+
+function toggleFullScreen() {
+  if (!document.fullscreenElement &&    // alternative standard method
+      !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+    if (document.documentElement.requestFullscreen) {
+      document.documentElement.requestFullscreen();
+    } else if (document.documentElement.msRequestFullscreen) {
+      document.documentElement.msRequestFullscreen();
+    } else if (document.documentElement.mozRequestFullScreen) {
+      document.documentElement.mozRequestFullScreen();
+    } else if (document.documentElement.webkitRequestFullscreen) {
+      document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+    }
+  } else {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    }
+  }
+}
+
+toggleFullScreen();
+
+$(function () {
+	  $('[data-toggle="tooltip"]').tooltip();
+	  //$("#fullscreen_btn").trigger("click");
+  });
 </script>
 @endsection 
