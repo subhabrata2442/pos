@@ -179,7 +179,7 @@ $is_branch 			= Session::get('is_branch');
                   <ul class="nav nav-treeview" >
                     <li class="nav-item"> 
                       <a href="{{ route('admin.report.sales.item') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.item') active @endif"> <i class="fas fa-list nav-icon"></i>
-                      <p>Sales</p>
+                      <p>Invoice Wise Sales</p>
                       </a> 
                     </li>
                     <li class="nav-item"> 
@@ -187,11 +187,11 @@ $is_branch 			= Session::get('is_branch');
                       <p>Product Wise Sales</p>
                       </a> 
                     </li>
-                    <li class="nav-item"> 
+                    {{-- <li class="nav-item"> 
                       <a href="{{ route('admin.report.sales.product') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.product') active @endif"> <i class="fas fa-list nav-icon"></i>
                       <p>Sales Product</p>
                       </a> 
-                    </li>
+                    </li> --}}
                   </ul>
                 </li>
                 <li class="nav-item"> <a href="{{ route('admin.report.inventory') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.inventory') active @endif"> 

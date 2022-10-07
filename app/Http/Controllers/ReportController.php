@@ -901,6 +901,7 @@ class ReportController extends Controller
                 //$items['category'][$group_cat_product->category->name][] = $group_sub_cat_product->subCategory->name;
 
                 $sales_products = SellStockProducts::where('subcategory_id',$group_sub_cat_product->subCategory->id)
+                    ->where('category_id',$group_sub_cat_product->category_id)
                     ->whereBetween('created_at', [$satrt_date, $end_date])
                     ->groupBy(['product_id','size_id'])
                     ->selectRaw('product_name,product_mrp,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')
