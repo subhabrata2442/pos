@@ -4,7 +4,9 @@
   <div class="loginWrapLeft d-flex flex-wrap align-items-end">
     <img src="{{ asset('assets/img/left-img.png') }}" alt="">
   </div>
+ 
   <div class="loginWrapRight d-flex flex-wrap align-items-center justify-content-center" style="background: url({{ asset('assets/img/login-bg-right.jpg') }}) no-repeat center center;">
+   <x-alert />
     <div class="loginFormFild">
       <form class="" method="post" action="{{ route('auth.login') }}" autocomplete="off">
       @csrf

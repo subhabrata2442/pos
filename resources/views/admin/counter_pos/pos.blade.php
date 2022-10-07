@@ -18,6 +18,11 @@
           <ul id="product_search_result">
           </ul>
         </div>
+      </div>
+      <div class="enterProduct d-flex align-items-center justify-content-between">
+        <div class="enterProductInner d-flex">
+          <input type="text" name="search_barcode_product" id="search_barcode_product" placeholder="Scan Barcode" value="">
+        </div>
         <span><i class="fas fa-barcode"></i></span> </div>
       <div class="fullscreen_wrap">
         <ul>
@@ -123,10 +128,10 @@
       <span class="plusCircle"><i class="fas fa-plus-circle"></i></span> </div>
     <div class="dateSales">
       <ul class="d-flex justify-content-between align-items-center">
-        <li><strong>Cashier :</strong> Alok Saha</li>
+        <li><strong>Cashier :</strong> {{$data['supplier']->name}}</li>
         <li class="d-flex align-items-center">
           <p>Date</p>
-          <input type="date" placeholder="Search by name" class="input-2">
+          <input type="date" class="input-2" value="<?php echo date('d-m-Y');?>">
         </li>
       </ul>
     </div>
@@ -145,9 +150,9 @@
       </div>
       <div class="customerDetailsBtm">
         <ul class="d-flex">
-          <li>Last Bill No - <span></span></li>
-          <li>Bill Amount - <span>₹0</span></li>
-          <li class="ml-auto"><i class="fas fa-print"></i></li>
+          <li>Last Bill No - <span>#{{$data['last_bill_no']}}</span></li>
+          <li>Bill Amount - <span>₹{{$data['last_bill_amount']}}</span></li>
+          <li class="ml-auto"><a href="javascript:;" class="print_off_counter_bill"><i class="fas fa-print"></i></a></li>
         </ul>
       </div>
     </div>
@@ -164,7 +169,7 @@
         <li class="col-3"><a href="javascript:;"><span><i class="fas fa-wallet"></i></span>Reset Bill</a></li>
         <li class="col-3"><a href="javascript:;"><span><i class="fas fa-luggage-cart"></i></span>Today Sale</a></li>
         <li class="payPrint col-6"><a href="javascript:;" class="payBtn"><span><i class="fas fa-money-check"></i></span>pay</a></li>
-        <li class="payPrint col-6"><a href="javascript:;" id="print_off_counter_bill"><span><i class="fas fa-print"></i></span>Print</a></li>
+        <li class="payPrint col-6"><a href="javascript:;" class="print_off_counter_bill"><span><i class="fas fa-print"></i></span>Print</a></li>
       </ul>
     </div>
   </div>

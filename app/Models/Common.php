@@ -586,6 +586,21 @@ public static function getOrderInfo($token) {
 		return $result;
 	}
 	
+	public static function get_product_stock($product_id,$size_id) {
+		$branch_id=Session::get('branch_id');
+		$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('size_id',$size_id)->get();
+		$c_qty=0;
+		if(count($branch_product_stock_info)>0){
+			$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('stock_id',$branch_product_stock_info[0]->id)->where('stock_type','counter')->get();
+			$c_qty =isset($branch_product_stock_sell_price_info[0]->c_qty)?$branch_product_stock_sell_price_info[0]->c_qty:0;	
+		}
+		//$c_qty=0;
+		return  $c_qty;
+	}
+	
+	public static function get_product_barcode($product_id,$size_id) {
+	}
+	
 	
 	
 	

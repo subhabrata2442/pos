@@ -15,7 +15,7 @@ class SellInwardStock extends Model
 	protected $guarded	= [];
 
     public function supplierDetails(){
-        return $this->hasOne(Supplier::class,'id','supplier_id');
+        return $this->hasOne(User::class,'id','supplier_id');
     }
 
     public function supplier(){

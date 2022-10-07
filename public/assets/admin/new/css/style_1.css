@@ -5332,9 +5332,8 @@ to {
 	z-index: -1;
 	background-size: cover !important;/* mix-blend-mode: hard-light; */
 }
-
 .metroBox {
-	height: 12.3vw;
+	height: 10vw;
 	padding: 3vw;
 	text-align: center;
 	color: #fff;
@@ -5348,15 +5347,12 @@ to {
 .metroBox span {
 	position: absolute;
 	bottom: 1vw;
-	left: 0;
+	left: 1vw;
 	font-size: 1vw;
 	text-align: left;
 	text-shadow: rgba(0, 0, 0, 0.3) 1px 1px;
 	-webkit-transition: all .3s ease-in-out;
 	transition: all .3s ease-in-out;
-	text-align: center;
-	width: 100%;
-	padding: 0 .5vw;
 }
 .metroBox img {
 	width: 3vw;
@@ -5375,8 +5371,8 @@ to {
 }
 .pcInner {
 	background: #052d72;
-	padding: 3.85vw 3vw;
-	margin: .3vw 0 .5vw;
+	padding: 3vw;
+ margin: .3vw 0 .5vw;
 }
 .pcInner h4 {
 	text-align: center;
@@ -5979,22 +5975,4 @@ to {
 
 .dbModal.modal {
 	background: rgba(2, 2, 2, 0.8);
-}
-.col.pcInnerBtmBox:not(:last-child) {
-	margin-bottom: 1vw;
-}
-.posCarouselArea .owl-theme .owl-nav.disabled + .owl-dots {
-	margin-top: 0;
-	position: absolute;
-	bottom: 1.2vw;
-	left: 50%;
-	-moz-transform: translateX(-50%);
-	-webkit-transform: translateX(-50%);
-	transform: translateX(-50%);
-}
-
-@media only screen and (max-width: 1366px) {
-	.metroBox {
-		height: 12.2vw;
-	}
 }

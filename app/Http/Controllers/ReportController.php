@@ -815,6 +815,10 @@ class ReportController extends Controller
         return Response::make($content, 200, $headers);
     }
     public function salesItems(Request $request){
+		
+		//$sales = SellInwardStock::where('invoice_no','!=','')->orderBy('id', 'desc')->get();
+		//echo '<pre>';print_r($sales);exit;
+				
         try {
             if ($request->ajax()) {
                 $sales = SellInwardStock::where('invoice_no','!=','');
@@ -836,7 +840,7 @@ class ReportController extends Controller
                     
                     })
                     ->addColumn('supplier', function ($row) {
-                        return $row->supplierDetails->company_name;
+                        return $row->supplierDetails->name;
                     })
                     ->addColumn('total_qty', function ($row) {
                         return $row->total_qty;
@@ -878,11 +882,14 @@ class ReportController extends Controller
     }
    
     public function itemWiseSaleReportPdf(Request $request){
-       $satrt_date = $request->start_date.' 00:00:00';
-       $end_date = $request->end_date.' 23:59:00';
-       //echo $satrt_date;die;
+		$satrt_date = $request->start_date.' 00:00:00';
+		$end_date 	= $request->end_date.' 23:59:00';
         $items = [];
+		
         $group_cat_products = SellStockProducts::with('category')->groupBy(['category_id'])->whereBetween('created_at', [$satrt_date, $end_date])->get();
+		
+		
+		
         foreach($group_cat_products as $group_cat_product){
             //$items['category'][] =  $group_cat_product->category->name;
             $group_sub_cat_products = SellStockProducts::
@@ -1007,6 +1014,10 @@ class ReportController extends Controller
             $data = [];
             $queryStockProduct = BranchStockProducts::query();
             $queryStockProduct->where('stock_type','counter');
+			
+			if(!is_null($request['product_barcode'])) {
+                $queryStockProduct->where('product_barcode',$request['product_barcode']);
+            }
             if(!is_null($request['product_id'])) {
                 $queryStockProduct->where('product_id',$request['product_id']);
             }
@@ -1026,27 +1037,34 @@ class ReportController extends Controller
                 });
             }
             if(!is_null($request['size'])) {
-                
-                $queryStockProduct->where('size_id',$request['size']);
-                
+				$queryStockProduct->where('size_id',$request['size']);    
             }
             $allStockProduct = $queryStockProduct->with('stockProduct')->get();
-            $stockProducts = $queryStockProduct->paginate(10);
+			
+			//echo '<pre>';print_r($allStockProduct);exit;
+			
+			
+			
+            $stockProducts 		= $queryStockProduct->paginate(10);
             $data['heading']    = 'Sales List';
             $data['breadcrumb'] = ['Sales', '', 'List'];
             $data['products']   = $stockProducts;
             $allStockProductArr = $allStockProduct->toArray();
-            echo "<pre>";print_r(array_sum($allStockProductArr['stock_product'],'c_qty'));die();
+			
+			//echo '<pre>';print_r($data);exit;
+			
+			
+            //echo "<pre>";print_r(array_sum($allStockProductArr['stock_product'],'c_qty'));die();
             //echo "<pre>";print_r($allStockProductArr[0]['stock_product']);die;
             //echo "<pre>";print_r($allStockProductArr[0]['stock_product']);die;
             //dd($all_product);
             //$data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
-            $data['total_qty']  = 0;
-            $data['total_cost'] = 0;
-            $data['categories'] = Category::all();
-            $data['sizes']      = Size::all();
-            $data['sub_categories']      = Subcategory::all();
-            $data['brands']      = Brand::all();
+            $data['total_qty']  	= 0;
+            $data['total_cost'] 	= 0;
+            $data['categories'] 	= Category::all();
+            $data['sizes']      	= Size::all();
+            $data['sub_categories']	= Subcategory::all();
+            $data['brands']      	= Brand::all();
             return view('admin.report.inventory', compact('data'));
         }catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());

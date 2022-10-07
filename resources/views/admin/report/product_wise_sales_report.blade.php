@@ -213,7 +213,7 @@
 				<th>{{$product->sellInwardStock->invoice_no}}</th>
 				<td>{{date('d-m-Y', strtotime($product->sellInwardStock->sell_date))}}</td>
 				<td>{{$product->sellInwardStock->customer->customer_fname.' '.$product->sellInwardStock->customer->customer_last_name;}}</td>
-				<td>{{$product->sellInwardStock->supplier->company_name}}</td>
+				<td>{{$product->sellInwardStock->supplierDetails->name}}</td>
 				<td>{{$product->product_name;}}</td>
 				<td>{{$product->category->name}}</td>
 				<td>{{$product->subCategory->name}}</td>

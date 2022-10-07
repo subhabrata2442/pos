@@ -172,7 +172,7 @@ class PurchaseOrderController extends Controller
         
         try {
             $data = [];
-			$branch_id=1;
+			$branch_id=Session::get('branch_id');
 			
             $data['heading'] 		= 'Purchase Order';
             $data['breadcrumb'] 	= ['Purchase Order', 'Add'];
@@ -264,7 +264,7 @@ class PurchaseOrderController extends Controller
     {
         try {
             $data = [];
-			$branch_id=1;
+			$branch_id=Session::get('branch_id');
 			
             $data['heading'] 		= 'Purchase Order';
             $data['breadcrumb'] 	= ['Purchase Order', 'Add'];
@@ -347,7 +347,7 @@ class PurchaseOrderController extends Controller
 		$tendered_amount		= $request->tendered_amount;
 		$tendered_change_amount	= $request->tendered_change_amount;
 		
-		$branch_id		= 1;
+		$branch_id=Session::get('branch_id');
 		$customer_id	= $request->customer_id;
 		$customer_info	= Customer::find($customer_id);
 		$customer_name	= isset($customer_info->customer_fname)?$customer_info->customer_fname:'';
@@ -636,7 +636,7 @@ class PurchaseOrderController extends Controller
 		
 		
 		if(count($data['items'])>0){
-			$branch_id		= 1;
+			$branch_id=Session::get('branch_id');
 			
 			$customer_info	= Customer::find($customer_id);
 			$customer_name	= isset($customer_info->customer_fname)?$customer_info->customer_fname:'';
@@ -863,7 +863,7 @@ class PurchaseOrderController extends Controller
 	
 	public function create(Request $request){
 		
-		$branch_id		= 1;
+		$branch_id=Session::get('branch_id');
 		$supplier_id	= 17;
 		$customer_id	= 2;
 		
@@ -1619,12 +1619,25 @@ class PurchaseOrderController extends Controller
 						//print_r($subcategory_id);exit;
 						
 						$size_title=trim($brand_liquor_data[$index_3]);
-						$size_id=0;
+						/*$size_id=0;
 						if($size_title!=''){
 							$size_arr=explode(' ',$size_title);
 							$size_result=Size::query()->where('name', 'LIKE', "%{$size_arr[0]}%")->get();
 							$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+						}*/
+						
+						
+						$size_id=0;
+						if($size_title!=''){
+							$size_arr=explode(' ',$size_title);
+							$size_ml=isset($size_arr[0])?trim($size_arr[0]):'';
+							if($size_ml!=''){
+								$size_result=Size::where('ml',$size_arr[0])->get();
+								$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+							}
 						}
+						
+						
 						
 						$product_slug	= Media::create_slug(trim($brand_slug.' '.$category_title.' '.$sub_category_title.' '.$size_title.' '.$batch_no));
 						if(!in_array($product_slug, $product_slugs)){
@@ -1863,7 +1876,7 @@ class PurchaseOrderController extends Controller
 			
             $data = [];
 			
-			$branch_id	= 1;
+			$branch_id=Session::get('branch_id');
 			$stock_type	= Common::get_user_settings($where=['option_name'=>'stock_type'],$branch_id);
 			
 			$data['stock_type'] 	= isset($stock_type)?$stock_type:'w';

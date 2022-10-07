@@ -24,14 +24,235 @@ use App\Models\Product;
 use App\Models\MasterProducts;
 use App\Models\ProductRelationshipSize;
 use App\Models\BarProductSizePrice;
-
-
+use App\Models\BranchStockProducts;
+use App\Models\BranchStockProductSellPrice;
+use App\Models\Common;
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Session;
+
 class ProductController extends Controller
 {
+	
+	public function product_stock_upload(Request $request){
+		$file = $request->file('product_upload_file');
+		if($file){
+			$filename = $file->getClientOriginalName();
+			$extension = $file->getClientOriginalExtension();
+			$tempPath = $file->getRealPath();
+			$fileSize = $file->getSize();
+			
+			if($extension!='csv'){
+				return redirect()->back()->with('error', 'Something error occurs!');
+			}
+			$location = 'uploads';
+			$file->move($location, $filename);
+			$filepath = public_path($location . "/" . $filename);
+			
+			$file = fopen($filepath, "r");
+			$importData_arr = array();
+			$i = 0;
+			while (($filedata = fgetcsv($file, 1000, ",")) !== FALSE) {
+				$num = count($filedata);
+				if ($i == 0) {
+					$i++;
+					continue;
+				}
+				for ($c = 0; $c < $num; $c++) {
+					$importData_arr[$i][] = $filedata[$c];
+				}
+				$i++;
+			} 
+			
+			
+			//echo '<pre>';print_r($importData_arr);exit;
+			
+			$j = 0;
+			$brand_data=[];
+			foreach ($importData_arr as $importData) {
+				$category				= $importData[0];
+				$type 					= $importData[1];
+				$brand_name 			= $importData[2];
+				$size 					= $importData[3];
+				$warehouse_stock		= $importData[4];
+				$counter_stock 			= $importData[5];
+				
+				
+				
+				
+				
+				if($category!=''){
+					$brand_slug 	= $this->create_slug($brand_name);
+					
+					$category_title=trim($category);
+					$category_result=Category::where('name',$category_title)->where('food_type',1)->get();
+					if(count($category_result)>0){
+						$category_id=isset($category_result[0]->id)?$category_result[0]->id:0;
+					}else{
+						$feature_data=array(
+							'name'  		=> $category_title,
+							'food_type'  	=> 1,
+							'created_at'	=> date('Y-m-d')
+						);
+						$feature=Category::create($feature_data);
+						$category_id=$feature->id;
+					}
+					
+					$size_id=0;
+					if($size!=''){
+						$size_arr=explode(' ',$size);
+						$size_ml=isset($size_arr[0])?trim($size_arr[0]):0;
+						
+						$size_result=Size::where('ml',$size_ml)->get();
+						
+						if(count($size_result)>0){
+							$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+						}else{
+							$size_arr=explode(' ',$size);
+							$feature_data=array(
+								'name'  		=> $size,
+								'ml'  			=> isset($size_arr[0])?trim($size_arr[0]):0,
+								'created_at'	=> date('Y-m-d')
+							);
+							$feature=Size::create($feature_data);
+							$size_id=$feature->id;
+						}
+					}
+					
+					$type_result=Subcategory::where('name',$type)->where('food_type',1)->get();
+					if(count($type_result)>0){
+						$subcategory_id=isset($type_result[0]->id)?$type_result[0]->id:0;
+					}else{
+						$feature_data=array(
+							'name'  		=> $type,
+							'food_type'  	=> 1,
+							'created_at'	=> date('Y-m-d')
+						);
+						$feature=Subcategory::create($feature_data);
+						$subcategory_id=$feature->id;
+					}
+					
+					$product_result=Product::where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+					
+					
+					$ws=0;
+					if($warehouse_stock!=''){
+						$ws=$warehouse_stock;
+					}
+					
+					$cs=0;
+					if($counter_stock!=''){
+						$cs=$counter_stock;
+					}
+					
+					
+					
+					
+						
+					if(count($product_result)>0){
+							$product_id=$product_result[0]->id;
+							//echo '<pre>';print_r($product_result);exit;
+							
+							
+							$productRelationshipSizeResult=ProductRelationshipSize::where('product_id',$product_id)->where('size_id',$size_id)->get();
+							$product_mrp=isset($productRelationshipSizeResult[0]->cost_rate)?$productRelationshipSizeResult[0]->cost_rate:'';
+							
+							$barcode=isset($productRelationshipSizeResult[0]->product_barcode)?$productRelationshipSizeResult[0]->product_barcode:'';
+							$barcode2=isset($productRelationshipSizeResult[0]->barcode2)?$productRelationshipSizeResult[0]->barcode2:'';
+							$barcode3=isset($productRelationshipSizeResult[0]->barcode3)?$productRelationshipSizeResult[0]->barcode3:'';
+							
+							$product_barcode='';
+							if($barcode!=''){
+								$product_barcode=$barcode;
+							}
+							if($barcode2!=''){
+								$product_barcode=$barcode2;
+							}
+							if($barcode3!=''){
+								$product_barcode=$barcode3;
+							}
+							
+							/*$brand_data[]=array(
+								'product_id'	=> $product_id,
+								'size_id'		=> $size_id,
+								'brand_name'	=> $brand_name,
+								'ws'			=> $ws,
+								'cs'			=> $cs
+							);*/
+							$branch_id=Session::get('branch_id');
+							$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('size_id',$size_id)->get();
+							if(count($branch_product_stock_info)>0){
+								$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('stock_id',$branch_product_stock_info[0]->id)->where('selling_price',$product_mrp)->where('stock_type','counter')->get();
+								
+								//echo '<pre>';print_r($product_mrp);exit;
+								$sell_price_id=isset($branch_product_stock_sell_price_info[0]->id)?$branch_product_stock_sell_price_info[0]->id:'';
+								
+								if($sell_price_id!=''){
+									
+									BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', 'counter')->update(['c_qty' => $cs]);
+								}else{
+									$branchProductStockSellPriceData=array(
+										'stock_id'		=> $branch_product_stock_info[0]->id,
+										'w_qty'  		=> 0,
+										'c_qty'  		=> $cs,
+										'selling_price'	=> $product_mrp,
+										'offer_price'  	=> 0,
+										'product_mrp'  	=> $product_mrp,
+										'stock_type'  	=> 'counter',
+										'created_at'	=> date('Y-m-d')
+									);
+									BranchStockProductSellPrice::create($branchProductStockSellPriceData);
+								}
+								//echo '<pre>';print_r($branch_product_stock_sell_price_info);exit;
+							}else{
+								$branchProductStockData=array(
+									'branch_id'			=> $branch_id,
+									'product_id'  		=> $product_id,
+									'product_barcode'  	=> $product_barcode,
+									'size_id'  			=> $size_id,
+									'created_at'		=> date('Y-m-d')
+								);
+								
+								$branchStockProducts=BranchStockProducts::create($branchProductStockData);
+								$stock_id=$branchStockProducts->id;
+								
+								$branchProductStockSellPriceData=array(
+									'stock_id'		=> $stock_id,
+									'w_qty'  		=> $ws,
+									'c_qty'  		=> $cs,
+									'selling_price'	=> $product_mrp,
+									'offer_price'  	=> 0,
+									'product_mrp'  	=> $product_mrp,
+									'stock_type'  	=> 'counter',
+									'created_at'	=> date('Y-m-d')
+								);
+								BranchStockProductSellPrice::create($branchProductStockSellPriceData);
+									
+							}
+						}
+					
+					
+					
+					/*echo '<pre>';print_r($product_result);exit;
+					
+					$brand_data[]=array(
+						'barcode1'		=> $barcode1,
+						'barcode2'		=> $barcode2,
+						'barcode3'		=> $barcode3,
+						'brand_code'	=> $brand_code,
+						'brand_name'	=> $brand_name
+					);*/
+					
+				}
+			$j++;}
+			
+			echo '<pre>';print_r($brand_data);exit;
+		}
+		
+	}
+	
 	public function product_upload(Request $request){
 		$file = $request->file('product_upload_file');
 		if($file){
@@ -83,6 +304,8 @@ class ProductController extends Controller
 				$unit_qty				= $importData[13];
 				
 				
+				
+				
 				if($category!=''){
 					$brand_slug 	= $this->create_slug($brand_name);
 					
@@ -100,20 +323,26 @@ class ProductController extends Controller
 						$category_id=$feature->id;
 					}
 					
-					$size_result=Size::where('name',$size)->get();
-					if(count($size_result)>0){
-						$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
-					}else{
+					$size_id=0;
+					if($size!=''){
 						$size_arr=explode(' ',$size);
-						$feature_data=array(
-							'name'  		=> $size,
-							'ml'  			=> isset($size_arr[0])?trim($size_arr[0]):0,
-							'created_at'	=> date('Y-m-d')
-						);
-						$feature=Size::create($feature_data);
-						$size_id=$feature->id;
+						$size_ml=isset($size_arr[0])?trim($size_arr[0]):0;
+						
+						$size_result=Size::where('ml',$size_ml)->get();
+						
+						if(count($size_result)>0){
+							$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+						}else{
+							$size_arr=explode(' ',$size);
+							$feature_data=array(
+								'name'  		=> $size,
+								'ml'  			=> isset($size_arr[0])?trim($size_arr[0]):0,
+								'created_at'	=> date('Y-m-d')
+							);
+							$feature=Size::create($feature_data);
+							$size_id=$feature->id;
+						}
 					}
-					
 					
 					$type_result=Subcategory::where('name',$type)->where('food_type',1)->get();
 					if(count($type_result)>0){
@@ -145,8 +374,9 @@ class ProductController extends Controller
 					$product_result=Product::where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
 					
 	
-					$n=Product::count();
-					$product_barcode=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+					//$n=Product::count();
+					//$product_barcode=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
+					$product_barcode='';
 					
 					if($barcode1!=''){
 						$product_barcode=$barcode1;
@@ -185,6 +415,9 @@ class ProductController extends Controller
 					//echo '<pre>';print_r($product_size_result);exit;
 					if(count($product_size_result)>0){
 						$size_cost_data=array(
+							'product_barcode'		=> $product_barcode,
+							'barcode2'				=> $barcode2,
+							'barcode3'				=> $barcode3,
 							'cost_rate'  			=> $mrp,
 							'product_mrp'  			=> $mrp,
 							'strength'  			=> $strength,
@@ -200,6 +433,9 @@ class ProductController extends Controller
 					}else{
 						$size_cost_data=array(
 							'product_id'  			=> $product_id,
+							'product_barcode'		=> $product_barcode,
+							'barcode2'				=> $barcode2,
+							'barcode3'				=> $barcode3,
 							'size_id'  				=> $size_id,
 							'cost_rate'  			=> $mrp,
 							'product_mrp'  			=> $mrp,
@@ -268,6 +504,14 @@ class ProductController extends Controller
 					
 					
 					//echo $j.'</br>';
+					
+					$brand_data[]=array(
+					'barcode1'		=> $barcode1,
+					'barcode2'		=> $barcode2,
+					'barcode3'		=> $barcode3,
+					'brand_code'	=> $brand_code,
+					'brand_name'	=> $brand_name,
+				);
 					
 				}
 			$j++;}
@@ -372,7 +616,7 @@ class ProductController extends Controller
 						$subcategory_id=$feature->id;
 					}
 					
-					$branch_id		= 1;
+					$branch_id=Session::get('branch_id');
 					$brand_slug 	= $this->create_slug($product_name);
 					$product_result	= Product::select('id')->where('branch_id',$branch_id)->where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();	
 					$product_id		= isset($product_result->id)?$product_result->id:'';
@@ -571,11 +815,14 @@ class ProductController extends Controller
 		//echo '<pre>';print_r($product[0]->category->name);exit;
 		
 		//echo '<pre>';print_r($product[0]->category->name);exit;
+		//$branch_id=Session::get('branch_id');
+		//echo Common::get_product_stock($branch_id,118,6);exit;
 		
 		
         try {
             if ($request->ajax()) {
                 $product = MasterProducts::orderBy('id', 'asc')->get();
+				
 				
                 return DataTables::of($product)
                     ->addColumn('product_name', function ($row) {
@@ -606,7 +853,9 @@ class ProductController extends Controller
                         return $row->mrp;
                     })
                     ->addColumn('qty', function ($row) {
-                        return $row->qty;
+						//return $row->product->id;
+                        return Common::get_product_stock($row->product->id,$row->size_id);
+						//return Common::get_product_stock(118,$row->size_id);
                     })
                     ->make(true);
             }

@@ -32,4 +32,8 @@ class MasterProducts extends Model
     {
 		return $this->hasOne(Subcategory::class,'id', 'subcategory_id'); 
     }
+	public function product()
+    {
+		return $this->hasOne(Product::class,'slug', 'slug'); 
+    }
 }

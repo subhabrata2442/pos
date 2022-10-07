@@ -36,221 +36,311 @@
 	.reset-btn{
 		background-color: #d3681b;
 	}
+	input.qty_update {
+    width: 70px;
+}
 </style>
-
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script> 
 <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <div class="srcBtnWrap">
-	<div class="card">
-		<div class="row align-items-center justify-content-between">
-			<div class="col-auto">
-				<h4>Stock Inventory</h4>
-			</div>
-			<div class="col d-flex invoiceAmout justify-content-center">
-				<ul class="d-flex">
-					{{-- <li>Total Invoice : <span>{{$data['total_invoice']}}</span></li> --}}
-					<li>Total Qty : <span>{{$data['total_qty']}}</span></li>
-					<li>Total Amount : <span>{{number_format($data['total_cost'],2)}}</span></li>
-					<!-- <li>advanced Search : <span>0</span></li> -->
-				</ul>
-			</div>
-			<div class="col-auto">
-				<a href="javascript:;" class="searchDropBtn">Advance Search <i class="fas fa-chevron-circle-down"></i></a>
-			</div>
-		</div>
-	</div>
+  <div class="card">
+    <div class="row align-items-center justify-content-between">
+      <div class="col-auto">
+        <h4>Stock Inventory</h4>
+      </div>
+      <!--<div class="col d-flex invoiceAmout justify-content-center">
+        <ul class="d-flex">
+          <li>Total Qty : <span>{{$data['total_qty']}}</span></li>
+          <li>Total Amount : <span>{{number_format($data['total_cost'],2)}}</span></li>
+        </ul>
+      </div>-->
+      <div class="col-auto"> <a href="javascript:;" class="searchDropBtn">Advance Search <i class="fas fa-chevron-circle-down"></i></a> </div>
+    </div>
+  </div>
 </div>
 <div class="card toggleCard">
-	<form action="" method="get" id="filter">
-		<div class="row">
-			{{-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="date_search" class="mr-3">Date Filter</label>
-					<input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off" value="{{request()->input('datefilter')}}">
-					<input type="hidden" name="start_date" id="start_date" value="{{request()->input('start_date')}}">
-					<input type="hidden" name="end_date" id="end_date" value="{{request()->input('end_date')}}">
-				</div>
-			</div> --}}
-			{{-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="customer_last_name" class="form-label">By Customer Name / Mobile</label>
-					<div class="position-relative">
-						<input type="text" class="form-control" id="search_customer" name="customer" value="{{request()->input('customer')}}" autocomplete="off">
-						<ul id="search_customer_list" class="auto_search_result">
-					</div>
-					<input type="hidden" name="customer_id" id="customer_id" value="{{request()->input('customer_id')}}">
-				</div>
-			</div> --}}
-			{{-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="customer_last_name" class="form-label">Invoice No.</label>
-					<div class="position-relative">
-						<input type="text" class="form-control" id="search_sale_invoice" name="invoice" value="{{request()->input('invoice')}}" autocomplete="off">
-						<ul id="search_sale_invoice_list" class="auto_search_result">
-					</div>
-					<input type="hidden" id="invoice_id" name="invoice_id" value="{{request()->input('invoice_id')}}">
-				</div>
-			</div> --}}
-			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="customer_last_name" class="form-label">Product Name / Barcode</label>
-					<div class="position-relative">
-						<input type="text" class="form-control" id="search_product" name="product" value="{{request()->input('product')}}" autocomplete="off">
-						<ul id="search_product_list" class="auto_search_result">
-					</div>
-					<input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">
-				</div>
-			</div>
-			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="" class="form-label">Select Brand</label>
-					<select class="form-control custom-select form-control-select" id="" name="brand">
-						<option value="">Select Brand</option>
+  <form action="" method="get" id="filter">
+    <div class="row">
+    {{--
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="date_search" class="mr-3">Date Filter</label>
+        <input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off" value="{{request()->input('datefilter')}}">
+        <input type="hidden" name="start_date" id="start_date" value="{{request()->input('start_date')}}">
+        <input type="hidden" name="end_date" id="end_date" value="{{request()->input('end_date')}}">
+      </div>
+    </div>
+    --}}
+    {{--
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+    <div class="form-group">
+    <label for="customer_last_name" class="form-label">By Customer Name / Mobile</label>
+    <div class="position-relative">
+    <input type="text" class="form-control" id="search_customer" name="customer" value="{{request()->input('customer')}}" autocomplete="off">
+    <ul id="search_customer_list" class="auto_search_result">
+    </div>
+    <input type="hidden" name="customer_id" id="customer_id" value="{{request()->input('customer_id')}}">
+    </div>
+    </div>
+    --}}
+    {{--
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+    <div class="form-group">
+    <label for="customer_last_name" class="form-label">Invoice No.</label>
+    <div class="position-relative">
+    <input type="text" class="form-control" id="search_sale_invoice" name="invoice" value="{{request()->input('invoice')}}" autocomplete="off">
+    <ul id="search_sale_invoice_list" class="auto_search_result">
+    </div>
+    <input type="hidden" id="invoice_id" name="invoice_id" value="{{request()->input('invoice_id')}}">
+    </div>
+    </div>
+    --}}
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="customer_last_name" class="form-label">Product Name</label>
+        <div class="position-relative">
+          <input type="text" class="form-control" id="search_product" name="product" value="{{request()->input('product')}}" autocomplete="off">
+          <!--<ul id="search_product_list" class="auto_search_result">--> 
+        </div>
+        <input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="product_barcode" class="form-label">Barcode</label>
+        <div class="position-relative">
+          <input type="text" class="form-control" id="product_barcode" name="product_barcode" value="{{request()->input('product_barcode')}}" autocomplete="off">
+          <!--<ul id="search_product_list" class="auto_search_result">--> 
+        </div>
+        <!--<input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">--> 
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="" class="form-label">Select Brand</label>
+        <select class="form-control custom-select form-control-select" id="" name="brand">
+          <option value="">Select Brand</option>
+          
+          
 						@forelse ($data['brands'] as $brand)
-							<option value="{{$brand->id}}" {{request()->input('brand') == $brand->id ? 'selected' : ''}}>{{$brand->name}}</option>
+							
+          
+          <option value="{{$brand->id}}" {{request()->input('brand') == $brand->id ? 'selected' : ''}}>{{$brand->name}}</option>
+          
+          
 						@empty
 							
 						@endforelse
-					</select>
-				</div>
-			</div>
-			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="" class="form-label">Select Category</label>
-					<select class="form-control custom-select form-control-select" id="" name="category">
-						<option value="">Select Category</option>
+					
+        
+        </select>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="" class="form-label">Select Category</label>
+        <select class="form-control custom-select form-control-select" id="" name="category">
+          <option value="">Select Category</option>
+          
+          
 						@forelse ($data['categories'] as $category)
-							<option value="{{$category->id}}" {{request()->input('category') == $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+							
+          
+          <option value="{{$category->id}}" {{request()->input('category') == $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+          
+          
 						@empty
 							
 						@endforelse
-					</select>
-				</div>
-			</div>
-			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="" class="form-label">Select Subcategory</label>
-					<select class="form-control custom-select form-control-select" id="" name="sub_category">
-						<option value="">Select Subcategory</option>
+					
+        
+        </select>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="" class="form-label">Select Subcategory</label>
+        <select class="form-control custom-select form-control-select" id="" name="sub_category">
+          <option value="">Select Subcategory</option>
+          
+          
 						@forelse ($data['sub_categories'] as $sub_category)
-							<option value="{{$sub_category->id}}" {{request()->input('sub_category') == $sub_category->id ? 'selected' : ''}}>{{$sub_category->name}}</option>
+							
+          
+          <option value="{{$sub_category->id}}" {{request()->input('sub_category') == $sub_category->id ? 'selected' : ''}}>{{$sub_category->name}}</option>
+          
+          
 						@empty
 							
 						@endforelse
-					</select>
-				</div>
-			</div>
-			<div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="" class="form-label">Select Size</label>
-					<select class="form-control custom-select form-control-select" id="" name="size">
-						<option value="">Select Size</option>
+					
+        
+        </select>
+      </div>
+    </div>
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="" class="form-label">Select Size</label>
+        <select class="form-control custom-select form-control-select" id="" name="size">
+          <option value="">Select Size</option>
+          
+          
 						@forelse ($data['sizes'] as $size)
-							<option value="{{$size->id}}" {{request()->input('size') == $size->id ? 'selected' : ''}}>{{$size->name}}</option>
+							
+          
+          <option value="{{$size->id}}" {{request()->input('size') == $size->id ? 'selected' : ''}}>{{$size->name}}</option>
+          
+          
 						@empty
 							
 						@endforelse
-					</select>
-				</div>
-			</div>
-			{{-- <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-				<div class="form-group">
-					<label for="" class="form-label">Select Brand</label>
-					<select class="form-control custom-select form-control-select" id="">
-						<option value="">Select 1</option>
-					</select>
-				</div>
-			</div> --}}
-			
-			<div class="col-12">
-				<ul class="saveSrcArea d-flex align-items-center justify-content-center mb-2">
-					<li>
-						<a href="javascript:?" class="saveBtn-2 reset-btn" id="reset">Reset</i></a>
-					</li>
-					<li>
-						<button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
-					</li>
-					{{-- <li class="d-flex align-items-center">
-						<div>
-							<select class="form-control custom-select form-control-select" id="report_type">
-								<option value=""> Select Report Type</option>
-								<option value="item_wise_sales_report"> Item Wise sales report</option>
-							</select>
-						</div>
-						<div>
-							<button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
-						</div>
-					</li> --}}
-				</ul>
-			</div>
-		</div>
-	</form>
+					
+        
+        </select>
+      </div>
+    </div>
+    {{--
+    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="form-group">
+        <label for="" class="form-label">Select Brand</label>
+        <select class="form-control custom-select form-control-select" id="">
+          <option value="">Select 1</option>
+        </select>
+      </div>
+    </div>
+    --}}
+    <div class="col-12">
+      <ul class="saveSrcArea d-flex align-items-center justify-content-center mb-2">
+        <li> <a href="javascript:?" class="saveBtn-2 reset-btn" id="reset">Reset</i></a> </li>
+        <li>
+          <button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
+        </li>
+        {{--
+        <li class="d-flex align-items-center">
+          <div>
+            <select class="form-control custom-select form-control-select" id="report_type">
+              <option value=""> Select Report Type</option>
+              <option value="item_wise_sales_report"> Item Wise sales report</option>
+            </select>
+          </div>
+          <div>
+            <button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
+          </div>
+        </li>
+        --}}
+      </ul>
+    </div>
+    </div>
+  </form>
 </div>
 <div class="row">
   <div class="col-12">
     <div class="card">
       <x-alert />
-	  {{-- <div class="d-flex justify-content-between align-items-center mb-4">
-		<form method="get" id="search-form" class="form-inline" role="form">
-			<input type="hidden" name="item_id" value="{{$data['item_id']}}" id="item_id">
-			<input type="hidden" name="start_date" id="start_date" value="">
-			<input type="hidden" name="end_date" id="end_date" value="">
-			<div class="form-group">
-				<label for="date_search" class="mr-3">Date</label>
-				<input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off">
-			</div>
-			<button type="submit" class="btn btn-primary ml-3">Search</button>
-		</form>
-		<a href="javascript:;" id="download" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Download</a>
-	  </div> --}}
-	  
+      {{--
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <form method="get" id="search-form" class="form-inline" role="form">
+          <input type="hidden" name="item_id" value="{{$data['item_id']}}" id="item_id">
+          <input type="hidden" name="start_date" id="start_date" value="">
+          <input type="hidden" name="end_date" id="end_date" value="">
+          <div class="form-group">
+            <label for="date_search" class="mr-3">Date</label>
+            <input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off">
+          </div>
+          <button type="submit" class="btn btn-primary ml-3">Search</button>
+        </form>
+        <a href="javascript:;" id="download" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Download</a> </div>
+      --}}
       <div class="table-responsive custom-table">
         <table id="" class="table table-bordered text-nowrap">
           <thead>
-			<th scope="col">Product Name</th>
-			<th scope="col">Size</th>
-            <th scope="col">Barcode</th>
-            <th scope="col">Brand</th>
-			<th scope="col">Category</th>
+          <th scope="col">Barcode</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Size</th>
+            <th scope="col">Category</th>
             <th scope="col">Sub Category</th>
             <th scope="col">Qty/Piece</th>
             <th scope="col">MRP/Piece</th>
-           </thead>
+              </thead>
           <tbody>
-			@forelse ($data['products'] as $Stock_product)
-			<tr>
-				<td>{{@$Stock_product->product->product_name}}</td>
-				<td>{{@$Stock_product->size->name}}</td>
-				<td>{{@$Stock_product->product->product_barcode}}</td>
-				<td>{{@$Stock_product->product->brand->name}}</td>
-				<td>{{@$Stock_product->product->category->name}}</td>
-				<td>{{@$Stock_product->product->subcategory->name}}</td>
-				<td>{{@$Stock_product->stockProduct->c_qty}}</td>
-				<td>{{number_format($Stock_product->stockProduct->product_mrp,2)}}</td>
-			</tr>
-			@empty
-				<tr ><td colspan="7"> No data found </td></tr>
-			@endforelse
-			
-          </tbody>
+          
+          @forelse ($data['products'] as $Stock_product)
+          @php
+          $product_mrp=isset($Stock_product->stockProduct->product_mrp)?number_format($Stock_product->stockProduct->product_mrp,2):'-';
+          $c_qty=isset($Stock_product->stockProduct->c_qty)?$Stock_product->stockProduct->c_qty:'-';
+          @endphp
+          <tr>
+            <td>{{@$Stock_product->product_barcode}}</td>
+            <td>{{@$Stock_product->product->product_name}}</td>
+            <td>{{@$Stock_product->size->name}}</td>
+            <td>{{@$Stock_product->product->category->name}}</td>
+            <td>{{@$Stock_product->product->subcategory->name}}</td>
+            <td><input type="number" class="qty_update" value="{{$c_qty}}" data-stock_id="{{@$Stock_product->id}}" data-branch_id="{{@$Stock_product->branch_id}}" data-product_id="{{@$Stock_product->product_id}}" data-size_id="{{@$Stock_product->size_id}}" /></td>
+            <td>{{$product_mrp}}</td>
+          </tr>
+          @empty
+          <tr >
+            <td colspan="7"> No data found </td>
+          </tr>
+          @endforelse
+            </tbody>
+          
         </table>
-		{{ $data['products']->appends($_GET)->links() }}
-      </div>
+        {{ $data['products']->appends($_GET)->links() }} </div>
     </div>
   </div>
 </div>
-
 @endsection
 
 @section('scripts') 
-@if( Request::has('product'))
-    <script>
+@if( Request::has('product')) 
+<script>
 	$(".toggleCard").css("display", "block");
-	</script>
-@endif
+	</script> 
+@endif 
 <script type="text/javascript">
+$(document).ready(function() {
+    $(".qty_update").click(function() {
+        $(this).select();
+    });
 
+    $(document).on('keyup', '.qty_update', function(e) {
+        var code = e.keyCode || e.which;
+        var qty = $(this).val();
+
+        var branch_id = $(this).data('branch_id');
+        var product_id = $(this).data('product_id');
+        var size_id = $(this).data('size_id');
+        var stock_id = $(this).data('stock_id');
+
+        if (code == 13) {
+            $.ajax({
+                url: prop.ajaxurl,
+                type: 'post',
+                data: {
+                    branch_id: branch_id,
+                    product_id: product_id,
+                    size_id: size_id,
+                    stock_id: stock_id,
+                    qty: qty,
+                    action: 'update_stock_product_qty',
+                    _token: prop.csrf_token
+                },
+                dataType: 'json',
+                success: function(response) {
+                    Swal.fire(
+                        'Success!',
+                        'Qty Successfully updated!',
+                        'success'
+                    )
+                }
+            });
+        }
+    });
+});
+</script> 
+<script type="text/javascript">
 $(function() {
 	
 	/* $('#download_report').on("click",function(){

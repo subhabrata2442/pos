@@ -1,3 +1,15 @@
+@php
+$branch_id 			= Session::get('branch_id');
+$company_name		= App\Models\Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+$company_address	= App\Models\Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+$is_branch 			= Session::get('is_branch');
+
+
+//print_r($is_branch);exit;
+
+@endphp
+
+
 <!-- Main Sidebar Container -->
 
 <aside class="main-sidebar sidebar-dark-primary elevation-4"> 
@@ -13,9 +25,8 @@
         <li class="nav-item"> <a href="{{ route('admin.dashboard') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.dashboard') active @endif"> <i class="nav-icon fas fa-tachometer-alt"></i>
           <p> Dashboard </p>
           </a> </li>
-        @if (Auth::user()->get_role->tag != 'normal_user')
-        @if (Auth::user()->get_role->tag === 'admin')
-        @endif
+        @if ($is_branch == 'Y')
+        
         <li class="nav-item @if (strpos(Route::currentRouteName(), 'admin.customer') !== false) menu-open @endif"> <a href="#" class="nav-link @if (strpos(Route::currentRouteName(), 'admin.customer') !== false) parent-active @endif"> <i class="fas fa-user nav-icon"></i>
           <p>Customer <i class="fas fa-angle-left right"></i></p>
           </a>

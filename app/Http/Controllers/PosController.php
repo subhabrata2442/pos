@@ -39,7 +39,7 @@ use App\Models\SellStockProducts;
 use App\Models\Site_settings;
 use App\Models\Common;
 use App\Models\Customer;
-
+use App\Models\User;
 
 use App\Models\Warehouse;
 use App\Models\TableBookingHistory;
@@ -54,7 +54,7 @@ use App\Models\BarInwardStockProducts;
 
 use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
-use Session;
+use Illuminate\Support\Facades\Session;
 
 require_once '../mpdf/vendor/autoload.php';
 
@@ -307,7 +307,7 @@ class PosController extends Controller
         try {
             $data = [];
 			
-			$branch_id	= 1;
+			$branch_id=Session::get('branch_id');
 			$stock_type	= Common::get_user_settings($where=['option_name'=>'stock_type'],$branch_id);
 			
 			$data['stock_type'] 	= isset($stock_type)?$stock_type:'w';
@@ -367,17 +367,31 @@ class PosController extends Controller
 			
 			$lastSellInwardStock=SellInwardStock::orderBy('id','DESC')->take(1)->get();
 			$invoice_url='';
+			$bill_no='';
+			$pay_amount=0;
 			if(count($lastSellInwardStock)>0){
 				$invoice_no=isset($lastSellInwardStock[0]->invoice_no)?$lastSellInwardStock[0]->invoice_no:'';
 				$bill_no=isset($lastSellInwardStock[0]->bill_no)? $lastSellInwardStock[0]->bill_no:'';
 				$branch_id=isset($lastSellInwardStock[0]->branch_id)? $lastSellInwardStock[0]->branch_id:'';
+				$pay_amount=isset($lastSellInwardStock[0]->pay_amount)? $lastSellInwardStock[0]->pay_amount:'';
 				
-				$bill_no=Common::create_slug($bill_no.' '.$branch_id.' '.$invoice_no);
-				$invoice_url=asset('uploads/off_counter/'.$bill_no.'-invoice.pdf?v='.time());
+				
+				$pdf_no=Common::create_slug($bill_no.' '.$branch_id.' '.$invoice_no);
+				$invoice_url=asset('uploads/off_counter/'.$pdf_no.'-invoice.pdf?v='.time());
 				
 			}
 			
-			$data['invoice_url']=$invoice_url;
+			$data['last_bill_no']		= $bill_no;
+			$data['last_bill_amount']	= $pay_amount;
+			$data['invoice_url']		= $invoice_url;
+			
+			
+			$supplier_id	= Session::get('adminId');
+			
+			$data['supplier']=User::find($supplier_id);
+			
+			//print_r($data['supplier']->name);exit;
+			
 			
 			
 			
@@ -394,8 +408,8 @@ class PosController extends Controller
 	
 	public function create(Request $request){
 		
-		$branch_id		= 1;
-		$supplier_id	= 17;
+		$branch_id		= Session::get('branch_id');
+		$supplier_id	= Session::get('adminId');
 		$customer_id	= 2;
 		
 		$validator = Validator::make($request->all(), [

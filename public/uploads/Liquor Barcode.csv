@@ -305,7 +305,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 8901131722330,,,0201112020/0010,IMFL,Rum,Old Monk Gold Reserve Select Rum,375 ml,25,20.84,6.52,25,350,24
 8901131722323,,,0201112020/0010,IMFL,Rum,Old Monk Gold Reserve Select Rum,750 ml,25,41.67,8.03,25,670,12
 8901131830066,,,0201112014/0004,IMFL,Rum,Old Monk Lemon Rum,750 ml,25,43.9,3.95,35,710,12
-8901131880023,8901131723092,,0201112020/0014,IMFL,Rum,Old Monk Matured XXX Premium Rum Very Old Vatted,180 ml,25,8.14,0.59,15,140,48
+8901131880023,,,0201112020/0014,IMFL,Rum,Old Monk Matured XXX Premium Rum Very Old Vatted,180 ml,25,8.14,0.59,15,140,48
 8901131880016,,,0201112020/0014,IMFL,Rum,Old Monk Matured XXX Premium Rum Very Old Vatted,375 ml,25,16.86,7.33,15,280,24
 8901131723078,,,0201112020/0014,IMFL,Rum,Old Monk Matured XXX Premium Rum Very Old Vatted,500 ml,25,22.48,1.44,15,360,18
 8901131723061,,,0201112020/0014,IMFL,Rum,Old Monk Matured XXX Premium Rum Very Old Vatted,750 ml,25,33.71,9.66,15,540,12
@@ -499,7 +499,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 8906003946838,,,0201142022/0034,IMFL,Whisky,Governors Reserve Connoisseur Edition Premier Grain Whisky - Gift Pack,,,,,,,
 ,,,0201142022/0033,IMFL,Whisky,Happy Royal Premium Whisky,375 ml,50,,,,100,24
 ,,,0201142022/0033,IMFL,Whisky,Happy Royal Premium Whisky,500 ml,50,,,,130,18
-8904020702098,8904020000000,,0201142020/0001,IMFL,Whisky,Highbury Classic Rare Reserve Whisky,750 ml,25,59.67,7.9,60,980,12
+8904020702098,8.90402E+12,,0201142020/0001,IMFL,Whisky,Highbury Classic Rare Reserve Whisky,750 ml,25,59.67,7.9,60,980,12
 8908008918377,,,0201142022/0009,IMFL,Whisky,Himalayan Bear Fine Indian Whiskey,375 ml,50,,,,100,24
 8908008918360,,,0201142022/0009,IMFL,Whisky,Himalayan Bear Fine Indian Whiskey,500 ml,50,,,,130,18
 8908008918353,,,0201142022/0009,IMFL,Whisky,Himalayan Bear Fine Indian Whiskey,750 ml,50,,,,195,12
@@ -547,7 +547,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 8901544062443,,,0201142020/0028,IMFL,Whisky,Officer's Choice Blue Prime Grain Whisky,375 ml,25,18.55,1.42,15,300,24
 8901544062436,,,0201142020/0028,IMFL,Whisky,Officer's Choice Blue Prime Grain Whisky,500 ml,25,24.74,6.9,15,400,18
 8901544062412,,,0201142020/0028,IMFL,Whisky,Officer's Choice Blue Prime Grain Whisky,750 ml,25,37.1,7.85,15,590,12
-8901544061163,8901544010291,,0201142019/0016,IMFL,Whisky,Officer's Choice Deluxe Whisky,180 ml,25,7.74,6.76,5,130,48
+8901544061163,,,0201142019/0016,IMFL,Whisky,Officer's Choice Deluxe Whisky,180 ml,25,7.74,6.76,5,130,48
 8901544010239,,,0201142019/0016,IMFL,Whisky,Officer's Choice Deluxe Whisky,375 ml,25,16.03,0,5,250,24
 8901544010277,,,0201142019/0016,IMFL,Whisky,Officer's Choice Deluxe Whisky,500 ml,25,20.67,9.04,5,330,24
 8901544010284,,,0201142019/0016,IMFL,Whisky,Officer's Choice Deluxe Whisky,750 ml,25,32.06,5.01,5,500,12
@@ -571,7 +571,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 ,,,0201142022/0007,IMFL,Whisky,Peter Cat Fine Grain Whisky,375 ml,50,,,,100,24
 ,,,0201142022/0007,IMFL,Whisky,Peter Cat Fine Grain Whisky,500 ml,50,,,,130,18
 ,,,0201142022/0007,IMFL,Whisky,Peter Cat Fine Grain Whisky,750 ml,50,,,,195,12
-890150322169,,8901500000000,0201142006/0046,IMFL,Whisky,Peter Scot Malt Whisky,750 ml,25,,,,5260,12
+890150322169,,8.9015E+12,0201142006/0046,IMFL,Whisky,Peter Scot Malt Whisky,750 ml,25,,,,5260,12
 ,,,0201142021/0015,IMFL,Whisky,Rampur Indian Single Malt Whisky Non-chill Filtered Double Cask-750ml,750 ml,25,,,,,
 ,,,0201142006/0047,IMFL,Whisky,Red Knight Finest Malt Blended Whisky,750 ml,25,,,,,
 8901556401742,,,0201142017/0022,IMFL,Whisky,Regal Talons Deluxe Rare Generation Whisky,180 ml,25,,,,170,48
@@ -655,7 +655,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 8908008971143,,,0201142022/0018,IMFL,Whisky,Sspl Grand Knight,375 ml,50,,,,100,24
 8908008971136,,,0201142022/0018,IMFL,Whisky,Sspl Grand Knight,500 ml,50,,,,130,18
 8908008971129,,,0201142022/0018,IMFL,Whisky,Sspl Grand Knight,750 ml,50,,,,195,12
-8901544025073,8902150000000,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,180 ml,25,14.05,5.29,50,270,48
+8901544025073,8.90215E+12,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,180 ml,25,14.05,5.29,50,270,48
 8901544025066,,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,375 ml,25,28.89,8.42,50,500,24
 8901544025035,,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,750 ml,25,57.78,6.84,50,940,12
 ,,,0201142019/0012,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky (Gift Pack),750 ml,25,57.78,6.84,50,940,12
@@ -857,7 +857,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 4901777305359,,,0203082021/0001,OS,Gin,Roku Gin,700 ml,25,241.76,4.59,110,3810,12
 5000281016689,,,0203082016/0004,OS,Gin,Tanquerary No Ten Distilled Gin,1000 ml,25,,,,3760,9
 5000291020706,,,0203082008/0002,OS,Gin,Tanqueray London Dry Gin,750 ml,25,,,,2220,12
-5000289934237,5000290000000,,0203082016/0003,OS,Gin,The Original Gordons London Dry Gin,750 ml,25,,,,1540,12
+5000289934237,5.00029E+12,,0203082016/0003,OS,Gin,The Original Gordons London Dry Gin,750 ml,25,,,,1540,12
 82184000335,,,0203092019/0001,OS,Liqueur,Jack Daniel's Original Recipe Tennessee Honey Finely Crafted Honey Liqueur,750 ml,25,172.86,7.78,100,2750,12
 4067700012586,,,0203092008/0016,OS,Liqueur,Jagermeister,750 ml,25,,,,2980,12
 4067700013484,,,0203092008/0016,OS,Liqueur,Jagermeister,375 ml,25,,,,1550,24

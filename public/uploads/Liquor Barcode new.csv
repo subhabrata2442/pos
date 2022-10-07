@@ -1,4 +1,4 @@
-Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Retailer margin,Round Off,Special Purpose Fee,MRP,Bottle/case
+﻿Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Retailer margin,Round Off,Special Purpose Fee,MRP,Bottle/case
 8908003033174,,,0101052013/0030,CS,Country Spirit,Alpha's Race,600 ml,60,5.92,1.24,0,120,20
 8908008924217,,,0101052020/0006,CS,Country Spirit,Asd,600 ml,60,5.92,1.24,0,120,20
 8906005740021,,,0101052015/0015,CS,Country Spirit,Avon,600 ml,60,5.92,1.24,0,120,20
@@ -499,7 +499,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 8906003946838,,,0201142022/0034,IMFL,Whisky,Governors Reserve Connoisseur Edition Premier Grain Whisky - Gift Pack,,,,,,,
 ,,,0201142022/0033,IMFL,Whisky,Happy Royal Premium Whisky,375 ml,50,,,,100,24
 ,,,0201142022/0033,IMFL,Whisky,Happy Royal Premium Whisky,500 ml,50,,,,130,18
-8904020702098,8904020000000,,0201142020/0001,IMFL,Whisky,Highbury Classic Rare Reserve Whisky,750 ml,25,59.67,7.9,60,980,12
+8904020702098,8904020702130,,0201142020/0001,IMFL,Whisky,Highbury Classic Rare Reserve Whisky,750 ml,25,59.67,7.9,60,980,12
 8908008918377,,,0201142022/0009,IMFL,Whisky,Himalayan Bear Fine Indian Whiskey,375 ml,50,,,,100,24
 8908008918360,,,0201142022/0009,IMFL,Whisky,Himalayan Bear Fine Indian Whiskey,500 ml,50,,,,130,18
 8908008918353,,,0201142022/0009,IMFL,Whisky,Himalayan Bear Fine Indian Whiskey,750 ml,50,,,,195,12
@@ -571,7 +571,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 ,,,0201142022/0007,IMFL,Whisky,Peter Cat Fine Grain Whisky,375 ml,50,,,,100,24
 ,,,0201142022/0007,IMFL,Whisky,Peter Cat Fine Grain Whisky,500 ml,50,,,,130,18
 ,,,0201142022/0007,IMFL,Whisky,Peter Cat Fine Grain Whisky,750 ml,50,,,,195,12
-890150322169,,8901500000000,0201142006/0046,IMFL,Whisky,Peter Scot Malt Whisky,750 ml,25,,,,5260,12
+890150322169,8901503200190,,0201142006/0046,IMFL,Whisky,Peter Scot Malt Whisky,750 ml,25,,,,5260,12
 ,,,0201142021/0015,IMFL,Whisky,Rampur Indian Single Malt Whisky Non-chill Filtered Double Cask-750ml,750 ml,25,,,,,
 ,,,0201142006/0047,IMFL,Whisky,Red Knight Finest Malt Blended Whisky,750 ml,25,,,,,
 8901556401742,,,0201142017/0022,IMFL,Whisky,Regal Talons Deluxe Rare Generation Whisky,180 ml,25,,,,170,48
@@ -655,7 +655,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 8908008971143,,,0201142022/0018,IMFL,Whisky,Sspl Grand Knight,375 ml,50,,,,100,24
 8908008971136,,,0201142022/0018,IMFL,Whisky,Sspl Grand Knight,500 ml,50,,,,130,18
 8908008971129,,,0201142022/0018,IMFL,Whisky,Sspl Grand Knight,750 ml,50,,,,195,12
-8901544025073,8902150000000,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,180 ml,25,14.05,5.29,50,270,48
+8901544025073,8902147000375,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,180 ml,25,14.05,5.29,50,270,48
 8901544025066,,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,375 ml,25,28.89,8.42,50,500,24
 8901544025035,,,0201142017/0009,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky,750 ml,25,57.78,6.84,50,940,12
 ,,,0201142019/0012,IMFL,Whisky,Sterling Reserve B10 Premium Blended Whisky (Gift Pack),750 ml,25,57.78,6.84,50,940,12
@@ -857,7 +857,7 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 4901777305359,,,0203082021/0001,OS,Gin,Roku Gin,700 ml,25,241.76,4.59,110,3810,12
 5000281016689,,,0203082016/0004,OS,Gin,Tanquerary No Ten Distilled Gin,1000 ml,25,,,,3760,9
 5000291020706,,,0203082008/0002,OS,Gin,Tanqueray London Dry Gin,750 ml,25,,,,2220,12
-5000289934237,5000290000000,,0203082016/0003,OS,Gin,The Original Gordons London Dry Gin,750 ml,25,,,,1540,12
+5000289934237,5000289020701,,0203082016/0003,OS,Gin,The Original Gordons London Dry Gin,750 ml,25,,,,1540,12
 82184000335,,,0203092019/0001,OS,Liqueur,Jack Daniel's Original Recipe Tennessee Honey Finely Crafted Honey Liqueur,750 ml,25,172.86,7.78,100,2750,12
 4067700012586,,,0203092008/0016,OS,Liqueur,Jagermeister,750 ml,25,,,,2980,12
 4067700013484,,,0203092008/0016,OS,Liqueur,Jagermeister,375 ml,25,,,,1550,24
@@ -1506,8 +1506,8 @@ Barcode1,Barcode2,Barcode3,Brand code,Category,Type,Brand Name,Size,Strength,Ret
 ,,,0203152007/0045,OS,Wine,Stags Leap Wine Cellars Napa Valley Merlot,,,,,,,
 ,,,0203152018/0049,OS,Wine,Stella Rosa Moscato,,,,,,,
 ,,,0203152013/0027,OS,Wine,Sudtirol Alto Adige Pinot Grigio,,,,,,,
-7798608480393,,,0203152019/0020,OS,Wine,Susana Balbo Crios Malbec,750 ml,14 %v/v,,,,5150,12
-7798608480300,,,0203152019/0021,OS,Wine,Susana Balbo Crios Torrontes,750 ml,13.5 %v/v,,,,4245,12
+7798610000000,,,0203152019/0020,OS,Wine,Susana Balbo Crios Malbec,750 ml,14 %v/v,,,,5150,12
+7798610000000,,,0203152019/0021,OS,Wine,Susana Balbo Crios Torrontes,750 ml,13.5 %v/v,,,,4245,12
 ,,,0203152012/0075,OS,Wine,Sutter Home Family Vineyard Cabernet Sauvignon,,,,,,,
 ,,,0203152012/0074,OS,Wine,Sutter Home Family Vineyards Chardonnay,,,,,,,
 ,,,0203152012/0076,OS,Wine,Sutter Home Family Vineyards Merlot,,,,,,,

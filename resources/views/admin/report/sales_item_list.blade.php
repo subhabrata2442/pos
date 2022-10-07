@@ -17,7 +17,7 @@
 			</div>
 			<button type="submit" class="btn btn-primary ml-3">Search</button>
 		</form>
-		<a href="javascript:;" id="item_wise_sale" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Item Wise sales Download</a>
+		<a href="javascript:;" id="item_wise_sale" data-date="" class="downloadBtn" target="_blank"><i class="fas fa-download"></i> Item Wise sales Download</a>
 	  </div>
       <div class="table-responsive dataTable-design">
         <table id="sales_list" class="table table-bordered">

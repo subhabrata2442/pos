@@ -25,5 +25,9 @@ class BranchStockProducts extends Model
   public function stockProduct(){
     return $this->hasOne(BranchStockProductSellPrice::class,'stock_id','id');
   }
+  
+   public function product_barcode(){
+       return $this->hasOne(ProductRelationshipSize::class, 'product_id', 'product_id')->first();
+    }
 
 }

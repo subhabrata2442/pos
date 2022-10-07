@@ -117,6 +117,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::match(['GET', 'POST'], '/add', [ProductController::class, 'add'])->name('add');
 		Route::match(['GET', 'POST'], '/product_upload', [ProductController::class, 'product_upload'])->name('product_upload');
 		Route::match(['GET', 'POST'], '/bar_product_price_upload', [ProductController::class, 'bar_product_price_upload'])->name('bar_product_price_upload');
+		Route::match(['GET', 'POST'], '/product_stock_upload', [ProductController::class, 'product_stock_upload'])->name('product_stock_upload');
         Route::match(['GET', 'POST'], '/list', [ProductController::class, 'list'])->name('list');
         Route::match(['GET', 'POST'], '/edit/{id}', [ProductController::class, 'edit'])->name('edit');
         Route::match(['GET', 'POST'], '/delete/{id}', [ProductController::class, 'delete'])->name('delete');

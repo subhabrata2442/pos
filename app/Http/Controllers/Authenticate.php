@@ -13,23 +13,15 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Session;
 
+
 class Authenticate extends Controller
 {
 
     public function login(Request $request)
     {
-		//$result=User::where('id',1)->get();
-		//echo '<pre>';print_r($result);exit;
-		
         try {
-            // $sdds = 0;
+           
             if ($request->isMethod('post')) {
-
-                // $request->validate([
-                //     'email' => 'required|email',
-                //     'password' => 'required',
-                // ]);
-                // dd('gdgd');
                 $validator = Validator::make($request->all(), [
                     'email' => 'required|email',
                     'password' => 'required',
@@ -38,16 +30,50 @@ class Authenticate extends Controller
                 if ($validator->fails()) {
                     return redirect()->back()->withErrors($validator)->withInput();
                 }
-                // $this->middleware('throttle:2,1');
                 $email = $request->email;
                 $password = $request->password;
+				
                 $remember = false;
                 if ($request->remember_me) {
                     $remember = true;
                 }
 				
+				$authenticated = Auth::attempt([
+						 'email' 	=> $email,
+						 'password' => $password,
+						 'status' 	=> 1,
+						 'role' 	=> function ($query) {
+							 $query->where('role', '!=', 1);
+							}
+						],$remember);
+						
+               /* if (Auth::attempt(['email' => $email, 'password' => $password, 'role !=' => 1, 'status' => 1], $remember)) {
+                    return redirect('admin/dashboard');
+                } else {
+                    return redirect()->back()->with('error', 'Wrong credentials');
+                }*/
 				
-                if (Auth::attempt(['email' => $email, 'password' => $password, 'status' => 1], $remember)) {
+				if ($authenticated) {
+					$user = User::where([['email', '=', $email],['status', '=', '1']])->first();
+					$userId 	= $user->id;
+					$userType 	= $user->role;
+					$userEmail 	= $user->email;
+					$userName 	= $user->name;
+					$branch_id 	= $user->id;
+					$is_branch 	= 'Y';
+					
+					if($userType == 5){
+						$branch_id	= $user->parent_id;
+						$is_branch 	= 'N';
+					}
+					
+					Session::put('branch_id', $branch_id);
+					Session::put('is_branch', $is_branch);
+					Session::put('adminId', $userId);
+					Session::put('admin_type', $userType);
+					Session::put('admin_email', $userEmail);
+					Session::put('admin_userName', $userName);
+					
                     return redirect('admin/dashboard');
                 } else {
                     return redirect()->back()->with('error', 'Wrong credentials');

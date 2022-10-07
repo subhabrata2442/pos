@@ -3,6 +3,9 @@ $(document).on('change', '#invoice_stock', function() {
 	$('#upload_invoice_stock_type').val(stock_type);
 });
 
+
+
+
 $(document).ready(function() {
     $('#invoice_upload-form').submit(function(evt) {
         evt.preventDefault();
