@@ -52,6 +52,8 @@ use App\Models\TableBookingKoPrintItems;
 use App\Models\BarInwardStock;
 use App\Models\BarInwardStockProducts;
 
+use App\Models\SellInwardOnlinePayment;
+
 use Carbon\Carbon;
 use Smalot\PdfParser\Parser;
 use Illuminate\Support\Facades\Session;
@@ -437,6 +439,8 @@ class PosController extends Controller
 		
 		$product_barcode=str_pad($n + 1, 5, 0, STR_PAD_LEFT);
 		
+		$payment_method=$request->payment_method_type;
+		
 		$sellStockData=array(
 			'branch_id' 				=> $branch_id,
 			'supplier_id' 				=> $supplier_id,
@@ -469,6 +473,10 @@ class PosController extends Controller
 		$sellStock		= SellInwardStock::create($sellStockData);
 		$sellStockId	= $sellStock->id;
 		//$sellStockId	= 1;
+		
+		//$result=SellInwardOnlinePayment::get();
+		//$arr=json_decode($result[0]->meta_data,true);	
+		//print_r($arr['upi_payble_amount']);exit;
 		
 		$product_ids			= $request->product_id;
 		$product_total_amount	= $request->product_total_amount;
@@ -548,27 +556,41 @@ class PosController extends Controller
 			}
 		}
 		
-		$rupee_type 	= $request->rupee_type;
-		$rupee_val 		= $request->note;
-		$rupee_qty 		= $request->note_qty;
 		
-		for($r=0;count($rupee_type)>$r;$r++){
-			$note_type	= isset($rupee_type[$r])?$rupee_type[$r]:'note';
-			$note_val	= isset($rupee_val[$r])?$rupee_val[$r]:0;
-			$note_qty	= isset($rupee_qty[$r])?$rupee_qty[$r]:0;
-			$total_note_amount	= $note_val*$note_qty;
-			
-			$tenderedChangeAmount=array(
+		
+		if($payment_method=='cash'){
+			$rupee_type 	= $request->rupee_type;
+			$rupee_val 		= $request->note;
+			$rupee_qty 		= $request->note_qty;
+			for($r=0;count($rupee_type)>$r;$r++){
+				$note_type	= isset($rupee_type[$r])?$rupee_type[$r]:'note';
+				$note_val	= isset($rupee_val[$r])?$rupee_val[$r]:0;
+				$note_qty	= isset($rupee_qty[$r])?$rupee_qty[$r]:0;
+				$total_note_amount	= $note_val*$note_qty;
+				
+				$tenderedChangeAmount=array(
+					'sell_inward_stock_id'	=> $sellStockId,
+					'type'  				=> $note_type,
+					'rupee_val'  			=> $note_val,
+					'qty'					=> $note_qty,
+					'amount'  				=> $total_note_amount,
+					'created_at'			=> date('Y-m-d')
+				);
+				//print_r($tenderedChangeAmount);exit;
+				SellInwardTenderedChangeAmount::create($tenderedChangeAmount);
+			}
+		}else{
+			$sell_online_payment_data=array(
 				'sell_inward_stock_id'	=> $sellStockId,
-				'type'  				=> $note_type,
-				'rupee_val'  			=> $note_val,
-				'qty'					=> $note_qty,
-				'amount'  				=> $total_note_amount,
+				'type'  				=> $payment_method,
+				'meta_data'  			=> json_encode($request->online_payment),
 				'created_at'			=> date('Y-m-d')
 			);
-			//print_r($tenderedChangeAmount);exit;
-			SellInwardTenderedChangeAmount::create($tenderedChangeAmount);
+			SellInwardOnlinePayment::create($sell_online_payment_data);
+			//print_r($sell_online_payment_data);exit;
 		}
+		
+		
 		
 		$this->print_invoice();
 		

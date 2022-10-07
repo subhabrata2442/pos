@@ -901,6 +901,11 @@ hr {
 	font-weight: bold;
 	text-transform: uppercase;
 }
+.pmMenu ul li a.active,
+.pmMenu ul li a.active:hover {
+	color: #333;
+	background: #6ab5f3;
+}
 .pmMenu ul li a:hover {
 	color: #282828;
 	background: #d7e2f5;

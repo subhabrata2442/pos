@@ -120,6 +120,8 @@
         </div>
       </div>
       <div class="note_coin_count_sec" style="display:none"> </div>
+      <div class="upi_payment_sec" style="display:none"> </div>
+      <div class="card_details_payment_sec" style="display:none"> </div>
     </form>
   </div>
   <div class="col-lg-4 col-md-4">
@@ -130,8 +132,9 @@
       <ul class="d-flex justify-content-between align-items-center">
         <li><strong>Cashier :</strong> {{$data['supplier']->name}}</li>
         <li class="d-flex align-items-center">
-          <p>Date</p>
-          <input type="date" class="input-2" value="<?php echo date('d-m-Y');?>">
+          <p>Date:</p>
+          <?php echo date('d-m-Y');?> 
+          <!--<input type="date" class="input-2" value="<?php echo date('d-m-Y');?>">--> 
         </li>
       </ul>
     </div>
@@ -616,58 +619,59 @@
           <div class="applyCoupon tab_sec" id="card_payment_sec" style="display: none;">
             <div class="applyCouponTop">
               <h3>Card Details</h3>
-              <form action="get">
-                <div class="mb-3">
-                  <label for="" class="form-label">Payment Account</label>
-                  <select class="form-select">
-                    <option>Disabled select</option>
-                  </select>
-                </div>
-                <div class="mb-3">
-                  <label for="" class="form-label">Customer Bank Name</label>
-                  <input type="text" class="form-control input-2" id="" placeholder="">
-                </div>
-                <div class="mb-3">
-                  <label for="" class="form-label">Card Payment Amount</label>
-                  <input type="text" class="form-control input-2" id="" placeholder="">
-                </div>
-                <div class="mb-3">
-                  <label for="" class="form-label">Card Holder Name</label>
-                  <input type="text" class="form-control input-2" id="" placeholder="">
-                </div>
-                <div class="mb-3">
-                  <label for="" class="form-label">Card transaction No</label>
-                  <input type="text" class="form-control input-2" id="" placeholder="">
-                </div>
-                <div class="mb-3">
-                  <button type="button" class="saveBtn-2">Finalize Payment</button>
-                </div>
-              </form>
+              <div class="mb-3">
+                <label for="card_payble_amount" class="form-label">Payment Account</label>
+                <input type="text" class="form-control input-2" id="card_payble_amount" placeholder="0.00">
+              </div>
+              <div class="mb-3">
+                <label for="card_type" class="form-label">Card Type</label>
+                <select class="form-select" name="card_type" id="card_type">
+                  <option value="rupay">RuPay</option>
+                  <option value="visa">Visa</option>
+                  <option value="master_card">Master Card</option>
+                  <option value="maestro">Maestro</option>
+                  <option value="amex">Amex</option>
+                  <option value="diner">Diner</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="card_number" class="form-label">Card No.</label>
+                <input type="text" class="form-control input-2" name="card_number" id="card_number" placeholder="Last 4 digits only">
+              </div>
+              <div class="mb-3">
+                <label for="card_invoice_number" class="form-label">Invoice No.</label>
+                <input type="text" class="form-control input-2" name="card_invoice_number" id="card_invoice_number" placeholder="Last 4 digits only">
+              </div>
+              <div class="mb-3">
+                
+                <button type="button" class="saveBtn-2" id="calculate_card_payment_btn">Submit</button>
+              </div>
             </div>
           </div>
           <div class="paymentOption tab_sec" id="gPay_payment_sec" style="display: none;">
             <div class="paymentOptionTop">
               <ul class="row">
-                <li><a href="#" class="active"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/paytm.jpg" alt=""></a></li>
-                <li><a href="#"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/phonepay.jpg" alt=""></a></li>
-                <li><a href="#"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/gpay.jpg" alt=""></a></li>
-                <li><a href="#"><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/upi.jpg" alt=""></a></li>
+                <li><a href="javascript:;" class="paymentmethod_btn" data-paymentmethod="paytm" id=""><img src="{{ url('assets/admin/images/paytm.jpg') }}" alt=""></a></li>
+                <li><a href="javascript:;" class="paymentmethod_btn active" data-paymentmethod="phonepay"><img src="{{ url('assets/admin/images/phonepay.jpg') }}" alt=""></a></li>
+                <li><a href="javascript:;" class="paymentmethod_btn" data-paymentmethod="gpay"><img src="{{ url('assets/admin/images/gpay.jpg') }}" alt=""></a></li>
+                <li><a href="javascript:;" class="paymentmethod_btn" data-paymentmethod="upi"><img src="{{ url('assets/admin/images/upi.jpg') }}" alt=""></a></li>
               </ul>
             </div>
             <div class="paymentOptionInputBox">
-              <form action="get">
-                <div class="mb-3">
-                  <input type="text" placeholder="" class="input-2 paymentOptionInput"/>
-                </div>
-                <div class="d-flex justify-content-center">
-                  <ul class="d-flex">
-                    <li class="col-auto">
-                      <button type="button" class="saveBtn-2">Submit</button>
-                    </li>
-                    <li class="col-auto"><a href="#" class="saveBtnBdr">Cancel</a></li>
-                  </ul>
-                </div>
-              </form>
+              
+              <div class="mb-3">
+                <input type="text" class="paymentOptionInput input-2" id="upi_payble_amount" placeholder="0.00">
+              </div>
+              <div class="d-flex justify-content-center">
+                <ul class="d-flex">
+                  <li class="col-auto">
+                    <input type="hidden" id="upi_paymentmethod_type" value="phonepay" />
+                    <button type="button" class="saveBtn-2" id="calculate_gPay_payment_btn">Submit</button>
+                  </li>
+                  <li class="col-auto"><a href="javascript:;" class="saveBtnBdr paymentModalCloseBtn">Cancel</a></li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
@@ -681,7 +685,9 @@
 @section('scripts') 
 <script>
 var stock_type	= "{{$data['stock_type']}}";
-</script> 
+</script>
+
+<script src="{{ url('assets/admin/js/jquery.scannerdetection.js') }}"></script> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
 <script src="{{ url('assets/admin/js/pos.js') }}"></script> 
 <script type="text/javascript" src="{{ url('assets/admin/js/fullscreen/jquery.fullscreen.min.js') }}"></script> 

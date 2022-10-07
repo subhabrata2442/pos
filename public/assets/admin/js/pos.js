@@ -13,7 +13,7 @@ $(document).ready(function(){
 });
 
 
-var _keybuffer = "";
+/*var _keybuffer = "";
 
 $(document).on("keyup", function(e) {
     var code = e.keyCode || e.which;
@@ -21,13 +21,50 @@ $(document).on("keyup", function(e) {
     // trim to last 13 characters
     _keybuffer = _keybuffer.substr(-13);
 
+
     if (_keybuffer.length == 13) {
+        console.log('13');
         if (!isNaN(parseInt(_keybuffer))) {
             barcodeEntered(_keybuffer);
             _keybuffer = "";
         }
+    } else if (_keybuffer.length == 8) {
+        console.log('8');
+        if (!isNaN(parseInt(_keybuffer))) {
+            barcodeEntered(_keybuffer);
+            _keybuffer = "";
+        }
+
     }
+});*/
+
+$(document).scannerDetection({
+	timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+	startChar: [120], // Prefix character for the cabled scanner (OPL6845R)
+	endChar: [13], // be sure the scan is complete if key 13 (enter) is detected
+	avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
+	onComplete: function(barcode, qty){
+		console.log(barcode);
+		console.log(qty);
+		barcodeEntered(barcode);
+	} 
 });
+
+/*$(document).scannerDetection({
+	timeBeforeScanTest: 200, // wait for the next character for upto 200ms
+	endChar: [13], // be sure the scan is complete if key 13 (enter) is detected
+	avgTimeByChar: 40, // it's not a barcode if a character takes longer than 40ms
+	//ignoreIfFocusOn: 'input', // turn off scanner detection if an input has focus
+	onComplete: function(barcode, qty){
+		console.log(barcode);
+		console.log(qty);
+		//barcodeEntered(barcode);
+	}, // main callback function
+	scanButtonKeyCode: 116, // the hardware scan button acts as key 116 (F5)
+	//scanButtonLongPressThreshold: 5, // assume a long press if 5 or more events come in sequence
+	//onScanButtonLongPressed: showKeyPad, // callback for long pressing the scan button
+	onError: function(string){alert('Error ' + string);}
+});*/
 
 
 
@@ -48,6 +85,41 @@ function checkTabPress(e) {
 
 var body = document.querySelector('body');
 body.addEventListener('keyup', checkTabPress);
+
+
+// event listener for keyup
+function checkEnterPress(e) {
+    "use strict";
+    // pick passed event or global event object if passed one is empty
+    e = e || event;
+    var activeElement;
+    if (e.keyCode == 13) {
+		var total_quantity = $('#total_quantity-input').val();
+		if (total_quantity > 0) {
+			if ($(".payWrap.active")[0]){
+				var payment_method=$('#payment_method_type-input').val();
+				if(payment_method=='cash'){
+					$("#calculate_cash_payment_btn").trigger("click");
+				}else if(payment_method=='card'){
+					$("#calculate_card_payment_btn").trigger("click");
+				}else if(payment_method=='gPay'){
+					$("#calculate_gPay_payment_btn").trigger("click");
+				}
+				console.log(payment_method);
+			} else {
+				$(".payBtn").trigger("click");
+				$("#tendered_amount").focus();
+			}	
+		}
+	}
+}
+
+//$(document).on('keypress',
+
+var body2 = document.querySelector('body');
+body2.addEventListener('keypress', checkEnterPress);
+
+
 
 $(function() {
 
@@ -120,8 +192,22 @@ $(document).ready(function() {
         $('#due_amount_tendering').val(total_payble_amount);
         $('#tendered_amount').val('');
         $('#tendered_change_amount').val('');
+		
+		$('#card_payble_amount').val('0.00');
+		$('#upi_payble_amount').val('0.00');
+		
+		
         if (total_quantity > 0) {
             $(".payWrap").toggleClass('active');
+			
+			 var due_amount_tendering 	= parseFloat($("#due_amount_tendering").val());
+			 $("#tendered_amount").val(due_amount_tendering);
+			 $('#card_payble_amount').val(due_amount_tendering);
+			 $('#upi_payble_amount').val(due_amount_tendering);
+			 $("#tendered_change_amount").val('0.00');
+			 $("#tendered_amount").focus();
+			
+			
         } else {
             toastr.error("Add minimum one product!");
         }
@@ -129,16 +215,34 @@ $(document).ready(function() {
 
     $(".paymentModalCloseBtn").on('click', function(e) {
         $(".payWrap").removeClass('active');
+		$("#search_barcode_product").focus();
     });
 });
 
 
+$(document).on('click', '.paymentmethod_btn', function() {
+	$('.paymentmethod_btn').removeClass('active');
+    $(this).addClass('active');
+	var paymentmethod=$(this).data('paymentmethod');
+	$('#upi_paymentmethod_type').val(paymentmethod);
+});
+
 
 /*Start Payment*/
 $(document).on('click', '.p-method-tab', function() {
+	$('.p-method-tab').removeClass('active');
     var type = $(this).data('type');
+	$('#payment_method_type-input').val(type);
     $('.tab_sec').hide();
     $('#' + type + '_payment_sec').show();
+	if(type=='cash'){
+		$("#tendered_amount").focus();
+	}else{
+		$('#' + type + '_payment_sec').find('input').first().focus();
+	}
+	
+	$(this).addClass('active');
+	//console.log('#' + type + '_payment_sec');
 });
 
 $(document).on('click', '.tendered_number_btn', function() {
@@ -211,8 +315,8 @@ $(document).on('click', '.tendered_number_reset', function() {
 });
 
 $(document).on('keyup', '#tendered_amount', function() {
-    var due_amount_tendering = parseFloat($("#due_amount_tendering").val());
-    var tendered_amount = parseFloat($("#tendered_amount").val());
+    var due_amount_tendering 	= parseFloat($("#due_amount_tendering").val());
+    var tendered_amount 		= parseFloat($("#tendered_amount").val());
 
     $("#tendered_change_amount").val((tendered_amount - due_amount_tendering).toFixed(2));
 
@@ -268,6 +372,8 @@ $(document).ready(function() {
 });
 
 $(document).on('click', '#calculate_cash_payment_btn', function() {
+	alert('cash');
+	return false;
     var due_amount_tendering = $('#due_amount_tendering').val();
     var tendered_change_amount = $('#tendered_change_amount').val();
     var tendered_amount = $('#tendered_amount').val();
@@ -306,6 +412,63 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
 
             $("#pos_create_order-form").submit();
         }
+    }
+});
+
+$(document).on('click', '#calculate_gPay_payment_btn', function() {
+	alert('gPay');
+	return false;
+    var upi_payble_amount = $('#upi_payble_amount').val();
+    var due_amount_tendering = $('#due_amount_tendering').val();
+    if (upi_payble_amount > 0) {
+        if (due_amount_tendering != upi_payble_amount) {
+            toastr.error("Make Full Payment");
+        } else {
+            $('#rupee_due_amount_tendering-input').val(upi_payble_amount);
+            $('#rupee_due_amount_tendering').html(upi_payble_amount);
+            $('.upi_payment_sec').append('<input type="hidden" name="online_payment[upi_payble_amount]" value="' + upi_payble_amount + '">');
+
+            $("#pos_create_order-form").submit();
+        }
+    } else {
+        toastr.error("Make Full Payment");
+    }
+});
+
+$(document).on('click', '#calculate_card_payment_btn', function() {
+	alert('card');
+	return false;
+    var upi_payble_amount = $('#card_payble_amount').val();
+    var due_amount_tendering = $('#due_amount_tendering').val();
+	
+	var card_type = $('#card_type').val();
+	var card_number = $('#card_number').val();
+	var card_invoice_number = $('#card_invoice_number').val();
+	
+	if(card_type!='other'){
+		if(card_number==''){
+			toastr.error("Enter Card No.");
+			return false;
+		}else if(card_invoice_number==''){
+			toastr.error("Enter Invoice No.");
+			return false;
+		}
+	}
+	
+	
+	
+    if (upi_payble_amount > 0) {
+        if (due_amount_tendering != upi_payble_amount) {
+            toastr.error("Make Full Payment");
+        } else {
+            $('#rupee_due_amount_tendering-input').val(upi_payble_amount);
+            $('#rupee_due_amount_tendering').html(upi_payble_amount);
+            $('.card_details_payment_sec').append('<input type="hidden" name="online_payment[upi_payble_amount]" value="' + upi_payble_amount + '"><input type="hidden" name="online_payment[card_type]" value="' + card_type + '"><input type="hidden" name="online_payment[card_number]" value="' + card_number + '"><input type="hidden" name="online_payment[card_invoice_number]" value="' + card_invoice_number + '">');
+
+            $("#pos_create_order-form").submit();
+        }
+    } else {
+        toastr.error("Make Full Payment");
     }
 });
 
