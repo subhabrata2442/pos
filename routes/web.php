@@ -143,6 +143,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 
         Route::match(['GET'],'/product-wise-sales-report', [ReportController::class, 'productWiseSaleReport'])->name('sales.report.product.wise');
 
+        Route::match(['GET'],'/month-wise-pdf', [ReportController::class, 'monthWiseReportPdf'])->name('product.month_wise');
 
 		
         //Route::match(['GET', 'POST'], '/list', [ProductController::class, 'list'])->name('list');

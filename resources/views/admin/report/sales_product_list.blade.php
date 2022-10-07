@@ -12,19 +12,15 @@
 	  <div class="d-flex justify-content-between align-items-center mb-4">
 		<form method="get" id="search-form" class="form-inline" role="form">
 			<input type="hidden" name="item_id" value="{{$data['item_id']}}" id="item_id">
-			{{-- <div id="reportrange" style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc;">
-				<i class="fa fa-calendar"></i>&nbsp;
-				<span></span> <i class="fa fa-caret-down"></i>
-			</div> --}}
 			<input type="hidden" name="start_date" id="start_date" value="">
 			<input type="hidden" name="end_date" id="end_date" value="">
-			<div class="form-group">
+			{{-- <div class="form-group">
 				<label for="date_search" class="mr-3">Date</label>
 				<input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off">
 			</div>
-			<button type="submit" class="btn btn-primary ml-3">Search</button>
+			<button type="submit" class="btn btn-primary ml-3">Search</button> --}}
 		</form>
-		<a href="javascript:;" id="download" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Download</a>
+		{{-- <a href="javascript:;" id="download" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Download</a> --}}
 	  </div>
 	  
       <div class="table-responsive dataTable-design">

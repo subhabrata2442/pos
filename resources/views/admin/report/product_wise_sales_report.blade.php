@@ -163,6 +163,7 @@
 							<select class="form-control custom-select form-control-select" id="report_type">
 								<option value=""> Select Report Type</option>
 								<option value="item_wise_sales_report"> Item Wise sales report</option>
+								<option value="month_wise_report"> Month Wise report</option>
 							</select>
 						</div>
 						<div>
@@ -271,13 +272,16 @@ $(function() {
                 text: 'Please select date!',
             })
         }else{
-			console.log('sdfd');
-            var url = "{{route('admin.report.sales.product.item_wise')}}";
-			var href = url+'?start_date='+start_date+'&end_date='+end_date;
-
+			//console.log('sdfd');
+			if(report_type == 'item_wise_sales_report'){
+				var url = "{{route('admin.report.sales.product.item_wise')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+			}else if(report_type == 'month_wise_report'){
+				var url = "{{route('admin.report.product.month_wise')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+			}
 			window.open(href);
-		    //$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
-			//window.location = window.location.href;
+		    
         }
         
 		

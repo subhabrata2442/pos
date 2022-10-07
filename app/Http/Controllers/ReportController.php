@@ -814,14 +814,10 @@ class ReportController extends Controller
         // make a response, with the content, a 200 response code and the headers
         return Response::make($content, 200, $headers);
     }
+    
     public function salesItems(Request $request){
-		
-		//$sales = SellInwardStock::where('invoice_no','!=','')->orderBy('id', 'desc')->get();
-		//echo '<pre>';print_r($sales);exit;
-				
         try {
-            if ($request->ajax()) {
-                $sales = SellInwardStock::where('invoice_no','!=','');
+            $sales = SellInwardStock::where('invoice_no','!=','');
                 if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
                     if($request->get('start_date') == $request->get('end_date')){
                         $sales->whereDate('sell_date', $request->get('start_date'));
@@ -829,51 +825,21 @@ class ReportController extends Controller
                         $sales->whereBetween('sell_date', [$request->get('start_date'), $request->get('end_date')]);
                     }    
                 }
-
-                $sales->orderBy('id', 'desc')->get();
-                
-                
-                //echo "<pre>";print_r($request->all());die;
-                return DataTables::of($sales)
-                    ->addColumn('invoice_no', function ($row) {
-                        return '<a class="td-anchor" href="'.route('admin.report.sales.product', [ 'id'=>base64_encode($row->id)]) .'" target="_blank">' . $row->invoice_no . '</a>';
+                if(!empty($request->get('invoice'))){
                     
-                    })
-                    ->addColumn('supplier', function ($row) {
-                        return $row->supplierDetails->name;
-                    })
-                    ->addColumn('total_qty', function ($row) {
-                        return $row->total_qty;
-                    })
-                    ->addColumn('gross_amount', function ($row) {
-                        return $row->gross_amount;
-                    })
-                    ->addColumn('discount_amount', function ($row) {
-                        return $row->discount_amount;
-                    })
-                    ->addColumn('sub_total', function ($row) {
-                        return $row->sub_total;
-                    })
-                    ->addColumn('pay_amount', function ($row) {
-                        return $row->pay_amount;
-                    })
-                    ->addColumn('payment_method', function ($row) {
-                        return $row->payment_method;
-                    })
-                    ->addColumn('sell_date', function ($row) {
-                        return date('d-m-Y', strtotime($row->sell_date));
-                    })
-                  
-                    /* ->addColumn('total_cost', function ($row) {
-                        return number_format($row->total_cost,2) ;
-                    }) */
-                    ->rawColumns(['invoice_no'])
-                    ->make(true);
-            }
+                    $sales->where('invoice_no', $request->get('invoice'));
+                      
+                }
+
+            $sales->orderBy('id', 'desc')->get();
             
             $data = [];
-            $data['heading'] = 'Sales List';
-            $data['breadcrumb'] = ['Sales', '', 'List'];
+            $data['total_ammount'] = $sales->sum('pay_amount');
+            $data['total_qty'] = $sales->sum('total_qty');
+            $data['total_invoice'] = $sales->count();
+            $data['sales'] = $sales->paginate(10);
+            $data['heading'] = 'Invoice Wise Sales List';
+            $data['breadcrumb'] = ['Invoice Wise Sales', '', 'List'];
 
             return view('admin.report.sales_item_list', compact('data'));
         } catch (\Exception $e) {
@@ -1070,5 +1036,53 @@ class ReportController extends Controller
         }catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
+    }
+
+    public function monthWiseReportPdf(Request $request){
+        $month = Carbon::create($request->start_date)->month;
+        $total_date = Carbon::create($request->start_date)->daysInMonth; 
+        $year = Carbon::create($request->start_date)->year;
+        $items=[];
+        $categories = Category::where('food_type',1)->get();
+        //foreach($categories as $category){
+            for($i = 1; $i <= $total_date; $i++){
+                $items['date'][]= $year.'-'.$month.'-'.$i;
+                foreach($categories as $category){
+                    $sells = SellStockProducts::where('category_id',$category->id)
+                        ->whereDate('created_at',$year.'-'.$month.'-'.$i)
+                        ->groupBy(['category_id'])
+                        ->selectRaw('product_name,product_mrp,category_id,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')->get();
+                    $items['date'][$year.'-'.$month.'-'.$i][]= $sells;
+                }
+            }
+            dd($items);
+       // }
+        
+        $data = [];
+        //$data['items'] = $items;
+        $data['categories'] = $categories;
+        $data['shop_name'] = 'BAZIMAT';
+        $data['shop_address'] = 'West Chowbaga Kolkata - 700105 West Bengal';
+        $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
+        $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
+
+       /*  $pdf = PDF::loadView('admin.pdf.month-wise-report', $data,
+            [ 
+                //'title' => 'Certificate', 
+                'format' => 'A4-L',
+                'orientation' => 'L'
+            ]); */
+        $pdf = PDF::loadView('admin.pdf.month-wise-report', 
+        $data, 
+        [], 
+        [ 
+          //'title' => 'Certificate', 
+          //'format' => 'A4-L',
+          'mode' => 'utf-8',
+          'format' => [190, 380],
+          'orientation' => 'L'
+        ]);   
+         //echo "<pre>";print_r($items);die;
+		return $pdf->stream(now().'-invoice.pdf');
     }
 }
