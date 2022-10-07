@@ -372,8 +372,8 @@ $(document).ready(function() {
 });
 
 $(document).on('click', '#calculate_cash_payment_btn', function() {
-	alert('cash');
-	return false;
+	//alert('cash');
+	//return false;
     var due_amount_tendering = $('#due_amount_tendering').val();
     var tendered_change_amount = $('#tendered_change_amount').val();
     var tendered_amount = $('#tendered_amount').val();
@@ -416,8 +416,8 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
 });
 
 $(document).on('click', '#calculate_gPay_payment_btn', function() {
-	alert('gPay');
-	return false;
+	//alert('gPay');
+	//return false;
     var upi_payble_amount = $('#upi_payble_amount').val();
     var due_amount_tendering = $('#due_amount_tendering').val();
     if (upi_payble_amount > 0) {
@@ -436,8 +436,8 @@ $(document).on('click', '#calculate_gPay_payment_btn', function() {
 });
 
 $(document).on('click', '#calculate_card_payment_btn', function() {
-	alert('card');
-	return false;
+	//alert('card');
+	//return false;
     var upi_payble_amount = $('#card_payble_amount').val();
     var due_amount_tendering = $('#due_amount_tendering').val();
 	
