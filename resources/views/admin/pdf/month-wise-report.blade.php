@@ -79,10 +79,10 @@
                 <td>{{$date}}</td>
                 @foreach ($item as $key=> $catval)
                     <td>{{@$catval['opening']}}</td>
-                    <td>{{@$catval['purchases']}}</td>
+                    <td>{{@$catval['purchase']}}</td>
                     <td>{{@$catval['sale']}}</td>
-                    <td>{{(@$catval['opening'] + @$catval['purchases'])-@$catval['sale']}}</td>
-                    {{-- <td>{{@$catval['closing']}}</td> --}}
+                    <td>{{@$catval['closing']}}</td>
+                    
                 @endforeach
             </tr>
             
