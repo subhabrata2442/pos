@@ -1130,7 +1130,8 @@ class ReportController extends Controller
         $total_date = Carbon::create($request->start_date)->daysInMonth; 
         $year = Carbon::create($request->start_date)->year;
         $previous_month = Carbon::create($request->start_date)->subMonth()->format('m');
-        
+        $last_twelve_years = Carbon::create($request->start_date)->subYear()->format('Y-m-d');
+        echo $previous_month;die;
         $items=[];
         $categories = Category::where('food_type',1)->get();
             for($i = 1; $i <= $total_date; $i++){
