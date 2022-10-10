@@ -215,6 +215,12 @@ $(document).ready(function() {
 						var unit_cost = item_detail.unit_cost;
 						var rrs_amt = item_detail.rrs_amt;
 						var retail_item_amt = item_detail.retail_item_val;
+						
+						var category_id = item_detail.category_id;
+						var subcategory_id = item_detail.subcategory_id;
+						
+						
+						
 
                         var is_new = 'new_item';
                         if (item_detail.product_id > 0) {
@@ -231,9 +237,12 @@ $(document).ready(function() {
                             '<input type="hidden" name="item_scan_time_' + product_id + '" id="item_scan_time_' + product_id + '" value="' + scan_time + '">' +
                             '<input type="hidden" name="inward_item_detail_id_' + product_id + '" id="inward_item_detail_id_' + product_id + '" value="">' +
                             '<input type="hidden" name="stock_transfers_detail_id_' + product_id + '" id="stock_transfers_detail_id_' + product_id + '" value="">' +
-							'<input type="hidden" name="rrs_amt_' + product_id + '" id="rrs_amt_' + product_id + '" value="'+rrs_amt+'">' +
+							
+							
 							
                             '<td></td>' +
+							'<td id="subcategory_id_' + product_id + '" style="display:none">'+subcategory_id+'</td>' +
+							'<td id="category_id_' + product_id + '" style="display:none">'+category_id+'</td>' +
                             '<td id="product_barcode_' + product_id + '">' + product_barcode + '</td>' +
                             '<td id="product_case_qty_' + product_id + '">' + bottle_case + '</td>' +
                             '<td id="product_bottle_case_' + product_id + '">' + bottle_per_case + '</td>' +
@@ -958,6 +967,7 @@ $(document).on('click', '#inwardStockSubmitBtm', function() {
             $(this).find('td').each(function() {
                 if ($(this).attr('id') != undefined) {
                     id = $(this).attr('id').split('_' + product_id)[0];
+					//console.log(id);return false;
                     values = $(this).html();
                     product_detail[id] = values;
                 }
@@ -965,6 +975,8 @@ $(document).on('click', '#inwardStockSubmitBtm', function() {
             product_info.push(product_detail);
         });
     });
+	
+	//console.log();
 
     inward_stock_info['product_detail'] = product_info;
 

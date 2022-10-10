@@ -922,6 +922,8 @@ class AjaxController extends Controller {
 	public function ajaxpost_add_inward_stock($request) {
 		$inward_stock	= $request->inward_stock;
 		$company_id		= Session::get('branch_id');
+		
+		//print_r($_POST);exit;
 
 		$purchaseStockData=array(
 		
@@ -1257,6 +1259,7 @@ class AjaxController extends Controller {
 
 					$inward_stock_product=array(
 						'inward_stock_id'			=> $purchaseInwardStockId,
+						'branch_id'  				=> $company_id,
 						'product_id'  				=> $inward_stock['product_detail'][$i]['product_id'],
 						'size_id'  					=> $size_id,
 						'case_qty'  				=> $inward_stock['product_detail'][$i]['product_case_qty'],
@@ -1273,6 +1276,9 @@ class AjaxController extends Controller {
 						'batch_no'  				=> $inward_stock['product_detail'][$i]['batch_no'],
 						'unit_cost'  				=> $inward_stock['product_detail'][$i]['unit_cost'],
 						'exc_unit_cost'  			=> $inward_stock['product_detail'][$i]['retail_item_amt'],
+						'category_id'  				=> $inward_stock['product_detail'][$i]['category_id'],
+						'subcategory_id'  			=> $inward_stock['product_detail'][$i]['subcategory_id'],
+						'size_ml'  					=> $inward_stock['product_detail'][$i]['measure'],
 						'base_price'  				=> isset($inward_stock['product_detail'][$i]['base_price'])?$inward_stock['product_detail'][$i]['base_price']:0,
 						'base_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['base_discount_percent'])?$inward_stock['product_detail'][$i]['base_discount_percent']:0,
 						'base_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['base_discount_amount'])?$inward_stock['product_detail'][$i]['base_discount_amount']:0,

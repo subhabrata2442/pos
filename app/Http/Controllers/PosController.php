@@ -320,6 +320,7 @@ class PosController extends Controller
 			
 			
 			
+			
 			/*$data['purchase_product_result']	= BranchStockProducts::select('master_products.id as product_id','products.slug','products.product_name','products.product_name')
 				->leftJoin('products', function($join) {
 					$join->on('branch_stock_products.product_id', '=', 'products.id');
@@ -534,6 +535,7 @@ class PosController extends Controller
 				$sellStockproductData=array(
 					'inward_stock_id'	=> $sellStockId,
 					'product_id'  		=> $product_id,
+					'branch_id'  		=> $branch_id,
 					'product_stock_id'  => $product_stock_id,
 					'barcode'			=> $barcode,
 					'product_name'  	=> $name,

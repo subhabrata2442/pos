@@ -51,6 +51,90 @@ class ReportController extends Controller
         }
     }
 	
+	public function test_report(Request $request)
+    {
+		//http://127.0.0.1:8000/admin/report/invoice/test_report
+		
+		$result=[];
+		$categories = Category::where('food_type',1)->get();
+		if(count($categories)>0){
+			foreach($categories as $row){
+				$category_id=$row->id;
+				$sub_cat_result=[];
+				$catehoty_wise_subcategory=Product::select('subcategory_id')->distinct()->where('category_id',$row->id)->get();
+				if(count($catehoty_wise_subcategory)>0){
+					foreach($catehoty_wise_subcategory as $sub_row){
+						
+						$subcategory_id	 = $sub_row->subcategory_id;
+						$opening_balance = 0;
+						$receipt_balance = 0;
+						$sales			 = 0;
+						$closing_balance = 0;
+						
+						//$month = Carbon::create($request->start_date)->month;
+						
+						$first_day_this_month = date('Y-m-01');
+						$last_day_this_month  = date('Y-m-t');
+						
+						$dateS = date('Y-m-d',strtotime($first_day_this_month));
+						$dateE = date('Y-m-d',strtotime($last_day_this_month));
+						
+						$start_date = date('Y-m-d',strtotime('2022-09-01'));
+						
+						//$dateS = date('Y-m-d',strtotime('2022-10-01'));
+						//$dateE = date('Y-m-d',strtotime('2022-10-01'));
+						
+						
+						
+						//DB::enableQueryLog();
+						//var_dump($result, DB::getQueryLog());
+						
+						$total_sell_result = SellStockProducts::selectRaw('sum(size_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$total_sell=isset($total_sell_result[0]->total_ml)?$total_sell_result[0]->total_ml:'0';
+						
+						$total_sell_result = InwardStockProducts::selectRaw('sum(size_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$total_sell=isset($total_sell_result[0]->total_ml)?$total_sell_result[0]->total_ml:'0';
+						
+						
+						echo '<pre>';print_r($total_sell);exit;
+
+						
+						
+						
+						
+						echo $last_day_this_month;
+						exit;
+
+
+						$sub_cat_result[]=array(
+							'category_id'	=> $sub_row->subcategory_id,
+							'category_name'	=> $sub_row->subcategory->name
+						);
+					}
+				}
+				
+				
+				//echo '<pre>';print_r($sub_cat_result);exit;
+				
+				 //Subcategory::all();
+				$result[]=array(
+					'category_id'	=> $row->id,
+					'category_name'	=> $row->name,
+					'sub_category'	=> $sub_cat_result
+				);
+			}
+		}
+		
+		echo '<pre>';print_r($result);exit;
+		
+		
+		
+		
+		
+		
+		
+	}
+	
 	public function invoice_report(Request $request)
     {
         try {
