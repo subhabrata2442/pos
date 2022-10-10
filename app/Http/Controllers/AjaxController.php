@@ -424,7 +424,7 @@ class AjaxController extends Controller {
 
 		//print_r($searchValues);exit;
 
-		$res=MasterProducts::query()->where('product_name', 'LIKE', "%{$search}%")->orWhere('product_barcode', 'LIKE', "%{$search}%")->take(20)->get();
+		$res=MasterProducts::query()->where('product_name', 'LIKE', "%{$search}%")->orWhere('product_barcode', $search)->orWhere('barcode2', $search)->orWhere('barcode3', $search)->take(20)->get();
 		$result=[];
 
 		foreach($res as $row){
@@ -1256,6 +1256,9 @@ class AjaxController extends Controller {
 					}
 
 					//Product::where('id', $product_id)->update(['stock_qty' => $current_stock]);
+					
+					$size_ml=trim(str_replace('Ml.', '', $inward_stock['product_detail'][$i]['measure']));
+					$total_ml=(int)$size_ml*(int)$inward_stock['product_detail'][$i]['product_qty'];
 
 					$inward_stock_product=array(
 						'inward_stock_id'			=> $purchaseInwardStockId,
@@ -1279,6 +1282,7 @@ class AjaxController extends Controller {
 						'category_id'  				=> $inward_stock['product_detail'][$i]['category_id'],
 						'subcategory_id'  			=> $inward_stock['product_detail'][$i]['subcategory_id'],
 						'size_ml'  					=> $inward_stock['product_detail'][$i]['measure'],
+						'total_ml'  				=> $total_ml,
 						'base_price'  				=> isset($inward_stock['product_detail'][$i]['base_price'])?$inward_stock['product_detail'][$i]['base_price']:0,
 						'base_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['base_discount_percent'])?$inward_stock['product_detail'][$i]['base_discount_percent']:0,
 						'base_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['base_discount_amount'])?$inward_stock['product_detail'][$i]['base_discount_amount']:0,

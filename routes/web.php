@@ -129,7 +129,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 			Route::match(['GET'], '/report', [ReportController::class, 'invoice_report'])->name('invoice_report');
 			
 			Route::match(['GET'], '/test_report', [ReportController::class, 'test_report'])->name('test_report');
-			
+			Route::match(['GET'], '/brand_report', [ReportController::class, 'brand_report'])->name('brand_report');
 			
 		});
         

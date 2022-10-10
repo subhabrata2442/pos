@@ -51,12 +51,51 @@ class ReportController extends Controller
         }
     }
 	
+	public function brand_report(Request $request)
+	{
+		echo 'test';exit;
+	}
+	
 	public function test_report(Request $request)
     {
 		//http://127.0.0.1:8000/admin/report/invoice/test_report
 		
+		
+		/*$total_sell_result = SellStockProducts::get();
+		
+		foreach($total_sell_result as $row){
+			$size_ml=trim(str_replace('ml', '', $row->size_ml));
+			$total_ml=(int)$size_ml*(int)$row->product_qty;
+			SellStockProducts::where('id', $row->id)->update(['total_ml' => $total_ml]);
+		}
+		
+		exit;
+		
+		$total_sell_result = InwardStockProducts::get();
+		
+		foreach($total_sell_result as $row){
+			$size_ml=trim(str_replace('ml', '', $row->size_ml));
+			$total_ml=(int)$size_ml*(int)$row->product_qty;
+			InwardStockProducts::where('id', $row->id)->update(['total_ml' => $total_ml]);
+		}
+		
+		exit;*/
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		$result=[];
 		$categories = Category::where('food_type',1)->get();
+		
+		//echo '<pre>';print_r($categories);exit;
+		
+		
 		if(count($categories)>0){
 			foreach($categories as $row){
 				$category_id=$row->id;
@@ -70,6 +109,7 @@ class ReportController extends Controller
 						$receipt_balance = 0;
 						$sales			 = 0;
 						$closing_balance = 0;
+						$prevYear_closing_balance=0;
 						
 						//$month = Carbon::create($request->start_date)->month;
 						
@@ -79,36 +119,91 @@ class ReportController extends Controller
 						$dateS = date('Y-m-d',strtotime($first_day_this_month));
 						$dateE = date('Y-m-d',strtotime($last_day_this_month));
 						
-						$start_date = date('Y-m-d',strtotime('2022-09-01'));
+						$start_date = date('Y-m-d',strtotime('2021-09-01'));
 						
 						//$dateS = date('Y-m-d',strtotime('2022-10-01'));
 						//$dateE = date('Y-m-d',strtotime('2022-10-01'));
 						
+						$dateP = date('Y-m-t', strtotime('last month'));
+						//echo $previous_month.'|'.$dateS.'|'.$dateE;exit;
+						
+						
+						$prevYeardateS = date('Y-m-01',strtotime('-1 year'));
+						$prevYeardateE = date('Y-m-t',strtotime('-1 year'));
+						
+						//$previous_year= date("Y",strtotime("-1 year"));
+						
+						//echo '<pre>';print_r($prevYeardateE);exit;
+						
+						
+						
+						$prevYear_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $prevYeardateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$prevYear_total_sell=isset($prevYear_sell_result[0]->total_ml)?$prevYear_sell_result[0]->total_ml:'0';
+						
+						$prevYear_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $prevYeardateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$prevYear_receipt_balance=isset($prevYear_purchase_result[0]->total_ml)?$prevYear_purchase_result[0]->total_ml:'0';
+						
+						if($prevYear_total_sell=0 && $prevYear_receipt_balance!=0){
+							$prevYear_closing_balance=$prevYear_receipt_balance-$prevYear_total_sell;
+						}
+						
+						
+						
+						
+						
+						
+						
+						$prev_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$prev_receipt_balance=isset($prev_purchase_result[0]->total_ml)?$prev_purchase_result[0]->total_ml:'0';
+						
+						$prev_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$prev_total_sell=isset($prev_sell_result[0]->total_ml)?$prev_sell_result[0]->total_ml:'0';
+						
+						//echo '<pre>';print_r($prev_sell_result);exit;
 						
 						
 						//DB::enableQueryLog();
 						//var_dump($result, DB::getQueryLog());
 						
-						$total_sell_result = SellStockProducts::selectRaw('sum(size_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
-						$total_sell=isset($total_sell_result[0]->total_ml)?$total_sell_result[0]->total_ml:'0';
+						$sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$total_sell=isset($sell_result[0]->total_ml)?$sell_result[0]->total_ml:'0';
 						
-						$total_sell_result = InwardStockProducts::selectRaw('sum(size_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
-						$total_sell=isset($total_sell_result[0]->total_ml)?$total_sell_result[0]->total_ml:'0';
-						
-						
-						echo '<pre>';print_r($total_sell);exit;
-
+						$purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$receipt_balance=isset($purchase_result[0]->total_ml)?$purchase_result[0]->total_ml:'0';
 						
 						
+						if($prev_receipt_balance==0){
+							$opening_balance=$receipt_balance;
+							
+						}
+						if($opening_balance!=0 && $total_sell!=0){
+							$closing_balance=$opening_balance-$total_sell;
+						}
 						
+						if($opening_balance!=0){
+							$opening_balance=$opening_balance/1000;
+						}
+						if($receipt_balance!=0){
+							$receipt_balance=$receipt_balance/1000;
+						}
+						if($total_sell!=0){
+							$total_sell=$total_sell/1000;
+						}
+						if($closing_balance!=0){
+							$closing_balance=$closing_balance/1000;
+						}
+						if($prevYear_closing_balance!=0){
+							$prevYear_closing_balance=$prevYear_closing_balance/1000;
+						}
 						
-						echo $last_day_this_month;
-						exit;
-
-
 						$sub_cat_result[]=array(
-							'category_id'	=> $sub_row->subcategory_id,
-							'category_name'	=> $sub_row->subcategory->name
+							'category_id'		=> $sub_row->subcategory_id,
+							'category_name'		=> $sub_row->subcategory->name,
+							'opening_balance'	=> $opening_balance,
+							'receipt_balance'	=> $receipt_balance,
+							'total_sell'		=> $total_sell,
+							'closing_balance'	=> $closing_balance,
+							'prevYear_closing_balance'=> $prevYear_closing_balance
 						);
 					}
 				}
@@ -125,7 +220,13 @@ class ReportController extends Controller
 			}
 		}
 		
-		echo '<pre>';print_r($result);exit;
+		$pdf = PDF::loadView('admin.pdf.e-report', compact('result'));
+		return $pdf->stream(now().'-e-report.pdf');
+		
+		//return $pdf->download('invoice.pdf');
+         
+		
+		echo '<pre>';print_r($pdf);exit;
 		
 		
 		
@@ -298,6 +399,7 @@ class ReportController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
+	
     public function complete_order_list(Request $request)
     {
         try {

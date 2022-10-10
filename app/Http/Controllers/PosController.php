@@ -532,6 +532,9 @@ class PosController extends Controller
 					BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type','counter')->update(['w_qty' => $sell_price_w_qty]);
 				}
 				
+				$size_ml=trim(str_replace('ml', '', $size));
+				$total_ml=(int)$size_ml*(int)$qty;
+				
 				$sellStockproductData=array(
 					'inward_stock_id'	=> $sellStockId,
 					'product_id'  		=> $product_id,
@@ -544,6 +547,7 @@ class PosController extends Controller
 					'category_id'  		=> $category_id,
 					'subcategory_id'  	=> $subcategory_id,
 					'size_ml'  			=> $size,
+					'total_ml'  		=> $total_ml,
 					'product_qty'		=> $qty,
 					'discount_percent'  => $disc_percent,
 					'discount_amount'  	=> $disc_amount,
