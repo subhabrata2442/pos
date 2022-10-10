@@ -81,6 +81,87 @@ class ReportController extends Controller
 		}
 		
 		exit;*/
+		$start_date = date('Y-m-d',strtotime('2021-09-01'));
+		
+		$total_month=31;
+		$result=[];
+		for($i = 1; $i <= $total_month; $i++){
+			$dateE = date('Y-m-d',strtotime('2022-10-'.$i));
+			$opening	= 0;
+			$purchase	= 0;
+			$sale		= 0;
+			$closing	= 0;
+			
+			$dateP=date('Y-m-d', strtotime('-1 day', strtotime($dateE)));
+			//$dateP='2022-10-10';
+			//print_r($dateP);exit;
+			
+			$prev_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->get();
+			$prev_purchase_balance=isset($prev_purchase_result[0]->total_ml)?$prev_purchase_result[0]->total_ml:'0';
+			
+			$prev_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->get();
+			$prev_total_sell=isset($prev_sell_result[0]->total_ml)?$prev_sell_result[0]->total_ml:'0';
+			
+			
+			//echo '<pre>';print_r($prev_purchase_balance);exit;
+			
+			//exit;
+			
+			$current_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$dateE." 00:00:00", $dateE." 23:59:59"])->get();
+			$purchase=isset($current_purchase_result[0]->total_ml)?$current_purchase_result[0]->total_ml:'0';
+			
+			
+			$current_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$dateE." 00:00:00", $dateE." 23:59:59"])->get();
+			$sale=isset($current_sell_result[0]->total_ml)?$current_sell_result[0]->total_ml:'0';
+			
+			//$closing=
+			
+			
+			
+			
+			
+			$opening=$prev_purchase_balance-$prev_total_sell;
+			if($purchase!=0){
+				$opening= +$purchase;
+			}
+			$closing=$opening-$sale;
+			
+			
+			
+			
+			
+			
+			
+			$result[]=array(
+				'date'		=> $dateE,
+				'opening'	=> $opening,
+				'purchase'	=> $purchase,
+				'sale'		=> $sale,
+				'closing'	=> $closing,
+				//'purchase_balance'	=> $prev_purchase_balance,
+				//'total_sell'		=> $total_sell
+				
+			);
+		}
+		
+		echo '<pre>';print_r($result);exit;
+		
+		
+		exit;
+		
+		
+		
+		
+		
+		
+		
+		$dateE = date('Y-m-d',strtotime('2022-10-31'));
+		
+		
+		$sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+		$total_sell=isset($sell_result[0]->total_ml)?$sell_result[0]->total_ml:'0';
+		
+		
 		
 		
 		
