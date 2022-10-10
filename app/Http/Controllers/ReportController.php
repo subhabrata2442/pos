@@ -28,6 +28,7 @@ use App\Models\Size;
 use App\Models\Subcategory;
 use Carbon\Carbon;
 Use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 Use Illuminate\Support\Str;
 
 class ReportController extends Controller
@@ -1225,27 +1226,67 @@ class ReportController extends Controller
     }
 
     public function monthWiseReportPdf(Request $request){
+        $branch_id		= Session::get('branch_id');
+        $supplier_id	= Session::get('adminId');
         $month = Carbon::create($request->start_date)->month;
         $total_date = Carbon::create($request->start_date)->daysInMonth; 
         $year = Carbon::create($request->start_date)->year;
+        $previous_month = Carbon::create($request->start_date)->subMonth()->format('m');
+        
         $items=[];
         $categories = Category::where('food_type',1)->get();
-        //foreach($categories as $category){
             for($i = 1; $i <= $total_date; $i++){
-                $items['date'][]= $year.'-'.$month.'-'.$i;
+                //$items[]= $year.'-'.$month.'-'.$i;
                 foreach($categories as $category){
-                    $sells = SellStockProducts::where('category_id',$category->id)
+                    //Start Previous month 
+                    $previous_month_purchase = InwardStockProducts::where('category_id',$category->id)
+                        ->where('branch_id',$branch_id)
+                        ->whereDate('created_at',$year.'-'.$previous_month.'-'.$i)
+                        ->groupBy(['category_id'])
+                        ->selectRaw('category_id,sum(total_ml) as previous_month_total_purchase_ml')->first();
+                    //echo "<pre>"    
+                    $previous_month_sells = SellStockProducts::where('category_id',$category->id)
+                        ->where('branch_id',$branch_id)
+                        ->whereDate('created_at',$year.'-'.$previous_month.'-'.$i)
+                        ->groupBy(['category_id'])
+                        ->selectRaw('category_id,sum(total_ml) as previous_month_total_sale_ml')->first();
+
+                    $total_previous_month_purches =  isset($previous_month_purchase) ? $previous_month_purchase->previous_month_total_purchase_ml : '0.000'; 
+                    
+                    $total_previous_month_sale =  isset($previous_month_sells) ? $previous_month_sells->previous_month_total_sale_ml : '0.000'; 
+                    
+                    $dayOpening = $total_previous_month_purches - $total_previous_month_sale;
+                    $items[$year.'-'.$month.'-'.$i][$category->name]['opening']= $dayOpening;   
+                    //End Previous month
+                    
+                    $purchases = InwardStockProducts::where('category_id',$category->id)
+                        ->where('branch_id',$branch_id)
                         ->whereDate('created_at',$year.'-'.$month.'-'.$i)
                         ->groupBy(['category_id'])
-                        ->selectRaw('product_name,product_mrp,category_id,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')->get();
-                    $items['date'][$year.'-'.$month.'-'.$i][]= $sells;
+                        ->selectRaw('category_id,sum(total_ml) as total_purchase_ml')->first();
+                    $dayPurchase = isset($purchases) ? $purchases->total_purchase_ml : '0.000';
+                    $items[$year.'-'.$month.'-'.$i][$category->name]['purchases']= $dayPurchase;
+                    $sells = SellStockProducts::where('category_id',$category->id)
+                        ->where('branch_id',$branch_id)
+                        ->whereDate('created_at',$year.'-'.$month.'-'.$i)
+                        ->groupBy(['category_id'])
+                        ->selectRaw('category_id,sum(total_ml) as total_sale_ml')->first();
+                    $daySale = isset($sells) ? $sells->total_sale_ml : '0.000'; 
+                    $items[$year.'-'.$month.'-'.$i][$category->name]['sale']= $daySale;
+                   
+                   
+                    //$items[$year.'-'.$month.'-'.$i]['date']= $year.'-'.$month.'-'.$i;
+                    
+                    //$items[$year.'-'.$month.'-'.$i][$category->name]['closing']= ($dayPurchase + $dayOpening) - $daySale;
+                    
                 }
             }
-            dd($items);
-       // }
+            //echo "<pre>";print_r($items);die;
+      
         
         $data = [];
-        //$data['items'] = $items;
+        $data['month'] = $month.'-'.$year;
+        $data['items'] = $items;
         $data['categories'] = $categories;
         $data['shop_name'] = 'BAZIMAT';
         $data['shop_address'] = 'West Chowbaga Kolkata - 700105 West Bengal';
