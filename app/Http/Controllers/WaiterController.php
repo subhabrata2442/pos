@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Waiter;
 use Illuminate\Http\Request;
 use DataTables;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 class WaiterController extends Controller
 {
@@ -14,14 +15,15 @@ class WaiterController extends Controller
             if ($request->isMethod('post')) {
                 $validator = Validator::make($request->all(), [
                     'name' 		=> 'required',
-                    'mobile' 	=> 'required',
+                    //'mobile' 	=> 'required',
                 ]);
                 if ($validator->fails()) {
                     return redirect()->back()->withErrors($validator)->withInput();
                 }
 				
-				
+				$branch_id		= Session::get('branch_id');
 				$waiter_data=array(
+					'branch_id'  	=> $branch_id,
 					'name'  		=> $request->name,
 					'gender'  	    => $request->gender,
 					'mobile'		=> $request->mobile,

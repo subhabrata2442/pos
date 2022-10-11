@@ -181,6 +181,12 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
             Route::match(['GET', 'POST'], '/edit/{id}', [ManageTableController::class, 'edit'])->name('edit');
             Route::match(['GET', 'POST'], '/delete/{id}', [ManageTableController::class, 'delete'])->name('delete');
         });
+        Route::prefix('product')->name('product.')->group(function () {
+            /* Route::match(['GET', 'POST'], '/add', [ManageTableController::class, 'add'])->name('add'); */
+            Route::match(['GET', 'POST'], '/list', [ProductController::class, 'restaurantProductList'])->name('list');
+            /* Route::match(['GET', 'POST'], '/edit/{id}', [ManageTableController::class, 'edit'])->name('edit');
+            Route::match(['GET', 'POST'], '/delete/{id}', [ManageTableController::class, 'delete'])->name('delete'); */
+        });
     });
 	
 	Route::get('/invoice',[ReportController::class,'invoicePdf'])->name('sale_pdf');

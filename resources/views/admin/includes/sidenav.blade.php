@@ -146,6 +146,10 @@ $is_branch 			= Session::get('is_branch');
                 </li>
               </ul>
             </li>
+            <li class="nav-item"> <a href="{{ route('admin.restaurant.product.list') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.restaurant.product.list') active @endif"> <i class="fas fa-list nav-icon"></i>
+              <p>Product List</p>
+              </a> 
+            </li>
           </ul>
         </li>  
           
