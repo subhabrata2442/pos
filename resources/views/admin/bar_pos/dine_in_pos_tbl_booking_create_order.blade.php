@@ -10,6 +10,9 @@
 .content-header {
 	display: none !important;
 }
+.swal2-container {
+    z-index: 9999;
+}
 </style>
 @section('admin-content')
 
@@ -48,10 +51,10 @@ $booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['ba
         </div>
       </div>
       <div class="ftDetails">
-        <div class="relative mb-4 onlineTab">
+        <!--<div class="relative mb-4 onlineTab">
           <input type="text" name="" id="" placeholder="Search By Name" class="co-searchInput">
           <button class="co-searchBtn"><i class="fas fa-search"></i></button>
-        </div>
+        </div>-->
         <div class="ftDetailsInner">
           <div class="row g-3" id="food_items_section"> </div>
         </div>
@@ -139,9 +142,9 @@ $booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['ba
                 <td class="text-center">{{$row->product_mrp}}</td>
                 <td class="text-center"><div>
                     <div class="priceControl d-flex">
-                      <button class="controls2" value="-">-</button>
+                      <button type="button" class="controls2" value="-">-</button>
                       <input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_{{$row->size_price_id}}" value="{{$row->items_qty}}" data-max-lim="20" readonly="readonly">
-                      <button class="controls2" value="+">+</button>
+                      <button type="button" class="controls2" value="+">+</button>
                     </div>
                   </div></td>
                 <td class="text-center" id="product_total_price_{{$row->size_price_id}}">{{$item_total_amount}}</td>
@@ -175,7 +178,7 @@ $booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['ba
         <div class="w-100 printBill" id="print_bill_section" @if(count($data['table_booking_cart_items'])==0) style="display:none;" @endif>
           <ul class="d-flex mb-0">
             <li class="col"><a href="javascript:;" class="koPrintBtn">KO Print</a></li>
-            <li class="col"><a href="javascript:;">Print Bill</a></li>
+            <!--<li class="col"><a href="javascript:;">Print Bill</a></li>-->
             <li class="col"><a href="javascript:;" class="payBtn">Pay</a></li>
           </ul>
         </div>

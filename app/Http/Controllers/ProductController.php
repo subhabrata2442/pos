@@ -615,7 +615,7 @@ class ProductController extends Controller
 						$subcategory_id=$feature->id;
 					}
 					
-					//echo '<pre>';print_r($type);exit;
+					//echo '<pre>';print_r($size);exit;
 					
 					$branch_id=Session::get('branch_id');
 					$brand_slug 	= $this->create_slug($product_name);
@@ -645,6 +645,37 @@ class ProductController extends Controller
 									
 									//echo '<pre>';print_r($size_cost_data);exit;
 									BarProductSizePrice::create($size_cost_data);
+									
+									
+									$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('stock_type','bar')->get();
+									if(count($branch_product_stock_info)>0){
+										$stock_id=$branch_product_stock_info[0]->id;
+										//BranchStockProducts::where('id', $stock_id)->where('stock_type', 'bar')->update(['c_qty' => $sell_price_c_qty]);
+									}else{
+										$branchProductStockData=array(
+											'branch_id'		=> $branch_id,
+											'product_id'  	=> $product_id,
+											'size_id'  		=> 0,
+											'stock_type'	=> 'bar'
+										);
+										
+										$branchStockProducts=BranchStockProducts::create($branchProductStockData);
+										$stock_id=$branchStockProducts->id;
+										
+										$sell_price_w_qty = 0;
+										$sell_price_c_qty = 1500;
+										
+										$branchProductStockSellPriceData=array(
+											'stock_id'		=> $stock_id,
+											'w_qty'  		=> $sell_price_w_qty,
+											'c_qty'  		=> $sell_price_c_qty,
+											'selling_price'	=> $product_mrp,
+											'offer_price'  	=> 0,
+											'product_mrp'  	=> $product_mrp,
+											'stock_type'  	=> 'bar'
+										);
+										BranchStockProductSellPrice::create($branchProductStockSellPriceData);	
+									}
 								}	
 							}
 						}

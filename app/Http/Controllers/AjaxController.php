@@ -182,7 +182,7 @@ class AjaxController extends Controller {
 
 		$subcategory_result	= Subcategory::where('food_type',$food_type_id)->where('status',1)->orderBy('name', 'ASC')->get();
 		
-		print_r($subcategory_result);exit;
+		//print_r($subcategory_result);exit;
 
 		$result=[];
 		foreach($subcategory_result as $key=>$row){
@@ -221,7 +221,7 @@ class AjaxController extends Controller {
 					$category_id	= $row->category_id;
 					$product_id		= $row->id;
 
-					$branch_stock_product_result	= BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->get();
+					$branch_stock_product_result	= BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('stock_type','bar')->get();
 
 					//print_r($branch_stock_product_result);exit;
 
@@ -282,6 +282,10 @@ class AjaxController extends Controller {
 		$product_result=[];
 		if($product_id!=''){
 			$item_result = Product::where('id',$product_id)->get();
+			
+			//print_r($item_result);exit;
+			
+			
 			if(count($item_result)>0){
 				if($food_type_id==2){
 					$branch_stock_product_result	= BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->first();
@@ -319,10 +323,12 @@ class AjaxController extends Controller {
 					}
 				}else{
 					$branch_stock_product_result	= BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('stock_type','bar')->first();
+					
 					$branch_stock_product_id		= isset($branch_stock_product_result->id)?$branch_stock_product_result->id:'';
 
 					$size_id			= $request->size_id;
 					$item_size_result	= BarProductSizePrice::where('id', $size_id)->first();
+					
 					$item_size_ml		= isset($item_size_result->size->ml)?$item_size_result->size->ml:'';
 					$size_title			= isset($item_size_result->size->name)?$item_size_result->size->name:'';
 
@@ -332,6 +338,8 @@ class AjaxController extends Controller {
 						$branch_product_stock_sell_price_info	= BranchStockProductSellPrice::where('stock_id',$branch_stock_product_id)->where('stock_type','bar')->get();
 						$item_total_ml = isset($branch_product_stock_sell_price_info[0]->total_ml)?$branch_product_stock_sell_price_info[0]->total_ml:'';
 					}
+					
+					$item_total_ml=1500;
 
 					if($item_size_ml!=''){
 						if($item_total_ml>=$item_size_ml){

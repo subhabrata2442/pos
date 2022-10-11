@@ -327,6 +327,8 @@ class PurchaseOrderController extends Controller
 	
 	public function bar_create(Request $request){
 		
+		//print_r($_POST);exit;
+		
 		$product_ids				= $request->product_id;
 		$size_price_ids				= $request->size_price_id;
 		$branch_stock_product_ids	= $request->branch_stock_product_id;
@@ -357,6 +359,10 @@ class PurchaseOrderController extends Controller
 		
 		
 		$barInwardStockResult	= BarInwardStock::where('table_booking_id',$table_booking_id)->where('branch_id',$branch_id)->where('floor_id',$floor_id)->where('table_id',$table_id)->where('waiter_id',$waiter_id)->where('customer_id',$customer_id)->where('sell_date',$sell_date)->where('status',1)->orderBy('id', 'DESC')->first();
+		
+		//echo '<pre>';print_r($barInwardStockResult);exit;
+		
+		
 		$bar_inward_stock_id	= isset($barInwardStockResult->id)?$barInwardStockResult->id:'';
 		if($bar_inward_stock_id!=''){
 			$barInwardStockData=array(

@@ -1804,6 +1804,10 @@ a.downloadBtn {
 	color: #1e1e1e;
 }
 
+.swal2-container {
+    z-index: 9999;
+}
+
 @media only screen and (max-width: 1366px) {
 	.ftBox-col {
 		-ms-flex: 0 0 33.333333%;
@@ -1901,3 +1905,6 @@ a.downloadBtn {
 		letter-spacing: 0;
    }
 }
+
+
+    

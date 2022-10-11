@@ -97,6 +97,7 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
         var tendered_amount = $('#tendered_amount').val();
         $('#total_tendered_amount').val(tendered_amount);
         $('#total_tendered_change_amount').val(tendered_change_amount);
+		
         $("#pos_create_order-form").submit();
 		
 		
@@ -183,7 +184,18 @@ $(document).ready(function() {
         $('#tendered_amount').val('');
         $('#tendered_change_amount').val('');
         if (total_quantity > 0) {
-            $(".payWrap").toggleClass('active');
+			
+			var ko_total_quantity=0;
+			$("#ko_print_sec div").each(function() {
+				var ko_product_id 	= $(this).attr('id').split('_')[3];
+				var ko_product_qty	= $('#ko_product_qty_' + ko_product_id).val();
+				ko_total_quantity += parseInt(ko_product_qty);
+			});
+			if(ko_total_quantity>0){
+				toastr.error("KO Print is available!");	
+			}else{
+				$(".payWrap").toggleClass('active');
+			}
         } else {
             toastr.error("Add minimum one product!");
         }
@@ -245,6 +257,10 @@ $('input[type=radio][name=food_type]').change(function() {
 $(document).on('click', '.category_btn', function() {
     var cat_id = $(this).data('id');
 	var food_type = $('input[name="food_type"]:checked').val();
+	
+	//$('.category_btn').removeClass('active');
+	//$(this).addClass('active');
+	
     $.ajax({
         url: prop.ajaxurl,
         type: 'post',
@@ -467,9 +483,9 @@ $(document).on('click', '.item_btn', function() {
                                                         '<td class="text-center">' + product_mrp + '</td>' +
                                                         '<td class="text-center"><div>' +
                                                         '<div class="priceControl d-flex">' +
-                                                        '<button class="controls2" value="-">-</button>' +
+                                                        '<button type="button" class="controls2" value="-">-</button>' +
                                                         '<input type="number" class="qtyInput2 product_qty" name="product_qty[]" id="product_qty_' + size_price_id + '" value="1" data-max-lim="20" readonly="readonly">' +
-                                                        '<button class="controls2" value="+">+</button>' +
+                                                        '<button type="button" class="controls2" value="+">+</button>' +
                                                         '</div>' +
                                                         '</div></td>' +
                                                         '<td class="text-center" id="product_total_price_' + size_price_id + '">' + product_mrp + '</td>' +
