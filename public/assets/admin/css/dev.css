@@ -1479,7 +1479,7 @@ a.tableBox:hover {
 	z-index: 1;
 }
 .ftiTable {
-	height: 57.3vh;
+	height: 56vh;
 }
 .controls2{
 	font-size: 16px;
@@ -1658,17 +1658,17 @@ a.downloadBtn {
 	border-color: transparent !important;
 }
 .ftDetailsInner {
-	max-height: 76vh;
+	max-height: 88vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 .ftMenuBtm {
-	max-height: 76vh;
+	max-height: 75vh;
 	overflow-y: auto;
 	overflow-x: hidden;
 }
 .filterTable {
-	padding: 10px 0;
+	padding: 10px 0 0;
 }
 .backBtnWrap {
 	margin-bottom: 5px;

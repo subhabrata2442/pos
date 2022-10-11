@@ -182,7 +182,7 @@ $booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['ba
             <li class="col"><a href="javascript:;" class="payBtn">Pay</a></li>
           </ul>
         </div>
-        <form method="post" action="{{ route('admin.pos.print_ko_product') }}" class="needs-validation" id="ko_print-product-form" novalidate enctype="multipart/form-data">
+        <form method="post" action="{{ route('admin.pos.print_ko_product') }}" class="needs-validation" id="ko_print-product-form" novalidate enctype="multipart/form-data" style="display:none;">
           @csrf
           <input type="hidden" name="floor_id" value="{{$data['booking_info']->floor_id}}">
           <input type="hidden" name="table_id" value="{{$data['booking_info']->table_id}}">
@@ -556,7 +556,22 @@ $booking_total_mrp		= isset($data['barInwardStockResult']->pay_amount)?$data['ba
 <script>
 	var stock_type	= "{{$data['stock_type']}}";
 </script> 
+<link rel="stylesheet" href="{{ url('assets/admin/malihu-custom-scrollbar-plugin-master/jquery.mCustomScrollbar.css') }}" />
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script> 
 <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
+<script src="{{ url('assets/admin/malihu-custom-scrollbar-plugin-master/jquery.mCustomScrollbar.concat.min.js') }}"></script> 
 <script src="{{ url('assets/admin/js/bar_pos.js') }}"></script> 
+
+<script>
+
+/*(function($){
+        $(window).on("load",function(){
+            $(".content").mCustomScrollbar();
+        });
+    })(jQuery);*/
+
+</script>
+ 
+
+
 @endsection 
