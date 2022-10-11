@@ -1286,60 +1286,72 @@ class ReportController extends Controller
         $total_date = Carbon::create($request->start_date)->daysInMonth; 
         $year = Carbon::create($request->start_date)->year;
         $previous_month = Carbon::create($request->start_date)->subMonth()->format('m');
-        
+        $last_twelve_years = Carbon::create($request->start_date)->subYear()->format('Y-m-d');
+        //echo $previous_month;die;
+        $start_date = $last_twelve_years;
         $items=[];
         $categories = Category::where('food_type',1)->get();
             for($i = 1; $i <= $total_date; $i++){
                 //$items[]= $year.'-'.$month.'-'.$i;
                 foreach($categories as $category){
-                    //Start Previous month 
-                    $previous_month_purchase = InwardStockProducts::where('category_id',$category->id)
-                        ->where('branch_id',$branch_id)
-                        ->whereDate('created_at',$year.'-'.$previous_month.'-'.$i)
-                        ->groupBy(['category_id'])
-                        ->selectRaw('category_id,sum(total_ml) as previous_month_total_purchase_ml')->first();
-                    //echo "<pre>"    
-                    $previous_month_sells = SellStockProducts::where('category_id',$category->id)
-                        ->where('branch_id',$branch_id)
-                        ->whereDate('created_at',$year.'-'.$previous_month.'-'.$i)
-                        ->groupBy(['category_id'])
-                        ->selectRaw('category_id,sum(total_ml) as previous_month_total_sale_ml')->first();
-
-                    $total_previous_month_purches =  isset($previous_month_purchase) ? $previous_month_purchase->previous_month_total_purchase_ml : '0.000'; 
+                    $dateE = $year.'-'.$month.'-'.$i;
+                    $opening	= 0;
+                    $purchase	= 0;
+                    $sale		= 0;
+                    $closing	= 0;
                     
-                    $total_previous_month_sale =  isset($previous_month_sells) ? $previous_month_sells->previous_month_total_sale_ml : '0.000'; 
-                    
-                    $dayOpening = $total_previous_month_purches - $total_previous_month_sale;
-                    $items[$year.'-'.$month.'-'.$i][$category->name]['opening']= $dayOpening;   
-                    //End Previous month
-                    
-                    $purchases = InwardStockProducts::where('category_id',$category->id)
-                        ->where('branch_id',$branch_id)
-                        ->whereDate('created_at',$year.'-'.$month.'-'.$i)
-                        ->groupBy(['category_id'])
-                        ->selectRaw('category_id,sum(total_ml) as total_purchase_ml')->first();
-                    $dayPurchase = isset($purchases) ? $purchases->total_purchase_ml : '0.000';
-                    $items[$year.'-'.$month.'-'.$i][$category->name]['purchases']= $dayPurchase;
-                    $sells = SellStockProducts::where('category_id',$category->id)
-                        ->where('branch_id',$branch_id)
-                        ->whereDate('created_at',$year.'-'.$month.'-'.$i)
-                        ->groupBy(['category_id'])
-                        ->selectRaw('category_id,sum(total_ml) as total_sale_ml')->first();
-                    $daySale = isset($sells) ? $sells->total_sale_ml : '0.000'; 
-                    $items[$year.'-'.$month.'-'.$i][$category->name]['sale']= $daySale;
+                    $dateP=date('Y-m-d', strtotime('-1 day', strtotime($dateE)));
                    
-                   
-                    //$items[$year.'-'.$month.'-'.$i]['date']= $year.'-'.$month.'-'.$i;
+                    $prev_purchase_result = InwardStockProducts::where('category_id',$category->id)
+                    ->where('branch_id',$branch_id)->selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->get();
+                    $prev_purchase_balance=isset($prev_purchase_result[0]->total_ml)?$prev_purchase_result[0]->total_ml:'0';
                     
-                    //$items[$year.'-'.$month.'-'.$i][$category->name]['closing']= ($dayPurchase + $dayOpening) - $daySale;
+                    $prev_sell_result = SellStockProducts::where('category_id',$category->id)
+                    ->where('branch_id',$branch_id)->selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->get();
+                    $prev_total_sell=isset($prev_sell_result[0]->total_ml)?$prev_sell_result[0]->total_ml:'0';
+                    
+                    
+                    //echo '<pre>';print_r($prev_purchase_balance);exit;
+                    
+                    //exit;
+                    
+                    $current_purchase_result = InwardStockProducts::where('category_id',$category->id)
+                    ->where('branch_id',$branch_id)->selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$dateE." 00:00:00", $dateE." 23:59:59"])->get();
+                    $purchase=isset($current_purchase_result[0]->total_ml)?$current_purchase_result[0]->total_ml:'0';
+                    
+                    
+                    $current_sell_result = SellStockProducts::where('category_id',$category->id)
+                    ->where('branch_id',$branch_id)->selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$dateE." 00:00:00", $dateE." 23:59:59"])->get();
+                    $sale=isset($current_sell_result[0]->total_ml)?$current_sell_result[0]->total_ml:'0';
+                    $opening=$prev_purchase_balance-$prev_total_sell;
+                    if($purchase!=0){
+                        $opening= +$purchase;
+                    }
+                    $closing=$opening-$sale;
+                    
+                    
+                    $items[$dateE][]=array(
+                        'date'		=> $dateE,
+                        'opening'	=> $opening/1000 ,
+                        'purchase'	=> $purchase/1000,
+                        'sale'		=> $sale/1000,
+                        'closing'	=> $closing/1000,
+                        //'purchase_balance'	=> $prev_purchase_balance,
+                        //'total_sell'		=> $total_sell
+                        
+                    );    
                     
                 }
+                if($year.'-'.$month.'-'.$i == Carbon::now()->format('Y-m-d')){
+                    break ;
+                }
             }
+            
             //echo "<pre>";print_r($items);die;
-      
         
         $data = [];
-        $data['month'] = $month.'-'.$year;
+        $date = Carbon::createFromDate($year, $month, 1);
+        $data['month'] = $date->format('F Y');
         $data['items'] = $items;
         $data['categories'] = $categories;
         $data['shop_name'] = 'BAZIMAT';
