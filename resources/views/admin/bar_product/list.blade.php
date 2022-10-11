@@ -43,6 +43,17 @@
 <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <div class="srcBtnWrap">
 	<div class="card">
+    <form method="post" action="{{ route('admin.product.bar_product_price_upload') }}" class="needs-validation" id="bar_product_price_upload-form" novalidate enctype="multipart/form-data">
+        @csrf
+        <div class="col-md-6">
+          <div class="form-group">
+            <div class="upload-btn file-upload">
+              <label for="product_upload" class="custom-file-upload fileInfo file-drop">Upload Product </label>
+              <input id="bar_product_upload_file" type="file" name="product_upload_file">
+            </div>
+          </div>
+        </div>
+      </form>
 		<div class="row align-items-center justify-content-between">
 			<div class="col-auto">
 				<h4>Restaurant Product List</h4>
@@ -181,6 +192,10 @@
 	</script>
 @endif
 <script type="text/javascript">
+
+$(document).on('change','#bar_product_upload_file',function(){
+	this.form.submit();
+});
 
 $(function() {
 	

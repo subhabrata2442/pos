@@ -1479,7 +1479,7 @@ a.tableBox:hover {
 	z-index: 1;
 }
 .ftiTable {
-	max-height: 57.3vh;
+	height: 57.3vh;
 }
 .controls2{
 	font-size: 16px;
