@@ -17,5 +17,13 @@ class BarProductSizePrice extends Model
     {
 		return $this->hasOne(Size::class,'id', 'size_id'); 
     }
+  
+  public function product(){
+    return $this->hasOne(Product::class,'id','product_id');
+  }  
+
+  public function barProductSizePrice(){
+    return $this->hasMany(barProductSizePrice::class,'product_id','product_id');
+  }
 
 }

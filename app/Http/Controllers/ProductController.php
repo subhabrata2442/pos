@@ -1021,4 +1021,27 @@ class ProductController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
+
+	public function restaurantProductList(Request $request){
+		try{
+			//dd($request->all());
+			$branch_id		= Session::get('branch_id');
+			$bar_products_size_prices = BarProductSizePrice::where('branch_id',$branch_id)->groupBy('product_id');
+			if(!empty($request->get('product_id'))){
+                    
+				$bar_products_size_prices->where('product_id', $request->get('product_id'));
+				  
+			}
+			$bar_products_size_prices->orderBy('id', 'desc')->get();
+			//echo "<pre>";print_r($bar_products_size_prices);die;
+			//dd($bar_products_size_prices);
+			$data = [];
+			$data['heading'] = 'Restaurant Products List';
+            $data['breadcrumb'] = ['Restaurant Products', '', 'List'];
+			$data['bar_products'] = $bar_products_size_prices->paginate(10);
+			return view('admin.bar_product.list', compact('data'));
+		}catch(\Exception $e){
+			return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+		}
+	}
 }
