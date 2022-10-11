@@ -181,6 +181,8 @@ class AjaxController extends Controller {
 		}
 
 		$subcategory_result	= Subcategory::where('food_type',$food_type_id)->where('status',1)->orderBy('name', 'ASC')->get();
+		
+		print_r($subcategory_result);exit;
 
 		$result=[];
 		foreach($subcategory_result as $key=>$row){

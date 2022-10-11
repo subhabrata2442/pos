@@ -553,7 +553,7 @@ class ProductController extends Controller
 				$i++;
 			}
 			
-			
+			//echo '<pre>';print_r($importData_arr);exit;
 			
 			$j = 0;
 			$brand_data=[];
@@ -563,32 +563,31 @@ class ProductController extends Controller
 				$brand_code			= $importData[1];
 				$category			= $importData[2];
 				$type 				= $importData[3];
-				$sn 				= $importData[4];
-				$product_name		= $importData[5];
-				$size[30] 			= isset($importData[6])?$importData[6]:'';
-				$size[60] 			= isset($importData[7])?$importData[7]:'';
-				$size[90] 			= isset($importData[8])?$importData[8]:'';
-				$size[180] 			= isset($importData[10])?$importData[9]:'';
-				$size[187] 			= isset($importData[11])?$importData[10]:'';
-				$size[200] 			= isset($importData[12])?$importData[11]:'';
-				$size[250] 			= isset($importData[13])?$importData[12]:'';
-				$size[275] 			= isset($importData[14])?$importData[13]:'';
-				$size[300] 			= isset($importData[15])?$importData[14]:'';
-				$size[330] 			= isset($importData[16])?$importData[15]:'';
-				$size[360] 			= isset($importData[17])?$importData[16]:'';
-				$size[375] 			= isset($importData[18])?$importData[17]:'';
-				$size[500] 			= isset($importData[19])?$importData[18]:'';
-				$size[600] 			= isset($importData[20])?$importData[19]:'';
-				$size[650] 			= isset($importData[21])?$importData[20]:'';
-				$size[700] 			= isset($importData[22])?$importData[21]:'';
-				$size[720] 			= isset($importData[23])?$importData[22]:'';
-				$size[750] 			= isset($importData[24])?$importData[23]:'';
-				$size[1000] 		= isset($importData[25])?$importData[24]:'';
-				$size[2000] 		= isset($importData[26])?$importData[25]:'';
+				//$sn 				= $importData[4];
+				$product_name		= $importData[4];
+				$size[30] 			= isset($importData[5])?$importData[5]:'';
+				$size[60] 			= isset($importData[6])?$importData[6]:'';
+				$size[90] 			= isset($importData[7])?$importData[7]:'';
+				$size[180] 			= isset($importData[8])?$importData[8]:'';
+				$size[187] 			= isset($importData[9])?$importData[9]:'';
+				$size[200] 			= isset($importData[10])?$importData[10]:'';
+				$size[250] 			= isset($importData[11])?$importData[11]:'';
+				$size[275] 			= isset($importData[12])?$importData[12]:'';
+				$size[300] 			= isset($importData[13])?$importData[13]:'';
+				$size[330] 			= isset($importData[14])?$importData[14]:'';
+				$size[360] 			= isset($importData[15])?$importData[15]:'';
+				$size[375] 			= isset($importData[16])?$importData[16]:'';
+				$size[500] 			= isset($importData[17])?$importData[17]:'';
+				$size[600] 			= isset($importData[18])?$importData[18]:'';
+				$size[650] 			= isset($importData[19])?$importData[19]:'';
+				$size[700] 			= isset($importData[20])?$importData[20]:'';
+				$size[720] 			= isset($importData[21])?$importData[21]:'';
+				$size[750] 			= isset($importData[22])?$importData[22]:'';
+				$size[1000] 		= isset($importData[23])?$importData[23]:'';
+				$size[2000] 		= isset($importData[24])?$importData[24]:'';
 				
 				if($category!=''){
 					$category_title	= trim($category);
-					
 					
 					$category_result=Category::where('name',$category_title)->where('food_type',1)->get();
 					if(count($category_result)>0){
@@ -616,9 +615,13 @@ class ProductController extends Controller
 						$subcategory_id=$feature->id;
 					}
 					
+					//echo '<pre>';print_r($type);exit;
+					
 					$branch_id=Session::get('branch_id');
 					$brand_slug 	= $this->create_slug($product_name);
-					$product_result	= Product::select('id')->where('branch_id',$branch_id)->where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();	
+					//echo '<pre>';print_r($product_name);exit;
+					//$product_result	= Product::select('id')->where('branch_id',$branch_id)->where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();	
+					$product_result	= Product::select('id')->where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();
 					$product_id		= isset($product_result->id)?$product_result->id:'';
 					
 					//echo '<pre>';print_r($size);exit;
@@ -628,11 +631,13 @@ class ProductController extends Controller
 							$size_val	= $val;
 							if($size_val!=''){
 								$size_result=Size::where('ml',$size_ml)->get();
+								//echo '<pre>';print_r($size_result);exit;
 								if(count($size_result)>0){
 									$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
 									BarProductSizePrice::where('product_id', $product_id)->where('size_id', $size_id)->delete();
 									$product_mrp=$size_val;
 									$size_cost_data=array(
+										'branch_id'  			=> $branch_id,
 										'product_id'  			=> $product_id,
 										'size_id'  				=> $size_id,
 										'product_mrp'  			=> $product_mrp

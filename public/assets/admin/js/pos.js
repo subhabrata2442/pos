@@ -107,8 +107,11 @@ function checkEnterPress(e) {
 				}
 				console.log(payment_method);
 			} else {
-				$(".payBtn").trigger("click");
-				$("#tendered_amount").focus();
+				 setTimeout(function() {
+                    $(".payBtn").trigger("click");
+					$("#tendered_amount").focus();
+                }, 500);
+				
 			}	
 		}
 	}
@@ -392,7 +395,9 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
         var tendered_amount = $('#tendered_amount').val();
         $('#total_tendered_amount').val(tendered_amount);
         $('#total_tendered_change_amount').val(tendered_change_amount);
-         $("#pos_create_order-form").submit();
+		$(".payWrap").toggleClass('active');
+        $("#pos_create_order-form").submit();
+		
 		
 		
 		
@@ -407,9 +412,7 @@ $(document).on('click', '#calculate_cash_payment_btn', function() {
             var tendered_amount = $('#tendered_amount').val();
             $('#total_tendered_amount').val(tendered_amount);
             $('#total_tendered_change_amount').val(tendered_change_amount);
-
-
-
+			$(".payWrap").toggleClass('active');
             $("#pos_create_order-form").submit();
         }
     }
@@ -427,7 +430,7 @@ $(document).on('click', '#calculate_gPay_payment_btn', function() {
             $('#rupee_due_amount_tendering-input').val(upi_payble_amount);
             $('#rupee_due_amount_tendering').html(upi_payble_amount);
             $('.upi_payment_sec').append('<input type="hidden" name="online_payment[upi_payble_amount]" value="' + upi_payble_amount + '">');
-
+			$(".payWrap").toggleClass('active');
             $("#pos_create_order-form").submit();
         }
     } else {
@@ -464,7 +467,7 @@ $(document).on('click', '#calculate_card_payment_btn', function() {
             $('#rupee_due_amount_tendering-input').val(upi_payble_amount);
             $('#rupee_due_amount_tendering').html(upi_payble_amount);
             $('.card_details_payment_sec').append('<input type="hidden" name="online_payment[upi_payble_amount]" value="' + upi_payble_amount + '"><input type="hidden" name="online_payment[card_type]" value="' + card_type + '"><input type="hidden" name="online_payment[card_number]" value="' + card_number + '"><input type="hidden" name="online_payment[card_invoice_number]" value="' + card_invoice_number + '">');
-
+			$(".payWrap").toggleClass('active');
             $("#pos_create_order-form").submit();
         }
     } else {

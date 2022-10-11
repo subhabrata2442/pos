@@ -827,8 +827,8 @@ hr {
 	width: 100%;
 }
 .leftPannel {
-	flex: 0 0 230px;
-	max-width: 230px;
+	flex: 0 0 260px;
+	max-width: 260px;
 	background: #abeafb;
 	padding: 10px;
 	border-radius: 15px;
@@ -1202,8 +1202,8 @@ span.payWrapCloseBtn {
 	border-radius: 15px;
 	padding: 15px;
 	color: #fff;
+	letter-spacing: .5px;
 	height: 100%;
-	min-height:115px;
 }
 a.tableBox:hover {
 	color: #fff;
@@ -1230,7 +1230,7 @@ a.tableBox:hover {
 	font-weight: bold;
 }
 .countdownArea .countdown {
-	margin-left: 5px;
+	margin-left: 10px;
 	font-weight: bold;
 	font-size: 14px;
 }

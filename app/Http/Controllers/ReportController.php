@@ -81,7 +81,7 @@ class ReportController extends Controller
 		}
 		
 		exit;*/
-		$start_date = date('Y-m-d',strtotime('2021-09-01'));
+		/*$start_date = date('Y-m-d',strtotime('2021-09-01'));
 		
 		$total_month=31;
 		$result=[];
@@ -147,30 +147,7 @@ class ReportController extends Controller
 		echo '<pre>';print_r($result);exit;
 		
 		
-		exit;
-		
-		
-		
-		
-		
-		
-		
-		$dateE = date('Y-m-d',strtotime('2022-10-31'));
-		
-		
-		$sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
-		$total_sell=isset($sell_result[0]->total_ml)?$sell_result[0]->total_ml:'0';
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+		exit;*/
 		
 		$result=[];
 		$categories = Category::where('food_type',1)->get();
@@ -228,12 +205,6 @@ class ReportController extends Controller
 						if($prevYear_total_sell=0 && $prevYear_receipt_balance!=0){
 							$prevYear_closing_balance=$prevYear_receipt_balance-$prevYear_total_sell;
 						}
-						
-						
-						
-						
-						
-						
 						
 						$prev_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
 						$prev_receipt_balance=isset($prev_purchase_result[0]->total_ml)?$prev_purchase_result[0]->total_ml:'0';
@@ -301,6 +272,8 @@ class ReportController extends Controller
 				);
 			}
 		}
+		
+		//echo '<pre>';print_r($result);exit;
 		
 		$pdf = PDF::loadView('admin.pdf.e-report', compact('result'));
 		return $pdf->stream(now().'-e-report.pdf');
