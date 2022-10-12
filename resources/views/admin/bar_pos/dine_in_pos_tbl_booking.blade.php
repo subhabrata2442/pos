@@ -16,13 +16,13 @@
   <div class="rightPannelTop">
     <div class="row">
       <div class="col-lg-4 col-md-3 col-sm-3 col-12">
-        <div class="tabBox"> <a href="#" class="active"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/dine-in.png" alt=""></span> Dine  in <i class="fas fa-bell"></i></a> </div>
+        <div class="tabBox"> <a href="#" class="active"><span><img src="{{ url('assets/admin/images/dine-in.png') }}" alt=""></span> Dine  in <i class="fas fa-bell"></i></a> </div>
       </div>
       <div class="col-lg-4 col-md-3 col-sm-3 col-12">
-        <div class="tabBox"> <a href="javascript:;"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/take-way.png" alt=""></span> Take Away</a> </div>
+        <div class="tabBox"> <a href="javascript:;"><span><img src="{{ url('assets/admin/images/take-way.png') }}" alt=""></span> Take Away</a> </div>
       </div>
       <div class="col-lg-4 col-md-3 col-sm-3 col-12">
-        <div class="tabBox"> <a href="javascript:;"><span><img src="https://pos.subho.aqualeafitsol.com/assets/admin/images/online.png" alt=""></span> online</a> </div>
+        <div class="tabBox"> <a href="javascript:;"><span><img src="{{ url('assets/admin/images/online.png') }}" alt=""></span> online</a> </div>
       </div>
     </div>
   </div>
