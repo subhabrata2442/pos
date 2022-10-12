@@ -50,7 +50,7 @@
 <div class="card toggleCard">
   <form action="" method="get" id="filter">
     <div class="row">
-      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+      <div class="col-lg-6 col-md-6 col-sm-12 col-12">
         <div class="form-group">
           <label for="customer_last_name" class="form-label">By Product Name</label>
           <div class="position-relative">

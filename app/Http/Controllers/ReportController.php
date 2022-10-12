@@ -289,10 +289,10 @@ class ReportController extends Controller
 		
 		//echo '<pre>';print_r($result);exit;
 		
-		require_once '../mpdf/vendor/autoload.php';
+		/*require_once '../mpdf/vendor/autoload.php';
 		$mpdf = new \Mpdf\Mpdf();
 		$mpdf->WriteHTML((string)view('admin.pdf.e-report', $result));
-		$mpdf->Output();
+		$mpdf->Output();*/
 		
 		$pdf = PDF::loadView('admin.pdf.e-report', compact('result'));
 		return $pdf->stream(now().'-e-report.pdf');
