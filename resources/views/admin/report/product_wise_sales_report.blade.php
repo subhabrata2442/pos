@@ -164,6 +164,7 @@
 								<option value=""> Select Report Type</option>
 								<option value="item_wise_sales_report"> Item Wise sales report</option>
 								<option value="month_wise_report"> Month Wise report</option>
+								<option value="text_download"> Text Download</option>
 							</select>
 						</div>
 						<div>
@@ -279,6 +280,10 @@ $(function() {
 			}else if(report_type == 'month_wise_report'){
 				var url = "{{route('admin.report.product.month_wise')}}";
 				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+			}else if(report_type == 'text_download'){
+				var url = "{{route('admin.report.sales.product.download')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+				//$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
 			}
 			window.open(href);
 		    
