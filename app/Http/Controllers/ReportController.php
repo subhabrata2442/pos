@@ -265,15 +265,34 @@ class ReportController extends Controller
 				//echo '<pre>';print_r($sub_cat_result);exit;
 				
 				 //Subcategory::all();
+				 
+				 $category_img='';
+				 if($row->id==1){
+					 $category_img=url('images/imfl.png');
+				 }else if($row->id==2){
+					 $category_img=url('images/os.png');
+				 }else if($row->id==3){
+					 $category_img=url('images/cs.png');
+				 }else if($row->id==4){
+					 $category_img=url('images/osbl.png');
+				 }
+				 
+				 
 				$result[]=array(
 					'category_id'	=> $row->id,
 					'category_name'	=> $row->name,
+					'category_img'	=> $category_img,
 					'sub_category'	=> $sub_cat_result
 				);
 			}
 		}
 		
 		//echo '<pre>';print_r($result);exit;
+		
+		require_once '../mpdf/vendor/autoload.php';
+		$mpdf = new \Mpdf\Mpdf();
+		$mpdf->WriteHTML((string)view('admin.pdf.e-report', $result));
+		$mpdf->Output();
 		
 		$pdf = PDF::loadView('admin.pdf.e-report', compact('result'));
 		return $pdf->stream(now().'-e-report.pdf');
