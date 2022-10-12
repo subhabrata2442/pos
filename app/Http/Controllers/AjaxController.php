@@ -999,13 +999,15 @@ class AjaxController extends Controller {
 			'created_at'		=> date('Y-m-d')
 		);
 
-		//print_r($purchaseStockData);exit;
+		
 
-		if($inward_stock['invoice_stock']=='warehouse'){
+		if($inward_stock['invoice_stock_type']=='warehouse'){
 			$purchaseStockData['w_qty']=$inward_stock['total_qty'];
 		}else{
 			$purchaseStockData['c_qty']=$inward_stock['total_qty'];
 		}
+		
+		//print_r($purchaseStockData);exit;
 
 		//print_r($purchaseStockData);exit;
 
@@ -1237,7 +1239,7 @@ class AjaxController extends Controller {
 						if($sell_price_id!=''){
 							$sell_price_w_qty = 0;
 							$sell_price_c_qty = 0;
-							if($inward_stock['invoice_stock']=='warehouse'){
+							if($inward_stock['invoice_stock_type']=='warehouse'){
 								$sell_price_w_qty +=isset($branch_product_stock_sell_price_info[0]->w_qty)?$branch_product_stock_sell_price_info[0]->w_qty:0;
 								$sell_price_w_qty +=$product_qty;
 								BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['w_qty' => $sell_price_w_qty]);
@@ -1249,7 +1251,7 @@ class AjaxController extends Controller {
 						}else{
 							$sell_price_w_qty = 0;
 							$sell_price_c_qty = 0;
-							if($inward_stock['invoice_stock']=='warehouse'){
+							if($inward_stock['invoice_stock_type']=='warehouse'){
 								$sell_price_w_qty=$product_qty;
 							}else{
 								$sell_price_c_qty=$product_qty;
@@ -1280,7 +1282,7 @@ class AjaxController extends Controller {
 						$sell_price_w_qty = 0;
 						$sell_price_c_qty = 0;
 
-						if($inward_stock['invoice_stock']=='warehouse'){
+						if($inward_stock['invoice_stock_type']=='warehouse'){
 							$sell_price_w_qty=$product_qty;
 						}else{
 							$sell_price_c_qty=$product_qty;

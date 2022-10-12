@@ -107,6 +107,7 @@
                 <li class="invAreaVal">
                   <select class="form-control custom-select form-control-select" id="payment_method" name="payment_method" required="required">
                     <option value="">Select payment method</option>
+                    <option value="bevco_wallet">Bevco Wallet</option>
                     <option value="ocr">Credit/Debit Card</option>
                     <option value="cheque">Cheque</option>
                     <option value="net_banking">Net Banking</option>

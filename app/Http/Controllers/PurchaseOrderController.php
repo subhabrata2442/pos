@@ -1565,8 +1565,6 @@ class PurchaseOrderController extends Controller
 						
 						$brand_name_length=($product_size_ids[$i]-$index_2);
 						
-						print_r($index_2);exit;
-						
 						$brand_name='';
 						for($j=1; $brand_name_length>$j; $j++){
 							$p_index=$index_2+$j;
@@ -1645,14 +1643,9 @@ class PurchaseOrderController extends Controller
 							}
 						}
 						
-						print_r($category_title);exit;
-						
 						
 						
 						$product_slug	= Media::create_slug(trim($brand_slug.' '.$category_title.' '.$sub_category_title.' '.$size_title.' '.$batch_no));
-						
-						
-						
 						if(!in_array($product_slug, $product_slugs)){
 							$product_slugs[]=$product_slug;
 							$item_result = Product::where('slug',$brand_slug)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
