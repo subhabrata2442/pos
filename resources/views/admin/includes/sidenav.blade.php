@@ -85,6 +85,10 @@ $is_branch 			= Session::get('is_branch');
             <!--<li class="nav-item"> <a href="{{ route('admin.purchase.debitnote') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.debitnote') active @endif"> <i class="fas fa-plus-circle nav-icon"></i>
               <p>Debit Note</p>
               </a> </li>-->
+            <li class="nav-item"> <a href="{{ route('admin.purchase.stock.transfer') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.stock.transfer') active @endif"> <i class="fas fa-list nav-icon"></i>
+                <p>Stock Transfer</p>
+                </a> 
+            </li>
           </ul>
         </li>
 

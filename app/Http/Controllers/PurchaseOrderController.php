@@ -2073,5 +2073,24 @@ class PurchaseOrderController extends Controller
         // make a response, with the content, a 200 response code and the headers
         return Response::make($content, 200, $headers);
 	}
-	
+	//Stock Tranfer
+	public function stockTranfer(Request $request){
+		//dd($request->all());\
+		try{
+			$branch_id		= Session::get('branch_id');
+			//echo $branch_id;die;
+			$stock_product = BranchStockProducts::where('branch_id',$branch_id)
+							->where('stock_type','counter')
+							->paginate(10);
+			$data = [];
+			$data['heading'] 		= 'Stock Tranfer';
+            $data['breadcrumb'] 	= ['Stock Tranfer', 'List'];
+			$data['stock_product'] = $stock_product;
+			//dd($data);
+			return view('admin.stock_transfer.list', compact('data'));				
+		} catch (\Exception $e) {
+			echo $e;die;
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+	}
 }
