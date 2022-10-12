@@ -75,9 +75,9 @@
                 <div class="col-6">
                   <div class="noteAreaInner">
                     <select class="form-control custom-select form-control-select" id="invoice_stock" required="required">
-                      <option value="">Select Stock</option>
-                      <option value="counter">Counter Stock</option>
-                      <option value="bar">Bar Stock</option>
+                     <!-- <option value="">Select Stock</option>-->
+                      <option value="counter" selected="selected">Counter Stock</option>
+                      <!--<option value="bar">Bar Stock</option>-->
                     </select>
                   </div>
                 </div>
