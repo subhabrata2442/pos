@@ -16,6 +16,8 @@ use App\Models\MasterProducts;
 use App\Models\VendorCode;
 use App\Models\Supplier;
 use App\Models\Warehouse;
+use App\Models\StockTransferHistory;
+
 
 use App\Models\SupplierGst;
 use App\Models\ProductRelationshipSize;
@@ -247,6 +249,7 @@ class AjaxController extends Controller {
 
 		echo json_encode($return_data);
 	}
+	
 	public function ajaxpost_get_bar_product_mlPrice($request) {
 		$product_id	= $request->product_id;
 		$food_type	= $request->food_type;
@@ -423,6 +426,37 @@ class AjaxController extends Controller {
 		
 	}
 	/*END COUNTER POS*/
+	
+	public function ajaxpost_set_update_stock($request) {
+		$prev_w_qty		= $request->prev_w_qty;
+		$prev_c_qty		= $request->prev_c_qty;
+		$new_w_qty		= $request->new_w_qty;
+		$new_c_qty		= $request->new_c_qty;
+		$stock_id		= $request->stock_id;
+		$price_id		= $request->price_id;
+		$transfer_to	= $request->transfer_to;
+		
+		BranchStockProductSellPrice::where('id', $price_id)->where('stock_id', $stock_id)->where('stock_type', 'counter')->update(['w_qty' => $new_w_qty,'c_qty' => $new_c_qty]);
+		
+		$stocktransferData=array(
+			'stock_id'		=> $stock_id,
+			'price_id'  	=> $price_id,
+			'prev_w_qty'  	=> $prev_w_qty,
+			'prev_c_qty'	=> $prev_c_qty,
+			'new_w_qty'  	=> $new_w_qty,
+			'new_c_qty'  	=> $new_c_qty,
+			'transfer_to'  	=> $transfer_to,
+		);
+		//print_r($stocktransferData);exit;
+		StockTransferHistory::create($stocktransferData);
+		
+		
+		$return_data['status']	= 1;
+		echo json_encode($return_data);
+	}
+	
+	
+	
 
 
 	public function ajaxpost_get_sell_product_search($request) {

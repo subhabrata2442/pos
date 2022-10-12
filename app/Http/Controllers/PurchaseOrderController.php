@@ -2081,11 +2081,12 @@ class PurchaseOrderController extends Controller
 			//echo $branch_id;die;
 			$stock_product = BranchStockProducts::where('branch_id',$branch_id)
 							->where('stock_type','counter')
-							->paginate(10);
+							
+							->paginate(20);
 			$data = [];
 			$data['heading'] 		= 'Stock Tranfer';
             $data['breadcrumb'] 	= ['Stock Tranfer', 'List'];
-			$data['stock_product'] = $stock_product;
+			$data['stock_product'] 	= $stock_product;
 			//dd($data);
 			return view('admin.stock_transfer.list', compact('data'));				
 		} catch (\Exception $e) {
