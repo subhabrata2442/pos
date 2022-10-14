@@ -40,7 +40,7 @@ Route::match(['GET', 'POST'], '/forget-password', [Authenticate::class, 'forget_
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::match(['GET'], '/logout', [Authenticate::class, 'logout'])->name('auth.logout');
-	Route::match(['GET'], '/setting', [UserController::class, 'setting'])->name('auth.setting');
+	//Route::match(['GET'], '/setting', [UserController::class, 'setting'])->name('auth.setting');
     Route::get('/dashboard', function () {
         $data = [];
         $data['heading'] = 'Dashboard';
@@ -56,7 +56,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::match(['GET'], '/users/delete/{id}', [UserController::class, 'delete'])->name('users.delete')->middleware('role:admin');
     Route::match(['GET'], '/users/change-status/{id}/{status}', [UserController::class, 'change_status'])->name('users.changeStatus')->middleware('role:admin');
     // end user route
-
+	Route::match(['GET'], '/setting', [UserController::class, 'profile'])->name('setting')->middleware('role:all,normal_user');
     Route::match(['GET'], '/profile', [UserController::class, 'profile'])->name('profile')->middleware('role:all,normal_user');
     Route::match(['GET', 'POST'], '/profile/edit', [UserController::class, 'profile_edit'])->name('profile.edit')->middleware('role:all,normal_user');
 	

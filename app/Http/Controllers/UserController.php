@@ -8,7 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
 use App\Helper\Media;
+use App\Models\Common;
 use App\Models\Role;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -81,9 +83,31 @@ class UserController extends Controller
     public function profile()
     {
         $data = [];
-        $data['heading'] = 'Profile Details';
-        $data['breadcrumb'] = ['Profile'];
-        return view('admin.profile.view', compact('data'));
+        $data['heading'] = 'Settings';
+        $data['breadcrumb'] = ['Settings'];
+		
+		$branch_id		= Session::get('branch_id');
+        //$supplier_id	= Session::get('adminId');
+		
+		
+		$supplier		= User::find($branch_id);
+		$admin_email	= $supplier->email;
+		
+		
+		$data['company_name'] 		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+		$data['company_address'] 	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+		$data['address1'] 			= Common::get_user_settings($where=['option_name'=>'address1'],$branch_id);
+		$data['address2'] 			= Common::get_user_settings($where=['option_name'=>'address2'],$branch_id);
+		$data['phone'] 				= Common::get_user_settings($where=['option_name'=>'phone'],$branch_id);
+		$data['company_licensee'] 	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);
+		$data['admin_email'] 		= $admin_email;
+		
+		
+		//echo '<pre>';print_r($data);exit;
+		
+		
+		
+        return view('admin.profile.edit', compact('data'));
     }
     public function profile_edit(Request $request)
     {
