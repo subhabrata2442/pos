@@ -956,7 +956,7 @@ p {
 }
 .tableFixHead {
 	overflow: auto;
-	height: 29.19vw;
+	height: 28.28vw;
 	margin-bottom: 1vw;
 	border: #e1e1e1 1px solid;
 	border-radius: 6px;
@@ -1129,14 +1129,16 @@ p {
 .customerDetailsMid {
  margin-bottom: .5vw;
 }
-.topsellingProduct ul.row {
+.topsellingProduct ul {
  margin-left: -.5vw;
  margin-right: -.5vw;
+ overflow-x: auto;
 }
 .topsellingProduct ul li {
- padding-right: .5vw;
- padding-left: .5vw;
+	padding-right: .5vw;
+	padding-left: .5vw;
 	width: 12.5%;
+	flex: 0 0 12.5%;
 }
 .topsellingProduct ul li a {
  padding: .3vw;
@@ -1366,4 +1368,36 @@ p {
 }
 .fullscreen_wrap {
 	padding-left: 15px;
+}
+.sidebar-widget ul li.disabled_btn a {
+  cursor: no-drop;
+  opacity: .3;
+}
+
+@media only screen and (max-width: 1365px) {
+	.topsellingProduct {
+		display: none;
+	}
+
+	.tableFixHead {
+		height: 38.28vw;
+	}
+	.customerDetails h4 {
+		font-size: 1.4vw;
+		padding-bottom: .8vw;
+		margin-bottom: 0;
+	}
+	.customerDetailsMid ul li {
+		font-size: 1.2vw;
+		margin: 1.7vw 0;
+	}
+	.customerDetailsBtm {
+		padding-top: .8vw;
+	}
+	.dateSales {
+		margin-bottom: .8vw;
+	}
+	.sidebar-widget ul li a, .sidebar-widget ul li button {
+		height: 10.15vw;
+	}
 }

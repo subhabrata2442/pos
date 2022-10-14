@@ -40,7 +40,11 @@ use App\Models\SellStockProducts;
 use App\Models\Site_settings;
 use App\Models\Common;
 use App\Models\Customer;
+use App\Models\Counter;
 
+use App\Models\StockTransferHistory;
+use App\Models\StockTransferCounterHistory;
+use App\Models\CounterWiseStock;
 
 use App\Models\Warehouse;
 use App\Models\TableBookingHistory;
@@ -1486,6 +1490,9 @@ class PurchaseOrderController extends Controller
 						if($th_head=='CS'){
 							$product_cat_ids[]	= $i;
 						}
+						if($th_head=='OS'){
+							$product_cat_ids[]	= $i;
+						}
 						/*if (preg_match('/\OS\b/', $th_head)) {
 							$product_cat_ids[]	= $i;
 						}
@@ -2093,6 +2100,122 @@ class PurchaseOrderController extends Controller
 	public function stockTranfer(Request $request){
 		//dd($request->all());\
 		try{
+			if ($request->isMethod('post')) {
+				$prev_w_qty		= $request->prev_w_qty;
+				$prev_c_qty		= $request->prev_c_qty;
+				$new_w_qty		= $request->w_qty;
+				$new_c_qty		= $request->c_qty;
+				$stock_id		= $request->stock_id;
+				$price_id		= $request->price_id;
+				$transfer_to	= $request->transfer_to;
+				$counter_id		= $request->counter_id;
+				
+				$branch_id=Session::get('branch_id');
+				
+				$branchStockProductResult=BranchStockProducts::where('id',$stock_id)->first();
+				$size_ml=isset($branchStockProductResult->size->ml)?$branchStockProductResult->size->ml:0;
+				
+				$total_c_qty=0;
+				if($prev_c_qty>0){
+					$total_c_qty +=$prev_c_qty;
+				}
+				
+				$trans_c_qty=0;
+				
+				if(count($new_c_qty)>0){
+					for($i=0;count($new_c_qty)>$i;$i++){
+						$c_qty=isset($new_c_qty[$i])?$new_c_qty[$i]:'';
+						if($c_qty!=''){
+							$total_c_qty +=$c_qty;
+							$trans_c_qty +=$c_qty;
+						}
+					}
+				}
+				
+				BranchStockProductSellPrice::where('id', $price_id)->where('stock_id', $stock_id)->where('stock_type', 'counter')->update(['w_qty' => $new_w_qty,'c_qty' => $total_c_qty]);
+				
+				$branch_id=Session::get('branch_id');
+				
+				$invoice_no='';
+				$n=StockTransferHistory::where('branch_id',$branch_id)->count();
+				$invoice_no .=date('d');
+				$invoice_no .='/'.date('Y');
+				$invoice_no .='/'.str_pad($n + 1, 4, 0, STR_PAD_LEFT);
+				$invoice_no .='|'.date('d/m/Y');
+				
+				
+				
+				$stocktransferData=array(
+					'invoice_no'	=> $invoice_no,
+					'stock_id'		=> $stock_id,
+					'branch_id'		=> $branch_id,
+					'price_id'  	=> $price_id,
+					'prev_w_qty'  	=> $prev_w_qty,
+					'prev_c_qty'	=> $prev_c_qty,
+					'new_w_qty'  	=> $new_w_qty,
+					'new_c_qty'  	=> $total_c_qty,
+					'transfer_to'  	=> $transfer_to,
+					'c_qty'  		=> $trans_c_qty,
+					
+				);
+				
+				//print_r($stocktransferData);exit;
+				
+				$stockTransferHistory=StockTransferHistory::create($stocktransferData);
+				$stock_transfer_id	= $stockTransferHistory->id;
+				
+				//$stock_transfer_id=1;
+				
+				
+				
+				if(count($counter_id)>0){
+					for($i=0;count($counter_id)>$i;$i++){
+						$c_qty=isset($new_c_qty[$i])?$new_c_qty[$i]:'';
+						if($c_qty!=''){
+							$stocktransferData=array(
+								'stock_transfer_id'	=> $stock_transfer_id,
+								'counter_id'  		=> $counter_id[$i],
+								'qty'  				=> $c_qty,
+							);
+							StockTransferCounterHistory::create($stocktransferData);
+							
+							
+							$branch_product_counter_stock_info=CounterWiseStock::where('stock_id',$stock_id)->where('counter_id',$counter_id[$i])->where('stock_type','counter')->get();
+							$product_counter_id=isset($branch_product_counter_stock_info[0]->id)?$branch_product_counter_stock_info[0]->id:'';
+							
+							$counter_c_qty=$c_qty;
+							$total_ml=$size_ml*$counter_c_qty;
+							
+							
+							if($product_counter_id!=''){
+								$product_total_ml=0;
+								$product_total_ml +=isset($branch_product_counter_stock_info[0]->total_ml)?$branch_product_counter_stock_info[0]->total_ml:0;
+								$product_total_ml +=$total_ml;
+								
+								$product_total_qty=0;
+								$product_total_qty +=isset($branch_product_counter_stock_info[0]->c_qty)?$branch_product_counter_stock_info[0]->c_qty:0;
+								$product_total_qty +=$counter_c_qty;
+								CounterWiseStock::where('id', $product_counter_id)->update(['c_qty' => $product_total_qty,'total_ml' => $product_total_ml]);
+							}else{
+								$counterWiseStockData=array(
+									'stock_id'		=> $stock_id,
+									'counter_id'  	=> $counter_id[$i],
+									'c_qty'  		=> $counter_c_qty,
+									'total_ml'		=> $total_ml,
+									'stock_type'  	=> 'counter'
+								);
+								CounterWiseStock::create($counterWiseStockData);
+							}
+						}
+					}
+				}
+				
+				$return_data['status']	= 1;
+				echo json_encode($return_data);exit;
+			}
+			
+			
+			
 			$branch_id		= Session::get('branch_id');
 			//echo $branch_id;die;
 			$stock_product = BranchStockProducts::where('branch_id',$branch_id)->where('stock_type','counter');
@@ -2106,6 +2229,15 @@ class PurchaseOrderController extends Controller
 			$data['heading'] 		= 'Stock Tranfer';
             $data['breadcrumb'] 	= ['Stock Tranfer', 'List'];
 			$data['stock_product'] 	= $stock_product;
+			
+			$data['counter'] = Counter::where('branch_id',$branch_id)->get();
+			
+			
+			
+			
+			
+			
+			
 			//dd($data);
 			return view('admin.stock_transfer.list', compact('data'));				
 		} catch (\Exception $e) {

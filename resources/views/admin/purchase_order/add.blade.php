@@ -75,9 +75,9 @@
                 <div class="col-6">
                   <div class="noteAreaInner">
                     <select class="form-control custom-select form-control-select" id="invoice_stock" required="required">
-                     <!-- <option value="">Select Stock</option>-->
+                     <option value="">Select Stock</option>
                       <option value="counter" selected="selected">Counter Stock</option>
-                      <!--<option value="bar">Bar Stock</option>-->
+                      <option value="bar">Bar Stock</option>
                     </select>
                   </div>
                 </div>
@@ -128,7 +128,7 @@
                 </li>
               </ul>
             </div>
-            <div class="uploadDiv"> <a href="javascript:;" class="uploadBtnMd"><i class="fas fa-upload"></i> Click Here To Upload Attachment</a>
+            <div class="uploadDiv"> <a href="javascript:;" class="uploadBtnMd" id="upload_invoice"><i class="fas fa-upload"></i> Click Here To Upload PDF</a>
               <p></p>
             </div>
             @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
@@ -136,7 +136,7 @@
             @else
             <div class="noteAreaInner">
               <ul class="d-flex flex-wrap justify-content-between">
-                <li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>
+                <!--<li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>-->
                 <li>
                   <button type="submit" class="btn btn-primary">Submit <i class="fas fa-paper-plane"></i></button>
                 </li>

@@ -18,6 +18,10 @@ use App\Models\Supplier;
 use App\Models\Warehouse;
 use App\Models\StockTransferHistory;
 
+use App\Models\Counter;
+use App\Models\StockTransferCounterHistory;
+use App\Models\CounterWiseStock;
+
 
 use App\Models\SupplierGst;
 use App\Models\ProductRelationshipSize;
@@ -452,7 +456,7 @@ class AjaxController extends Controller {
 		
 		
 		$return_data['status']	= 1;
-		echo json_encode($return_data);
+		echo json_encode($return_data);exit;
 	}
 	
 	
@@ -967,6 +971,12 @@ class AjaxController extends Controller {
 		$inward_stock	= $request->inward_stock;
 		$company_id		= Session::get('branch_id');
 		
+		$counter_id='';
+		$counter_result=counter::where('branch_id',$company_id)->where('stock_type','bar')->get();
+		if(count($counter_result)>0){
+			$counter_id=$counter_result[0]->id;
+		}
+		
 		//print_r($_POST);exit;
 
 		$purchaseStockData=array(
@@ -1009,22 +1019,23 @@ class AjaxController extends Controller {
 		
 		//print_r($purchaseStockData);exit;
 
-		//print_r($purchaseStockData);exit;
-
-		//print_r($purchaseStockData);exit;
+		
 		$purchaseInwardStock	= PurchaseInwardStock::create($purchaseStockData);
 		$purchaseInwardStockId	= $purchaseInwardStock->id;
 
-		//print_r($purchaseInwardStockId);exit;
-
-		//print_r($inward_stock['product_detail']);exit;
+		
 
 		//$purchaseInwardStockId=1;
-
+		
+		
+		
+		
+		
+		
 		if($inward_stock['invoice_stock']=='bar'){
 			if(isset($inward_stock['product_detail'])){
-			if(count($inward_stock['product_detail'])>0){
-				for($i=0;count($inward_stock['product_detail'])>$i;$i++){
+				if(count($inward_stock['product_detail'])>0){
+					for($i=0;count($inward_stock['product_detail'])>$i;$i++){
 
 					$product_id=$inward_stock['product_detail'][$i]['product_id'];
 					$product_info=Product::find($inward_stock['product_detail'][$i]['product_id']);
@@ -1050,10 +1061,9 @@ class AjaxController extends Controller {
 
 					$branch_id=Session::get('branch_id');
 					$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('stock_type','bar')->get();
-					//print_r($branch_product_stock_info);exit;
-
 					if(count($branch_product_stock_info)>0){
 						$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('stock_id',$branch_product_stock_info[0]->id)->where('stock_type',$inward_stock['invoice_stock'])->get();
+						//print_r($branch_product_stock_sell_price_info);exit;
 						$sell_price_id=isset($branch_product_stock_sell_price_info[0]->id)?$branch_product_stock_sell_price_info[0]->id:'';
 
 						if($sell_price_id!=''){
@@ -1066,7 +1076,7 @@ class AjaxController extends Controller {
 							$total_ml +=$product_total_ml;
 
 							BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['total_ml' => $total_ml]);
-							if($inward_stock['invoice_stock']=='warehouse'){
+							if($inward_stock['invoice_stock_type']=='warehouse'){
 								$sell_price_w_qty +=isset($branch_product_stock_sell_price_info[0]->w_qty)?$branch_product_stock_sell_price_info[0]->w_qty:0;
 								$sell_price_w_qty +=$product_qty;
 								BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['w_qty' => $sell_price_w_qty]);
@@ -1079,7 +1089,7 @@ class AjaxController extends Controller {
 							$sell_price_w_qty = 0;
 							$sell_price_c_qty = 0;
 							$total_ml=0;
-							if($inward_stock['invoice_stock']=='warehouse'){
+							if($inward_stock['invoice_stock_type']=='warehouse'){
 								$sell_price_w_qty=$product_qty;
 								$total_ml=$size_ml*$sell_price_w_qty;
 							}else{
@@ -1117,7 +1127,7 @@ class AjaxController extends Controller {
 						$sell_price_w_qty = 0;
 						$sell_price_c_qty = 0;
 						$total_ml=0;
-						if($inward_stock['invoice_stock']=='warehouse'){
+						if($inward_stock['invoice_stock_type']=='warehouse'){
 							$sell_price_w_qty=$product_qty;
 							$total_ml=$size_ml*$sell_price_w_qty;
 						}else{
@@ -1201,64 +1211,166 @@ class AjaxController extends Controller {
 					InwardStockProducts::create($inward_stock_product);
 					//print_r($inward_stock_product);exit;
 				}
+					
+					$branch_id=Session::get('branch_id');
+					for($i=0;count($inward_stock['product_detail'])>$i;$i++){
+						$product_id=$inward_stock['product_detail'][$i]['product_id'];
+						$product_qty		= isset($inward_stock['product_detail'][$i]['product_qty'])?$inward_stock['product_detail'][$i]['product_qty']:0;
+						$measure=$inward_stock['product_detail'][$i]['measure'];
+						$size_arr=explode(' ',$measure);
+						$size_result=Size::query()->where('name', 'LIKE', "%{$size_arr[0]}%")->get();
+						$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+						$size_ml=isset($size_result[0]->ml)?$size_result[0]->ml:0;
+						
+						$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('stock_type',$inward_stock['invoice_stock'])->get();
+						if(count($branch_product_stock_info)>0){
+							$branch_product_counter_stock_info=CounterWiseStock::where('stock_id',$branch_product_stock_info[0]->id)->where('counter_id',$counter_id)->where('stock_type',$inward_stock['invoice_stock'])->get();
+							
+							$product_counter_id=isset($branch_product_counter_stock_info[0]->id)?$branch_product_counter_stock_info[0]->id:'';
+							
+							if($counter_id!=''){
+								$c_qty		= 0;
+								$total_ml	= 0;
+								if($inward_stock['invoice_stock_type']=='counter'){
+									$c_qty=$product_qty;
+									$total_ml=$size_ml*$c_qty;
+								}
+								if($product_counter_id!=''){
+									$product_total_ml=0;
+									$product_total_ml +=isset($branch_product_counter_stock_info[0]->total_ml)?$branch_product_counter_stock_info[0]->total_ml:0;
+									$product_total_ml +=$total_ml;
+									$product_total_qty=0;
+									$product_total_qty +=isset($branch_product_counter_stock_info[0]->c_qty)?$branch_product_counter_stock_info[0]->c_qty:0;
+									$product_total_qty +=$c_qty;
+									CounterWiseStock::where('id', $product_counter_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['c_qty' => $product_total_qty,'total_ml' => $product_total_ml]);
+								}else{
+									$counterWiseStockData=array(
+										'stock_id'		=> $branch_product_stock_info[0]->id,
+										'counter_id'  	=> $counter_id,
+										'c_qty'  		=> $c_qty,
+										'total_ml'		=> $total_ml,
+										'stock_type'  	=> $inward_stock['invoice_stock']
+									);
+									CounterWiseStock::create($counterWiseStockData);
+								}
+							}
+						}
+					}
+				}
 			}
-		}
 		}else{
 			if(isset($inward_stock['product_detail'])){
-			if(count($inward_stock['product_detail'])>0){
-				for($i=0;count($inward_stock['product_detail'])>$i;$i++){
-
-					$product_id=$inward_stock['product_detail'][$i]['product_id'];
-					$product_info=Product::find($inward_stock['product_detail'][$i]['product_id']);
-
-					$prev_stock=isset($product_info->stock_qty)?$product_info->stock_qty:0;
-					$current_stock=0;
-					$current_stock += $prev_stock;
-					$current_stock += $inward_stock['product_detail'][$i]['product_qty'];
-					$current_stock += $inward_stock['product_detail'][$i]['free_qty'];
-
-					$measure=$inward_stock['product_detail'][$i]['measure'];
-					$size_arr=explode(' ',$measure);
-					$size_result=Size::query()->where('name', 'LIKE', "%{$size_arr[0]}%")->get();
-					$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
-
-					$product_mrp		= isset($inward_stock['product_detail'][$i]['product_mrp'])?$inward_stock['product_detail'][$i]['product_mrp']:0;
-					$product_offer_mrp	= isset($inward_stock['product_detail'][$i]['offer_price'])?$inward_stock['product_detail'][$i]['offer_price']:0;
-					$product_qty		= isset($inward_stock['product_detail'][$i]['product_qty'])?$inward_stock['product_detail'][$i]['product_qty']:0;
-
-
-					//print_r($product_mrp);exit;
-
-					$branch_id=Session::get('branch_id');
-					$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('size_id',$size_id)->get();
-					if(count($branch_product_stock_info)>0){
-						$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('stock_id',$branch_product_stock_info[0]->id)->where('selling_price',$product_mrp)->where('stock_type',$inward_stock['invoice_stock'])->get();
-
-						$sell_price_id=isset($branch_product_stock_sell_price_info[0]->id)?$branch_product_stock_sell_price_info[0]->id:'';
-
-						if($sell_price_id!=''){
-							$sell_price_w_qty = 0;
-							$sell_price_c_qty = 0;
-							if($inward_stock['invoice_stock_type']=='warehouse'){
-								$sell_price_w_qty +=isset($branch_product_stock_sell_price_info[0]->w_qty)?$branch_product_stock_sell_price_info[0]->w_qty:0;
-								$sell_price_w_qty +=$product_qty;
-								BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['w_qty' => $sell_price_w_qty]);
+				if(count($inward_stock['product_detail'])>0){
+					for($i=0;count($inward_stock['product_detail'])>$i;$i++){
+	
+						$product_id=$inward_stock['product_detail'][$i]['product_id'];
+						$product_info=Product::find($inward_stock['product_detail'][$i]['product_id']);
+	
+						$prev_stock=isset($product_info->stock_qty)?$product_info->stock_qty:0;
+						$current_stock=0;
+						$current_stock += $prev_stock;
+						$current_stock += $inward_stock['product_detail'][$i]['product_qty'];
+						$current_stock += $inward_stock['product_detail'][$i]['free_qty'];
+	
+						$measure=$inward_stock['product_detail'][$i]['measure'];
+						$size_arr=explode(' ',$measure);
+						$size_result=Size::query()->where('name', 'LIKE', "%{$size_arr[0]}%")->get();
+						$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+						
+						
+						$productRelationshipSizeResult=ProductRelationshipSize::where('product_id',$product_id)->where('size_id',$size_id)->get();
+						$barcode1=isset($productRelationshipSizeResult[0]->product_barcode)?$productRelationshipSizeResult[0]->product_barcode:'';
+						$barcode2=isset($productRelationshipSizeResult[0]->barcode2)?$productRelationshipSizeResult[0]->barcode2:'';
+						$barcode3=isset($productRelationshipSizeResult[0]->barcode3)?$productRelationshipSizeResult[0]->barcode3:'';
+						
+						$product_barcode='';
+						if($barcode1!=''){
+							$product_barcode=$barcode1;
+						}
+						if($barcode2!=''){
+							$product_barcode=$barcode2;
+						}
+						if($barcode3!=''){
+							$product_barcode=$barcode3;
+						}
+						
+						
+						
+						
+						
+	
+						$product_mrp		= isset($inward_stock['product_detail'][$i]['product_mrp'])?$inward_stock['product_detail'][$i]['product_mrp']:0;
+						$product_offer_mrp	= isset($inward_stock['product_detail'][$i]['offer_price'])?$inward_stock['product_detail'][$i]['offer_price']:0;
+						$product_qty		= isset($inward_stock['product_detail'][$i]['product_qty'])?$inward_stock['product_detail'][$i]['product_qty']:0;
+	
+	
+						//print_r($product_mrp);exit;
+	
+						$branch_id=Session::get('branch_id');
+						$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('size_id',$size_id)->get();
+						if(count($branch_product_stock_info)>0){
+							
+							BranchStockProducts::where('id', $branch_product_stock_info[0]->id)->where('stock_type', $inward_stock['invoice_stock'])->update(['product_barcode' => $product_barcode]);
+							
+							$branch_product_stock_sell_price_info=BranchStockProductSellPrice::where('stock_id',$branch_product_stock_info[0]->id)->where('selling_price',$product_mrp)->where('stock_type',$inward_stock['invoice_stock'])->get();
+	
+							$sell_price_id=isset($branch_product_stock_sell_price_info[0]->id)?$branch_product_stock_sell_price_info[0]->id:'';
+	
+							if($sell_price_id!=''){
+								$sell_price_w_qty = 0;
+								$sell_price_c_qty = 0;
+								if($inward_stock['invoice_stock_type']=='warehouse'){
+									$sell_price_w_qty +=isset($branch_product_stock_sell_price_info[0]->w_qty)?$branch_product_stock_sell_price_info[0]->w_qty:0;
+									$sell_price_w_qty +=$product_qty;
+									BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['w_qty' => $sell_price_w_qty]);
+								}else{
+									$sell_price_c_qty +=isset($branch_product_stock_sell_price_info[0]->c_qty)?$branch_product_stock_sell_price_info[0]->c_qty:'';
+									$sell_price_c_qty +=$product_qty;
+									BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['c_qty' => $sell_price_c_qty]);
+								}
 							}else{
-								$sell_price_c_qty +=isset($branch_product_stock_sell_price_info[0]->c_qty)?$branch_product_stock_sell_price_info[0]->c_qty:'';
-								$sell_price_c_qty +=$product_qty;
-								BranchStockProductSellPrice::where('id', $sell_price_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['c_qty' => $sell_price_c_qty]);
+								$sell_price_w_qty = 0;
+								$sell_price_c_qty = 0;
+								if($inward_stock['invoice_stock_type']=='warehouse'){
+									$sell_price_w_qty=$product_qty;
+								}else{
+									$sell_price_c_qty=$product_qty;
+								}
+	
+								$branchProductStockSellPriceData=array(
+									'stock_id'		=> $branch_product_stock_info[0]->id,
+									'w_qty'  		=> $sell_price_w_qty,
+									'c_qty'  		=> $sell_price_c_qty,
+									'selling_price'	=> $product_mrp,
+									'offer_price'  	=> $product_offer_mrp,
+									'product_mrp'  	=> $product_mrp,
+									'stock_type'  	=> $inward_stock['invoice_stock'],
+									'created_at'	=> date('Y-m-d')
+								);
+								BranchStockProductSellPrice::create($branchProductStockSellPriceData);
 							}
 						}else{
+							$branchProductStockData=array(
+								'branch_id'			=> $branch_id,
+								'product_barcode'	=> $product_barcode,
+								'product_id'  		=> $product_id,
+								'size_id'  			=> $size_id,
+								'created_at'		=> date('Y-m-d')
+							);
+							$branchStockProducts=BranchStockProducts::create($branchProductStockData);
+							$stock_id=$branchStockProducts->id;
+	
 							$sell_price_w_qty = 0;
 							$sell_price_c_qty = 0;
+	
 							if($inward_stock['invoice_stock_type']=='warehouse'){
 								$sell_price_w_qty=$product_qty;
 							}else{
 								$sell_price_c_qty=$product_qty;
 							}
-
+	
 							$branchProductStockSellPriceData=array(
-								'stock_id'		=> $branch_product_stock_info[0]->id,
+								'stock_id'		=> $stock_id,
 								'w_qty'  		=> $sell_price_w_qty,
 								'c_qty'  		=> $sell_price_c_qty,
 								'selling_price'	=> $product_mrp,
@@ -1267,107 +1379,125 @@ class AjaxController extends Controller {
 								'stock_type'  	=> $inward_stock['invoice_stock'],
 								'created_at'	=> date('Y-m-d')
 							);
-							BranchStockProductSellPrice::create($branchProductStockSellPriceData);
+							BranchStockProductSellPrice::create($branchProductStockSellPriceData);	
 						}
-					}else{
-						$branchProductStockData=array(
-							'branch_id'		=> $branch_id,
-							'product_id'  	=> $product_id,
-							'size_id'  		=> $size_id,
-							'created_at'	=> date('Y-m-d')
+	
+						//Product::where('id', $product_id)->update(['stock_qty' => $current_stock]);
+						
+						$size_ml=trim(str_replace('Ml.', '', $inward_stock['product_detail'][$i]['measure']));
+						$total_ml=(int)$size_ml*(int)$inward_stock['product_detail'][$i]['product_qty'];
+	
+						$inward_stock_product=array(
+							'inward_stock_id'			=> $purchaseInwardStockId,
+							'branch_id'  				=> $company_id,
+							'product_id'  				=> $inward_stock['product_detail'][$i]['product_id'],
+							'size_id'  					=> $size_id,
+							'case_qty'  				=> $inward_stock['product_detail'][$i]['product_case_qty'],
+							'bottle_case'  				=> $inward_stock['product_detail'][$i]['product_bottle_case'],
+							'loose_qty'  				=> $inward_stock['product_detail'][$i]['product_loose_qty'],
+							'product_qty'  				=> $inward_stock['product_detail'][$i]['product_qty'],
+							'free_qty'  				=> $inward_stock['product_detail'][$i]['free_qty'],
+							'strength'  				=> $inward_stock['product_detail'][$i]['strength'],
+							'bl'  						=> $inward_stock['product_detail'][$i]['bl'],
+							'lpl'  						=> $inward_stock['product_detail'][$i]['lpl'],
+							'retailer_margin'  			=> $inward_stock['product_detail'][$i]['retailer_margin'],
+							'round_off'  				=> $inward_stock['product_detail'][$i]['round_off'],
+							'sp_fee'  					=> $inward_stock['product_detail'][$i]['sp_fee'],
+							'batch_no'  				=> $inward_stock['product_detail'][$i]['batch_no'],
+							'unit_cost'  				=> $inward_stock['product_detail'][$i]['unit_cost'],
+							'exc_unit_cost'  			=> $inward_stock['product_detail'][$i]['retail_item_amt'],
+							'category_id'  				=> $inward_stock['product_detail'][$i]['category_id'],
+							'subcategory_id'  			=> $inward_stock['product_detail'][$i]['subcategory_id'],
+							'size_ml'  					=> $inward_stock['product_detail'][$i]['measure'],
+							'total_ml'  				=> $total_ml,
+							'base_price'  				=> isset($inward_stock['product_detail'][$i]['base_price'])?$inward_stock['product_detail'][$i]['base_price']:0,
+							'base_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['base_discount_percent'])?$inward_stock['product_detail'][$i]['base_discount_percent']:0,
+							'base_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['base_discount_amount'])?$inward_stock['product_detail'][$i]['base_discount_amount']:0,
+	
+							'scheme_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['scheme_discount_percent'])?$inward_stock['product_detail'][$i]['scheme_discount_percent']:0,
+	
+							'scheme_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['scheme_discount_amount'])?$inward_stock['product_detail'][$i]['scheme_discount_amount']:0,
+	
+							'free_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['free_discount_percent'])?$inward_stock['product_detail'][$i]['free_discount_percent']:0,
+	
+							'free_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['free_discount_amount'])?$inward_stock['product_detail'][$i]['free_discount_amount']:0,
+	
+							'free_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['free_discount_amount'])?$inward_stock['product_detail'][$i]['free_discount_amount']:0,
+	
+							'cost_rate'  				=> isset($inward_stock['product_detail'][$i]['cost_rate'])?$inward_stock['product_detail'][$i]['cost_rate']:0,
+							'total_cost_rate'  			=> isset($inward_stock['product_detail'][$i]['total_cost_rate'])?$inward_stock['product_detail'][$i]['total_cost_rate']:0,
+							'gst_percent'  				=> isset($inward_stock['product_detail'][$i]['gst_percent'])?$inward_stock['product_detail'][$i]['gst_percent']:0,
+							'gst_amount'  				=> isset($inward_stock['product_detail'][$i]['gst_amount'])?$inward_stock['product_detail'][$i]['gst_amount']:0,
+	
+							'extra_charge'  			=> isset($inward_stock['product_detail'][$i]['extra_charge'])?$inward_stock['product_detail'][$i]['extra_charge']:0,
+							'profit_percent'  			=> isset($inward_stock['product_detail'][$i]['profit_percent'])?$inward_stock['product_detail'][$i]['profit_percent']:0,
+							'profit_amount'  			=> isset($inward_stock['product_detail'][$i]['profit_amount'])?$inward_stock['product_detail'][$i]['profit_amount']:0,
+							'sell_price'  				=> isset($inward_stock['product_detail'][$i]['sell_price'])?$inward_stock['product_detail'][$i]['sell_price']:0,
+	
+							'selling_gst_percent'  		=> isset($inward_stock['product_detail'][$i]['selling_gst_percent'])?$inward_stock['product_detail'][$i]['selling_gst_percent']:0,
+							'selling_gst_amount'  		=> isset($inward_stock['product_detail'][$i]['selling_gst_amount'])?$inward_stock['product_detail'][$i]['selling_gst_amount']:0,
+							'offer_price'  				=> $inward_stock['product_detail'][$i]['offer_price'],
+							'product_mrp'  				=> $inward_stock['product_detail'][$i]['product_mrp'],
+							'wholesale_price'  			=> 0,
+							'mfg_date'  				=> '',
+							'expiry_date'  				=> '',
+							'total_cost'  				=> $inward_stock['product_detail'][$i]['total_cost'],
+							'created_at'				=> date('Y-m-d')
 						);
-						$branchStockProducts=BranchStockProducts::create($branchProductStockData);
-						$stock_id=$branchStockProducts->id;
-
-						$sell_price_w_qty = 0;
-						$sell_price_c_qty = 0;
-
-						if($inward_stock['invoice_stock_type']=='warehouse'){
-							$sell_price_w_qty=$product_qty;
-						}else{
-							$sell_price_c_qty=$product_qty;
-						}
-
-						$branchProductStockSellPriceData=array(
-							'stock_id'		=> $stock_id,
-							'w_qty'  		=> $sell_price_w_qty,
-							'c_qty'  		=> $sell_price_c_qty,
-							'selling_price'	=> $product_mrp,
-							'offer_price'  	=> $product_offer_mrp,
-							'product_mrp'  	=> $product_mrp,
-							'stock_type'  	=> $inward_stock['invoice_stock'],
-							'created_at'	=> date('Y-m-d')
-						);
-						BranchStockProductSellPrice::create($branchProductStockSellPriceData);
+						InwardStockProducts::create($inward_stock_product);
+						//print_r($inward_stock_product);exit;
 					}
-
-					//Product::where('id', $product_id)->update(['stock_qty' => $current_stock]);
-					
-					$size_ml=trim(str_replace('Ml.', '', $inward_stock['product_detail'][$i]['measure']));
-					$total_ml=(int)$size_ml*(int)$inward_stock['product_detail'][$i]['product_qty'];
-
-					$inward_stock_product=array(
-						'inward_stock_id'			=> $purchaseInwardStockId,
-						'branch_id'  				=> $company_id,
-						'product_id'  				=> $inward_stock['product_detail'][$i]['product_id'],
-						'size_id'  					=> $size_id,
-						'case_qty'  				=> $inward_stock['product_detail'][$i]['product_case_qty'],
-						'bottle_case'  				=> $inward_stock['product_detail'][$i]['product_bottle_case'],
-						'loose_qty'  				=> $inward_stock['product_detail'][$i]['product_loose_qty'],
-						'product_qty'  				=> $inward_stock['product_detail'][$i]['product_qty'],
-						'free_qty'  				=> $inward_stock['product_detail'][$i]['free_qty'],
-						'strength'  				=> $inward_stock['product_detail'][$i]['strength'],
-						'bl'  						=> $inward_stock['product_detail'][$i]['bl'],
-						'lpl'  						=> $inward_stock['product_detail'][$i]['lpl'],
-						'retailer_margin'  			=> $inward_stock['product_detail'][$i]['retailer_margin'],
-						'round_off'  				=> $inward_stock['product_detail'][$i]['round_off'],
-						'sp_fee'  					=> $inward_stock['product_detail'][$i]['sp_fee'],
-						'batch_no'  				=> $inward_stock['product_detail'][$i]['batch_no'],
-						'unit_cost'  				=> $inward_stock['product_detail'][$i]['unit_cost'],
-						'exc_unit_cost'  			=> $inward_stock['product_detail'][$i]['retail_item_amt'],
-						'category_id'  				=> $inward_stock['product_detail'][$i]['category_id'],
-						'subcategory_id'  			=> $inward_stock['product_detail'][$i]['subcategory_id'],
-						'size_ml'  					=> $inward_stock['product_detail'][$i]['measure'],
-						'total_ml'  				=> $total_ml,
-						'base_price'  				=> isset($inward_stock['product_detail'][$i]['base_price'])?$inward_stock['product_detail'][$i]['base_price']:0,
-						'base_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['base_discount_percent'])?$inward_stock['product_detail'][$i]['base_discount_percent']:0,
-						'base_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['base_discount_amount'])?$inward_stock['product_detail'][$i]['base_discount_amount']:0,
-
-						'scheme_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['scheme_discount_percent'])?$inward_stock['product_detail'][$i]['scheme_discount_percent']:0,
-
-						'scheme_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['scheme_discount_amount'])?$inward_stock['product_detail'][$i]['scheme_discount_amount']:0,
-
-						'free_discount_percent'  	=> isset($inward_stock['product_detail'][$i]['free_discount_percent'])?$inward_stock['product_detail'][$i]['free_discount_percent']:0,
-
-						'free_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['free_discount_amount'])?$inward_stock['product_detail'][$i]['free_discount_amount']:0,
-
-						'free_discount_amount'  	=> isset($inward_stock['product_detail'][$i]['free_discount_amount'])?$inward_stock['product_detail'][$i]['free_discount_amount']:0,
-
-						'cost_rate'  				=> isset($inward_stock['product_detail'][$i]['cost_rate'])?$inward_stock['product_detail'][$i]['cost_rate']:0,
-						'total_cost_rate'  			=> isset($inward_stock['product_detail'][$i]['total_cost_rate'])?$inward_stock['product_detail'][$i]['total_cost_rate']:0,
-						'gst_percent'  				=> isset($inward_stock['product_detail'][$i]['gst_percent'])?$inward_stock['product_detail'][$i]['gst_percent']:0,
-						'gst_amount'  				=> isset($inward_stock['product_detail'][$i]['gst_amount'])?$inward_stock['product_detail'][$i]['gst_amount']:0,
-
-						'extra_charge'  			=> isset($inward_stock['product_detail'][$i]['extra_charge'])?$inward_stock['product_detail'][$i]['extra_charge']:0,
-						'profit_percent'  			=> isset($inward_stock['product_detail'][$i]['profit_percent'])?$inward_stock['product_detail'][$i]['profit_percent']:0,
-						'profit_amount'  			=> isset($inward_stock['product_detail'][$i]['profit_amount'])?$inward_stock['product_detail'][$i]['profit_amount']:0,
-						'sell_price'  				=> isset($inward_stock['product_detail'][$i]['sell_price'])?$inward_stock['product_detail'][$i]['sell_price']:0,
-
-						'selling_gst_percent'  		=> isset($inward_stock['product_detail'][$i]['selling_gst_percent'])?$inward_stock['product_detail'][$i]['selling_gst_percent']:0,
-						'selling_gst_amount'  		=> isset($inward_stock['product_detail'][$i]['selling_gst_amount'])?$inward_stock['product_detail'][$i]['selling_gst_amount']:0,
-						'offer_price'  				=> $inward_stock['product_detail'][$i]['offer_price'],
-						'product_mrp'  				=> $inward_stock['product_detail'][$i]['product_mrp'],
-						'wholesale_price'  			=> 0,
-						'mfg_date'  				=> '',
-						'expiry_date'  				=> '',
-						'total_cost'  				=> $inward_stock['product_detail'][$i]['total_cost'],
-						'created_at'				=> date('Y-m-d')
-					);
-					InwardStockProducts::create($inward_stock_product);
-					//print_r($inward_stock_product);exit;
+					$branch_id=Session::get('branch_id');
+					for($i=0;count($inward_stock['product_detail'])>$i;$i++){
+						$product_id=$inward_stock['product_detail'][$i]['product_id'];
+						
+						$product_qty		= isset($inward_stock['product_detail'][$i]['product_qty'])?$inward_stock['product_detail'][$i]['product_qty']:0;
+						
+						$measure=$inward_stock['product_detail'][$i]['measure'];
+						$size_arr=explode(' ',$measure);
+						$size_result=Size::query()->where('name', 'LIKE', "%{$size_arr[0]}%")->get();
+						$size_id=isset($size_result[0]->id)?$size_result[0]->id:0;
+						$size_ml=isset($size_result[0]->ml)?$size_result[0]->ml:0;
+				
+						$branch_product_stock_info=BranchStockProducts::where('branch_id',$branch_id)->where('product_id',$product_id)->where('size_id',$size_id)->where('stock_type',$inward_stock['invoice_stock'])->get();
+						if(count($branch_product_stock_info)>0){
+							$branch_product_counter_stock_info=CounterWiseStock::where('stock_id',$branch_product_stock_info[0]->id)->where('counter_id',$counter_id)->where('stock_type',$inward_stock['invoice_stock'])->get();
+							
+							$product_counter_id=isset($branch_product_counter_stock_info[0]->id)?$branch_product_counter_stock_info[0]->id:'';
+							
+							if($counter_id!=''){
+								$c_qty		= 0;
+								$total_ml	= 0;
+								if($inward_stock['invoice_stock_type']=='counter'){
+									$c_qty=$product_qty;
+									$total_ml=$size_ml*$c_qty;
+								}
+								if($product_counter_id!=''){
+									$product_total_ml=0;
+									$product_total_ml +=isset($branch_product_counter_stock_info[0]->total_ml)?$branch_product_counter_stock_info[0]->total_ml:0;
+									$product_total_ml +=$total_ml;
+									
+									$product_total_qty=0;
+									$product_total_qty +=isset($branch_product_counter_stock_info[0]->c_qty)?$branch_product_counter_stock_info[0]->c_qty:0;
+									$product_total_qty +=$c_qty;
+									
+									CounterWiseStock::where('id', $product_counter_id)->where('stock_type', $inward_stock['invoice_stock'])->update(['c_qty' => $product_total_qty,'total_ml' => $total_ml]);
+								}else{
+									$counterWiseStockData=array(
+										'stock_id'		=> $branch_product_stock_info[0]->id,
+										'counter_id'  	=> $counter_id,
+										'c_qty'  		=> $c_qty,
+										'total_ml'		=> $total_ml,
+										'stock_type'  	=> $inward_stock['invoice_stock']
+									);
+									
+									CounterWiseStock::create($counterWiseStockData);
+								}
+							}
+						}
+					}
 				}
 			}
-		}
 		}
 		$return_data['msg']		= 'Successfully added';
 		$return_data['status']	= 1;

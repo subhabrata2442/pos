@@ -26,6 +26,13 @@ use App\Models\SellInwardStock;
 use App\Models\SellStockProducts;
 use App\Models\Size;
 use App\Models\Subcategory;
+
+use App\Models\Counter;
+use App\Models\StockTransferHistory;
+use App\Models\StockTransferCounterHistory;
+use App\Models\CounterWiseStock;
+
+
 use Carbon\Carbon;
 Use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
@@ -159,6 +166,16 @@ class ReportController extends Controller
 			foreach($categories as $row){
 				$category_id=$row->id;
 				$sub_cat_result=[];
+				
+				
+				$cat_opening_balance = 0;
+				$cat_receipt_balance = 0;
+				$cat_sales			 = 0;
+				$cat_closing_balance = 0;
+				$cat_prevYear_closing_balance=0;
+				
+				
+				
 				$catehoty_wise_subcategory=Product::select('subcategory_id')->distinct()->where('category_id',$row->id)->get();
 				if(count($catehoty_wise_subcategory)>0){
 					foreach($catehoty_wise_subcategory as $sub_row){
@@ -248,6 +265,13 @@ class ReportController extends Controller
 						if($prevYear_closing_balance!=0){
 							$prevYear_closing_balance=$prevYear_closing_balance/1000;
 						}
+						$cat_opening_balance += $opening_balance;
+						$cat_receipt_balance += $receipt_balance;
+						$cat_sales			 += $total_sell;
+						$cat_closing_balance += $closing_balance;
+						$cat_prevYear_closing_balance +=$prevYear_closing_balance;
+						
+						
 						
 						$sub_cat_result[]=array(
 							'category_id'		=> $sub_row->subcategory_id,
@@ -281,6 +305,11 @@ class ReportController extends Controller
 				$result[]=array(
 					'category_id'	=> $row->id,
 					'category_name'	=> $row->name,
+					'opening_balance'=>$cat_opening_balance,
+					'receipt_balance'	=> $cat_receipt_balance,
+					'total_sell'		=> $cat_sales,
+					'closing_balance'	=> $cat_closing_balance,
+					'prevYear_closing_balance'=> $cat_prevYear_closing_balance,
 					'category_img'	=> $category_img,
 					'sub_category'	=> $sub_cat_result
 				);
@@ -811,8 +840,73 @@ class ReportController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
     }
+	
+	 public function counterPurchase(Request $request){
+        try {
+            if ($request->ajax()) {
+				$purchase = PurchaseInwardStock::where('invoice_stock','counter')->orderBy('id', 'desc')->get();
+                return DataTables::of($purchase)
+                    ->addColumn('invoice_no', function ($row) {
+                       return '<a class="td-anchor" href="'.route('admin.report.stock_product.list', [base64_encode($row->id)]) .'" target="_blank">' . $row->invoice_no . '</a>';
+                   
+                    })
+                    ->addColumn('inward_date', function ($row) {
+                        return date('d-m-Y', strtotime($row->inward_date));
+                    })
+                    ->addColumn('tp_no', function ($row) {
+                        return $row->tp_no;
+                    })
+                    ->addColumn('purchase_date', function ($row) {
+                        return date('d-m-Y', strtotime($row->purchase_date));
+                    })
+                    ->addColumn('supplier_id', function ($row) {
+                        return $row->supplier->company_name;
+                    })
+                    ->addColumn('total_qty', function ($row) {
+                        return $row->total_qty;
+                    })
+                    ->addColumn('sub_total', function ($row) {
+                        return number_format($row->sub_total,2);
+                    })
 
-    public function stockProductList(Request $request,$inward_stock_id){
+                    ->addColumn('action', function ($row) {
+                        /*$dropdown = '<a class="dropdown-item" href="'.route('admin.purchase.inward_stock.update', [base64_encode($row->id)]) .'">Edit</a>
+                        <a class="dropdown-item delete-item" id="delete_inward_stock" href="#" data-url="' . route('admin.purchase.inward-stock.delete', [base64_encode($row->id)]) . '">Delete</a>';*/
+						
+						$dropdown = '
+                        <a class="dropdown-item delete-item" id="delete_inward_stock" href="#" data-url="' . route('admin.purchase.inward-stock.delete', [base64_encode($row->id)]) . '">Delete</a>';
+
+                        $btn = '<div class="dropdown">
+                                    <div class="actionList " id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <svg style="cursor: pointer;" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-sliders dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg>
+                                    </div>
+                                    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        ' . $dropdown . '
+                                    </div>
+                                </div>
+                                ';
+
+                        return $btn;
+                    })
+                   
+                    ->rawColumns(['invoice_no','action'])
+                    ->make(true);
+            }
+            $data = [];
+            $data['heading'] = 'Purchase Order List';
+            $data['breadcrumb'] = ['Stock', 'Purchase Order', 'List'];
+			
+            return view('admin.report.purchase', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+	 
+	 
+	 
+	 
+	 
+	 public function stockProductList(Request $request,$inward_stock_id){
         
         try {
             if ($request->ajax()) {
@@ -1209,6 +1303,40 @@ class ReportController extends Controller
             $data['sub_categories']      = Subcategory::all();
             //$data['request'] = $request;
             return view('admin.report.product_wise_sales_report', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+	
+	public function stockTransferReport(Request $request){
+        try {
+            //echo $request->get('start_date');die;
+            //dd($request);
+            $data = [];
+			$branch_id		= Session::get('branch_id');
+            $branch_id		= Session::get('branch_id');
+			$queryProduct = StockTransferHistory::leftJoin('branch_stock_products', function($join) {
+						$join->on('stock_transfer_history.stock_id', '=', 'branch_stock_products.id');
+					})->where('stock_transfer_history.branch_id', $branch_id)->where('branch_stock_products.stock_type', 'counter');
+            $all_product 	= $queryProduct->get();
+            $products 		= $queryProduct->paginate(10);
+			
+			
+			//echo '<pre>';print_r($products);exit;
+			
+			
+            $data['heading']    = 'Stock Transfer List';
+            $data['breadcrumb'] = ['Stock Transfer', '', 'List'];
+            $data['products']   = $products;
+            $data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
+           // $data['total_qty']  = $total_qty;
+           // $data['total_cost'] = $total_cost;
+            $data['categories'] = Category::all();
+            $data['sizes']      = Size::all();
+            $data['sub_categories']      = Subcategory::all();
+            //$data['request'] = $request;
+			//echo '<pre>';print_r($data);exit;
+            return view('admin.report.stockTransferReport', compact('data'));
         } catch (\Exception $e) {
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }

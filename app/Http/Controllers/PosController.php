@@ -184,7 +184,8 @@ class PosController extends Controller
 	
 	public function print_invoice(){
 		
-		$lastSellInwardStock=SellInwardStock::orderBy('id','DESC')->take(1)->get();
+		$branch_id 			= Session::get('branch_id');
+		$lastSellInwardStock=SellInwardStock::where('branch_id',$branch_id)->orderBy('id','DESC')->take(1)->get();
 		$invoice_url='';
 		if(count($lastSellInwardStock)>0){
 			 $data=[];
@@ -194,6 +195,7 @@ class PosController extends Controller
 			 $invoice_time=isset($lastSellInwardStock[0]->sell_time)? date('h:i a',strtotime($lastSellInwardStock[0]->sell_time)):'';
 			 $bill_no=isset($lastSellInwardStock[0]->bill_no)? $lastSellInwardStock[0]->bill_no:'';
 			 $branch_id=isset($lastSellInwardStock[0]->branch_id)? $lastSellInwardStock[0]->branch_id:'';
+			 $payment_method=isset($lastSellInwardStock[0]->payment_method)?$lastSellInwardStock[0]->payment_method:'Cash';
 			 
 			 
 			 $total_qty			= isset($lastSellInwardStock[0]->total_qty)?$lastSellInwardStock[0]->total_qty:'';
@@ -216,17 +218,32 @@ class PosController extends Controller
 			 //echo '<pre>';print_r($sellStockProducts);exit;
 			 
 			 
+			 
+			 $company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+			 $company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+			 $address2	= Common::get_user_settings($where=['option_name'=>'address2'],$branch_id);
+			 $phone				= Common::get_user_settings($where=['option_name'=>'phone'],$branch_id);
+			 
+			 $supplier_id	= Session::get('adminId');
+			 $supplier		= User::find($supplier_id);
+			 $supplier_name = $supplier->name;
+			 
+			 
+			
+			
+			 
+			 
 			 $data['shop_details'] = [
-				'name' 		=> 'BAZIMAT F.L.(OFF) SHOP',
-				'address1'	=> 'West Chowbaga , Kolkata-700105',
-				'address2' 	=> 'West Bengal India',
-				'phone'		=> '8770663036',
+				'name' 		=> $company_name,
+				'address1'	=> $company_address,
+				'address2' 	=> $address2,
+				'phone'		=> $phone,
 			];
 			
 			$data['customer_details'] = [
-				'name'		=> 'Subha',
-            	'mobile'	=> '7003923969',
-            	'address'	=> 'India',
+				'name'		=> '',
+            	'mobile'	=> '',
+            	'address'	=> '',
         	];
 			
 			$data['invoice_details'] = [
@@ -236,9 +253,10 @@ class PosController extends Controller
 				'invoice_time'	=> $invoice_time,
 				'gstin'			=> '',
 				'place'			=> 'West Bengal',
-				'branch'		=> 'K.P.Shaw Bottling Pvt.Ltd.',
-				'cashier_name'	=> 'Mrs Roy Suchandra',
+				'branch'		=> $company_address,
+				'cashier_name'	=> $supplier_name,
 			];
+			
 			$data['items']=[];
 			
 			if(count($sellStockProducts)>0){
@@ -254,6 +272,7 @@ class PosController extends Controller
 					);
 				}
 			}
+			
 			
 			$data['total'] =[
 				'total_qty'		=> number_format($total_qty,2),
@@ -272,9 +291,11 @@ class PosController extends Controller
 			];
 			
 			//echo '<pre>';print_r($data);exit;
-			$data['total_amt_in_word']	= ucwords(Media::getIndianCurrency($pay_amount));
+			$data['total_amt_in_word']		= ucwords(Media::getIndianCurrency($pay_amount));
 			$data['total_discount_amount']	= number_format($total_discount_amount,2);
-			$data['payment_method'] 	= 'Cash';
+			$data['payment_method'] 		= 'Cash';
+			
+			
 			
 			
 			$mpdf = new \Mpdf\Mpdf();

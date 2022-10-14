@@ -42,7 +42,7 @@ th, td {
 <body>
 <p style="margin:0;">Trader Id No.:</p>
 <p style="margin:0;">Licensee Id No. : 31/2008/0004</p>
-<p style="margin:0;">Statement month (mm/yyyy) : June, 2022 <span class="h1">Government of West Bengal </span>Licensee Name        : Bazimat F.L. Off Shop <span class="h1">Excise Department </span>District Name : Alipur Excise District</p>
+<p style="margin:0;">Statement month (mm/yyyy) : <?php echo date('F, Y') ?> <span class="h1">Government of West Bengal </span>Licensee Name        : Bazimat F.L. Off Shop <span class="h1">Excise Department </span>District Name : Alipur Excise District</p>
 <h2 style="font-size:16px;margin:0;">Range : Kasba <span class="s1">e-Report Return : Retail</span></h2>
 <p style="margin-bottom:15px;">Circle : Tiljala</p>
 <table width="1000" border="0" cellspacing="0" cellpadding="0">
@@ -70,11 +70,11 @@ th, td {
               <tr>
                 <td width="135" class="">0<?=$i;?></td>
                 <td width="98" class=""><?=$sub_row['category_name'];?></td>
-                <td width="158" class="">1822.46</td>
-                <td width="101" class="">5361.06</td>
-                <td width="80" class="">5509.39</td>
-                <td width="161" class="">1674.13</td>
-                <td width="204" class="">3346.02</td>
+                <td width="158" class=""><?=$sub_row['opening_balance'];?></td>
+                <td width="101" class=""><?=$sub_row['receipt_balance'];?></td>
+                <td width="80" class=""><?=$sub_row['total_sell'];?></td>
+                <td width="161" class=""><?=$sub_row['closing_balance'];?></td>
+                <td width="204" class=""><?=$sub_row['prevYear_closing_balance'];?></td>
               </tr>
           <?php $i++;} ?>
           <?php } ?>
@@ -86,6 +86,31 @@ th, td {
   </tr>
   <?php } ?>
   <?php } ?>
+  
+  <tr>
+    <td colspan="2" class="no-padding noBdr"><table border="0" cellspacing="0" cellpadding="0" class="noBdr">
+        <tr>
+          <td width="59" class="bdr-l-none bdr-r-none" style="background:#444; color:#fff; font-weight:bold;text-align:center;">TOTAL</td>
+          <td width="936" class="no-padding noBdr bdr-r-none"><table width="937" border="0" cellpadding="0" cellspacing="0" class="noBdr">
+         <?php if(count($result)>0){ ?>
+  		 <?php $i=1;foreach($result as $row){?>
+              <tr>
+                <td width="135" class="">0<?=$i;?></td>
+                <td width="98" class=""><?=$row['category_name'];?></td>
+                <td width="158" class=""><?=$row['opening_balance'];?></td>
+                <td width="101" class=""><?=$row['receipt_balance'];?></td>
+                <td width="80" class=""><?=$row['total_sell'];?></td>
+                <td width="161" class=""><?=$row['closing_balance'];?></td>
+                <td width="204" class=""><?=$row['prevYear_closing_balance'];?></td>
+              </tr>
+         <?php $i++;} ?>
+          <?php } ?>
+          
+              
+            </table></td>
+        </tr>
+      </table></td>
+  </tr>
   
   
   
@@ -100,25 +125,21 @@ th, td {
                 <td width="202" class="">0.00</td>
               </tr>
               <tr>
-                <td width="134" class="">R28</td>
-                <td width="601" class="">Initial Grant Fee for the next Period of Settlement</td>
+                <td width="134" class="">R29</td>
+                <td width="601" class="">Composition Money</td>
                 <td width="202" class="">0.00</td>
               </tr>
               <tr>
-                <td width="134" class="">R28</td>
-                <td width="601" class="">Initial Grant Fee for the next Period of Settlement</td>
+                <td width="134" class="">R30</td>
+                <td width="601" class="">Other fees paid, if any</td>
                 <td width="202" class="">0.00</td>
               </tr>
               <tr>
-                <td width="134" class="">R28</td>
-                <td width="601" class="">Initial Grant Fee for the next Period of Settlement</td>
+                <td width="134" class="">RT</td>
+                <td width="601" class="">Total fees & other monies paid</td>
                 <td width="202" class="">0.00</td>
               </tr>
-              <tr>
-                <td width="134" class="">R28</td>
-                <td width="601" class="">Initial Grant Fee for the next Period of Settlement</td>
-                <td width="202" class="">0.00</td>
-              </tr>
+              
             </table></td>
         </tr>
       </table></td>

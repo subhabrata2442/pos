@@ -35,7 +35,7 @@ $(function() {
 		processing: true,
 		serverSide: true,
 		searchDelay: 350,
-		ajax: "{{ route('admin.report.purchase') }}",
+		ajax: "{{ route('admin.report.counter.counter_purchase') }}",
 		columns: [
 			{
 				data: 'action',

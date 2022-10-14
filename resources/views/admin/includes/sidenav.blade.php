@@ -195,6 +195,14 @@ $is_branch 			= Session::get('is_branch');
                       <p>Product Wise Sales</p>
                       </a> 
                     </li>
+                    
+                    <li class="nav-item"> 
+                      <a href="{{ route('admin.report.sales.report.stock_transfer') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.report.stock_transfer') active @endif"> <i class="fas fa-list nav-icon"></i>
+                      <p>Stock transfer</p>
+                      </a> 
+                    </li>
+                    
+                    
                     {{-- <li class="nav-item"> 
                       <a href="{{ route('admin.report.sales.product') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.report.sales.product') active @endif"> <i class="fas fa-list nav-icon"></i>
                       <p>Sales Product</p>

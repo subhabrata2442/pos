@@ -40,9 +40,6 @@
     width: 70px;
 }
 </style>
-<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script> 
-<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
-<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
 <div class="srcBtnWrap">
   <div class="card">
     <div class="row align-items-center justify-content-between">
@@ -62,92 +59,38 @@
 <div class="card toggleCard">
   <form action="" method="get" id="filter">
     <div class="row">
-    {{--
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="date_search" class="mr-3">Date Filter</label>
-        <input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off" value="{{request()->input('datefilter')}}">
-        <input type="hidden" name="start_date" id="start_date" value="{{request()->input('start_date')}}">
-        <input type="hidden" name="end_date" id="end_date" value="{{request()->input('end_date')}}">
-      </div>
-    </div>
-    --}}
-    {{--
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-    <div class="form-group">
-    <label for="customer_last_name" class="form-label">By Customer Name / Mobile</label>
-    <div class="position-relative">
-    <input type="text" class="form-control" id="search_customer" name="customer" value="{{request()->input('customer')}}" autocomplete="off">
-    <ul id="search_customer_list" class="auto_search_result">
-    </div>
-    <input type="hidden" name="customer_id" id="customer_id" value="{{request()->input('customer_id')}}">
-    </div>
-    </div>
-    --}}
-    {{--
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-    <div class="form-group">
-    <label for="customer_last_name" class="form-label">Invoice No.</label>
-    <div class="position-relative">
-    <input type="text" class="form-control" id="search_sale_invoice" name="invoice" value="{{request()->input('invoice')}}" autocomplete="off">
-    <ul id="search_sale_invoice_list" class="auto_search_result">
-    </div>
-    <input type="hidden" id="invoice_id" name="invoice_id" value="{{request()->input('invoice_id')}}">
-    </div>
-    </div>
-    --}}
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="customer_last_name" class="form-label">Product Name</label>
-        <div class="position-relative">
-          <input type="text" class="form-control" id="search_product" name="product" value="{{request()->input('product')}}" autocomplete="off">
-          <!--<ul id="search_product_list" class="auto_search_result">--> 
+      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="customer_last_name" class="form-label">Product Name</label>
+          <div class="position-relative">
+            <input type="text" class="form-control" id="search_product" name="product" value="{{request()->input('product')}}" autocomplete="off">
+          </div>
+          <input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">
         </div>
-        <input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">
       </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="product_barcode" class="form-label">Barcode</label>
-        <div class="position-relative">
-          <input type="text" class="form-control" id="product_barcode" name="product_barcode" value="{{request()->input('product_barcode')}}" autocomplete="off">
-          <!--<ul id="search_product_list" class="auto_search_result">--> 
+      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="product_barcode" class="form-label">Barcode</label>
+          <div class="position-relative">
+            <input type="text" class="form-control" id="product_barcode" name="product_barcode" value="{{request()->input('product_barcode')}}" autocomplete="off">
+          </div>
         </div>
-        <!--<input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">--> 
       </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="" class="form-label">Select Brand</label>
-        <select class="form-control custom-select form-control-select" id="" name="brand">
-          <option value="">Select Brand</option>
-          
-          
-						@forelse ($data['brands'] as $brand)
-							
-          
-          <option value="{{$brand->id}}" {{request()->input('brand') == $brand->id ? 'selected' : ''}}>{{$brand->name}}</option>
-          
-          
-						@empty
-							
-						@endforelse
-					
-        
-        </select>
-      </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="" class="form-label">Select Category</label>
-        <select class="form-control custom-select form-control-select" id="" name="category">
-          <option value="">Select Category</option>
+      
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="" class="form-label">Select Category</label>
+          <select class="form-control custom-select form-control-select" id="" name="category">
+            <option value="">Select Category</option>
+            
           
           
 						@forelse ($data['categories'] as $category)
 							
           
-          <option value="{{$category->id}}" {{request()->input('category') == $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+          
+            <option value="{{$category->id}}" {{request()->input('category') == $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+            
           
           
 						@empty
@@ -155,20 +98,24 @@
 						@endforelse
 					
         
-        </select>
+        
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="" class="form-label">Select Subcategory</label>
-        <select class="form-control custom-select form-control-select" id="" name="sub_category">
-          <option value="">Select Subcategory</option>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="" class="form-label">Select Subcategory</label>
+          <select class="form-control custom-select form-control-select" id="" name="sub_category">
+            <option value="">Select Subcategory</option>
+            
           
           
 						@forelse ($data['sub_categories'] as $sub_category)
 							
           
-          <option value="{{$sub_category->id}}" {{request()->input('sub_category') == $sub_category->id ? 'selected' : ''}}>{{$sub_category->name}}</option>
+          
+            <option value="{{$sub_category->id}}" {{request()->input('sub_category') == $sub_category->id ? 'selected' : ''}}>{{$sub_category->name}}</option>
+            
           
           
 						@empty
@@ -176,20 +123,24 @@
 						@endforelse
 					
         
-        </select>
+        
+          </select>
+        </div>
       </div>
-    </div>
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="" class="form-label">Select Size</label>
-        <select class="form-control custom-select form-control-select" id="" name="size">
-          <option value="">Select Size</option>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="" class="form-label">Select Size</label>
+          <select class="form-control custom-select form-control-select" id="" name="size">
+            <option value="">Select Size</option>
+            
           
           
 						@forelse ($data['sizes'] as $size)
 							
           
-          <option value="{{$size->id}}" {{request()->input('size') == $size->id ? 'selected' : ''}}>{{$size->name}}</option>
+          
+            <option value="{{$size->id}}" {{request()->input('size') == $size->id ? 'selected' : ''}}>{{$size->name}}</option>
+            
           
           
 						@empty
@@ -197,40 +148,32 @@
 						@endforelse
 					
         
-        </select>
+        
+          </select>
+        </div>
       </div>
-    </div>
-    {{--
-    <div class="col-lg-3 col-md-3 col-sm-12 col-12">
-      <div class="form-group">
-        <label for="" class="form-label">Select Brand</label>
-        <select class="form-control custom-select form-control-select" id="">
-          <option value="">Select 1</option>
-        </select>
+      
+      <div class="col-12">
+        <ul class="saveSrcArea d-flex align-items-center justify-content-center mb-2">
+          <li> <a href="javascript:?" class="saveBtn-2 reset-btn" id="reset">Reset</i></a> </li>
+          <li>
+            <button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
+          </li>
+          {{--
+          <li class="d-flex align-items-center">
+            <div>
+              <select class="form-control custom-select form-control-select" id="report_type">
+                <option value=""> Select Report Type</option>
+                <option value="item_wise_sales_report"> Item Wise sales report</option>
+              </select>
+            </div>
+            <div>
+              <button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
+            </div>
+          </li>
+          --}}
+        </ul>
       </div>
-    </div>
-    --}}
-    <div class="col-12">
-      <ul class="saveSrcArea d-flex align-items-center justify-content-center mb-2">
-        <li> <a href="javascript:?" class="saveBtn-2 reset-btn" id="reset">Reset</i></a> </li>
-        <li>
-          <button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
-        </li>
-        {{--
-        <li class="d-flex align-items-center">
-          <div>
-            <select class="form-control custom-select form-control-select" id="report_type">
-              <option value=""> Select Report Type</option>
-              <option value="item_wise_sales_report"> Item Wise sales report</option>
-            </select>
-          </div>
-          <div>
-            <button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
-          </div>
-        </li>
-        --}}
-      </ul>
-    </div>
     </div>
   </form>
 </div>
@@ -238,20 +181,6 @@
   <div class="col-12">
     <div class="card">
       <x-alert />
-      {{--
-      <div class="d-flex justify-content-between align-items-center mb-4">
-        <form method="get" id="search-form" class="form-inline" role="form">
-          <input type="hidden" name="item_id" value="{{$data['item_id']}}" id="item_id">
-          <input type="hidden" name="start_date" id="start_date" value="">
-          <input type="hidden" name="end_date" id="end_date" value="">
-          <div class="form-group">
-            <label for="date_search" class="mr-3">Date</label>
-            <input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off">
-          </div>
-          <button type="submit" class="btn btn-primary ml-3">Search</button>
-        </form>
-        <a href="javascript:;" id="download" data-date="" class="downloadBtn"><i class="fas fa-download"></i> Download</a> </div>
-      --}}
       <div class="table-responsive custom-table">
         <table id="" class="table table-bordered text-nowrap">
           <thead>
@@ -260,7 +189,8 @@
             <th scope="col">Size</th>
             <th scope="col">Category</th>
             <th scope="col">Sub Category</th>
-            <th scope="col">Qty/Piece</th>
+            <th scope="col">Warehouse Qty</th>
+            <th scope="col">Counter Qty</th>
             <th scope="col">MRP/Piece</th>
               </thead>
           <tbody>
@@ -269,6 +199,7 @@
           @php
           $product_mrp=isset($Stock_product->stockProduct->product_mrp)?number_format($Stock_product->stockProduct->product_mrp,2):'-';
           $c_qty=isset($Stock_product->stockProduct->c_qty)?$Stock_product->stockProduct->c_qty:'-';
+          $w_qty=isset($Stock_product->stockProduct->w_qty)?$Stock_product->stockProduct->w_qty:'-';
           @endphp
           <tr>
             <td>{{@$Stock_product->product_barcode}}</td>
@@ -276,6 +207,7 @@
             <td>{{@$Stock_product->size->name}}</td>
             <td>{{@$Stock_product->product->category->name}}</td>
             <td>{{@$Stock_product->product->subcategory->name}}</td>
+            <td>{{$w_qty}}</td>
             <td><input type="number" class="qty_update" value="{{$c_qty}}" data-stock_id="{{@$Stock_product->id}}" data-branch_id="{{@$Stock_product->branch_id}}" data-product_id="{{@$Stock_product->product_id}}" data-size_id="{{@$Stock_product->size_id}}" /></td>
             <td>{{$product_mrp}}</td>
           </tr>
@@ -342,76 +274,6 @@ $(document).ready(function() {
 </script> 
 <script type="text/javascript">
 $(function() {
-	
-	/* $('#download_report').on("click",function(){
-		var start_date = $('input[name=start_date]').val();
-		//alert(start_date);
-		var end_date = $('input[name=end_date]').val();
-		var url = "{{route('admin.report.sales.product.download')}}";
-		$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
-	}) */
-
-	$('#download_report').on("click",function(){
-		var report_type = $('#report_type').val();
-		var start_date = $('input[name=start_date]').val();
-		var end_date = $('input[name=end_date]').val();
-		if(report_type == ''){
-			Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please select report type!',
-            })
-		}else if(start_date == '' && end_date== ''){
-            Swal.fire({
-                icon: 'error',
-                title: 'Oops...',
-                text: 'Please select date!',
-            })
-        }else{
-			console.log('sdfd');
-            var url = "{{route('admin.report.sales.product.item_wise')}}";
-			var href = url+'?start_date='+start_date+'&end_date='+end_date;
-
-			window.open(href);
-		    //$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
-			//window.location = window.location.href;
-        }
-        
-		
-	})
-	//Start date range picker
-	/* var start = moment().subtract(29, 'days');
-    var end = moment();
-	 */
-
-   /*  function cb(start, end) {
-        //$('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
-        $('#reportrange').val(start.format('D-MM-YYYY') + ' - ' + end.format('D-MM-YYYY'));
-		$('#start_date').val(start.format('YYYY-MM-DD'));
-		$('#end_date').val(end.format('YYYY-MM-DD'));
-    } */
-
-    $('#reportrange').daterangepicker({
-        //startDate: start,
-        //endDate: end,
-		autoUpdateInput: false,
-        ranges: {
-           'Today': [moment(), moment()],
-           'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-           'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-           'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-           'This Month': [moment().startOf('month'), moment().endOf('month')],
-           'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        }
-    });
-
-    //cb(start, end);
-
-	$('input[name="datefilter"]').on('apply.daterangepicker', function(ev, picker) {
-      	$(this).val(picker.startDate.format('MM/DD/YYYY') + ' - ' + picker.endDate.format('MM/DD/YYYY'));
-	  	$('#start_date').val(picker.startDate.format('YYYY-MM-DD'));
-		$('#end_date').val(picker.endDate.format('YYYY-MM-DD'));
-  	});
 	//End Date range picker
 	$('.searchDropBtn').on("click",function(){
 		$(".toggleCard").slideToggle();
@@ -450,6 +312,7 @@ $(function() {
             });
         }
 	});
+	
 	//Invoice List
 	$("#search_sale_invoice").keyup(function() {
 		var search = $(this).val();

@@ -12,5 +12,13 @@ class StockTransferHistory extends Model
 	
 	protected $table = 'stock_transfer_history';
 	protected $guarded	= [];
+	
+	public function size(){
+		return $this->hasOne(Size::class,'id', 'size_id');
+	}
+	
+	public function product(){
+    	return $this->hasOne(Product::class,'id','product_id');
+  }
 
 }

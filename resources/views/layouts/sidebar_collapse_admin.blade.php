@@ -18,6 +18,7 @@
 <script src="{{ url('assets/admin/js/app.js') }}"></script>
 </head>
 
+
 <body class="hold-transition  layout-fixed sidebar-mini sidebar-collapse">
 <!--<body class="hold-transition dark_mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapse">-->
 <x-preloader />

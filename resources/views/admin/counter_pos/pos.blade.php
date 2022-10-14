@@ -161,16 +161,16 @@
     </div>
     <div class="sidebar-widget text-center">
       <ul class="row">
-        <li class="col-3"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-1"><span><i class="fas fa-ticket-alt"></i></span>Apply<br>
+        <li class="col-3 disabled_btn"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-1"><span><i class="fas fa-ticket-alt"></i></span>Apply<br>
           Coupon</a></li>
-        <li class="col-3"><a href="#"><span><i class="fas fa-user-check"></i></span>Apply<br>
+        <li class="col-3 disabled_btn"><a href="#"><span><i class="fas fa-user-check"></i></span>Apply<br>
           Membership</a></li>
-        <li class="col-3"><a href="#"><span><i class="fas fa-calculator"></i></span>Calculator</a></li>
-        <li class="col-3"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-2"><span><i class="fas fa-credit-card"></i></span>Reedem Credit</a></li>
-        <li class="col-3"><a href="#"><span><i class="fas fa-hand-paper"></i></span>Hold</a></li>
-        <li class="col-3"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-3"><span><i class="fas fa-street-view"></i></span>View Hold</a></li>
-        <li class="col-3"><a href="javascript:;"><span><i class="fas fa-wallet"></i></span>Reset Bill</a></li>
-        <li class="col-3"><a href="javascript:;"><span><i class="fas fa-luggage-cart"></i></span>Today Sale</a></li>
+        <li class="col-3 disabled_btn"><a href="#"><span><i class="fas fa-calculator"></i></span>Calculator</a></li>
+        <li class="col-3 disabled_btn"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-2"><span><i class="fas fa-credit-card"></i></span>Reedem Credit</a></li>
+        <li class="col-3 disabled_btn"><a href="#"><span><i class="fas fa-hand-paper"></i></span>Hold</a></li>
+        <li class="col-3 disabled_btn"><a href="jsvascript:;" data-bs-toggle="modal" data-bs-target="#modal-3"><span><i class="fas fa-street-view"></i></span>View Hold</a></li>
+        <li class="col-3 disabled_btn"><a href="javascript:;"><span><i class="fas fa-wallet"></i></span>Reset Bill</a></li>
+        <li class="col-3 disabled_btn"><a href="javascript:;"><span><i class="fas fa-luggage-cart"></i></span>Today Sale</a></li>
         <li class="payPrint col-6"><a href="javascript:;" class="payBtn"><span><i class="fas fa-money-check"></i></span>pay</a></li>
         <li class="payPrint col-6"><a href="javascript:;" class="print_off_counter_bill"><span><i class="fas fa-print"></i></span>Print</a></li>
       </ul>

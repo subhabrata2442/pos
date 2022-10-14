@@ -40,6 +40,7 @@ Route::match(['GET', 'POST'], '/forget-password', [Authenticate::class, 'forget_
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
     Route::match(['GET'], '/logout', [Authenticate::class, 'logout'])->name('auth.logout');
+	Route::match(['GET'], '/setting', [UserController::class, 'setting'])->name('auth.setting');
     Route::get('/dashboard', function () {
         $data = [];
         $data['heading'] = 'Dashboard';
@@ -132,6 +133,13 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 			Route::match(['GET'], '/brand_report', [ReportController::class, 'brand_report'])->name('brand_report');
 			
 		});
+		
+		Route::prefix('counter')->name('counter.')->group(function () {
+			Route::match(['GET'], '/purchase', [ReportController::class, 'counterPurchase'])->name('counter_purchase');
+		});
+		
+		
+		
         
         Route::match(['GET'], '/sales/sales-product', [ReportController::class, 'salesProduct'])->name('sales.product');
         Route::match(['GET'], '/sales-product/download', [ReportController::class, 'salesProductDownload'])->name('sales.product.download');
@@ -146,6 +154,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET'],'/item-wise-sales-report', [ReportController::class, 'itemWiseSaleReportPdf'])->name('sales.product.item_wise');
 
         Route::match(['GET'],'/product-wise-sales-report', [ReportController::class, 'productWiseSaleReport'])->name('sales.report.product.wise');
+		
+		Route::match(['GET'],'/stock-transfer-report', [ReportController::class, 'stockTransferReport'])->name('sales.report.stock_transfer');
 
         Route::match(['GET'],'/month-wise-pdf', [ReportController::class, 'monthWiseReportPdf'])->name('product.month_wise');
 

@@ -36,17 +36,12 @@
 	.reset-btn{
 		background-color: #d3681b;
 	}
-	.swal2-title {
-   
-    font-size: 1.3em;
-
-}
 </style>
 <div class="srcBtnWrap">
   <div class="card">
     <div class="row align-items-center justify-content-between">
       <div class="col-auto">
-        <h4>Stock Transfer</h4>
+        <h4>Stock Tranfer</h4>
       </div>
       <div class="col-auto"> <a href="javascript:;" class="searchDropBtn">Advance Search <i class="fas fa-chevron-circle-down"></i></a> </div>
     </div>
@@ -116,6 +111,7 @@
     </div>
   </div>
 </div>
+
 <div class="modal fade modalMdHeader" id="modal-applyExchange" tabindex="-1" aria-labelledby="modal-1Label" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
@@ -125,27 +121,26 @@
       </div>
       <div class="modal-body">
         <div class="applyCouponBox">
-          <form action="{{ route('admin.purchase.stock.transfer') }}" method="post" id="applyExchange-form">
-            @csrf
-            <input type="hidden" id="original_w_qty" name="prev_w_qty" />
-            <input type="hidden" id="original_c_qty" name="prev_c_qty" />
-            <input type="hidden" id="stock_id" name="stock_id" />
-            <input type="hidden" id="price_id" name="price_id" />
-            <input type="hidden" id="transfer_to" name="transfer_to" value="c" />
-            <input type="hidden" id="w_qty-input" name="w_qty" />
+          <form action="" method="get" id="applyExchange-form">
+          <input type="hidden" id="original_w_qty" name="prev_w_qty" />
+          <input type="hidden" id="original_c_qty" name="prev_c_qty" />
+          <input type="hidden" id="stock_id" name="stock_id" />
+          <input type="hidden" id="price_id" name="price_id" />
+          <input type="hidden" id="transfer_to" name="transfer_to" value="w" />
             <div class="mb-3">
               <label for="" class="form-label">Warehouse Stock:<span id="prev_w_qty_label"></span></label>
+              
             </div>
+            
             @forelse ($data['counter'] as $counter_row)
             <div class="mb-3">
-              <label for="" class="form-label">{{$counter_row->name}}</label>
-              <input type="number" class="form-control number update_c_qty" name="c_qty[]" autocomplete="off">
-              <input type="hidden" name="counter_id[]" value="{{$counter_row->id}}">
+              <label for="" class="form-label">{{$counter_row->name}} (Stock:<span id="prev_c_qty_label"></span>)</label>
+              <input type="number" class="form-control number" name="c_qty[]" autocomplete="off">
             </div>
             @empty
             <div class="mb-3">
-              <label for="" class="form-label">Counter</label>
-              <input type="number" class="form-control number update_c_qty" name="c_qty[]" autocomplete="off">
+              <label for="" class="form-label">Counter (Stock:<span id="prev_c_qty_label"></span>)</label>
+              <input type="number" class="form-control number" name="c_qty[]" autocomplete="off">
             </div>
             @endforelse
             <button type="submit" class="btn btn-primary">Submit</button>
@@ -155,10 +150,13 @@
     </div>
   </div>
 </div>
+
+
 @endsection
 
-@section('scripts') 
-<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script> 
+@section('scripts')
+<script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
 @if( Request::has('product')) 
 <script>
 	$(".toggleCard").css("display", "block");
@@ -167,50 +165,80 @@
 <script type="text/javascript">
 
 
-$(document).on('keyup', '.update_c_qty', function() {
-    var total_qty = 0;
-    var original_w_qty = $('#original_w_qty').val();
+$(document).on('click', '#w_qty-input', function() {
+	$('#transfer_to').val('w');
+	$(this).select();
 	
-    var input_c_qty = $(this).val();
-    if (Number(input_c_qty) <= 0) {
-        $(this).val(0);
-        toastr.error("Entered Qty should not be greater than Stock");
+});
 
-        if (Number(input_c_qty) <= 0) {
-            var total_qty = 0
-            $(".update_c_qty").each(function() {
-                var c_qty = $(this).val();
-                if (c_qty != '') {
-                    total_qty += parseInt(c_qty);
-                }
-            });
-            var new_w_qty = parseInt(original_w_qty) - parseInt(total_qty);
-            $('#prev_w_qty_label').text(new_w_qty);
-            $('#w_qty-input').val(new_w_qty);
-        }
-		
-        return false;
-    }
+$(document).on('click', '#c_qty-input', function() {
+	$('#transfer_to').val('c');
+	$(this).select();
+});
+
+$(document).on('keyup', '#w_qty-input', function() {
+	var original_w_qty	= $('#original_w_qty').val();
+	var original_c_qty	= $('#original_c_qty').val();
 	
-	var total_qty = 0
-	$(".update_c_qty").each(function() {
-        var c_qty = $(this).val();
-        if (c_qty != '') {
-            total_qty += parseInt(c_qty);
-        }
-    });
+	var new_w_qty=$(this).val();
+	
+	if (Number(new_w_qty) <= 0) {
+		$('#w_qty-input').val(0);
+		toastr.error("Entered Qty should not be greater than Stock");
+		return false;
+	}
+	
+	console.log('new_w_qty',new_w_qty);
+	
+	var w_qty=0;
+	if(original_w_qty>0){
+		//console.log('original_w_qty',original_w_qty);
+		if(parseInt(original_w_qty) < parseInt(new_w_qty)){
+			w_qty=parseInt(new_w_qty)-parseInt(original_w_qty);
+			var new_c_qty=parseInt(original_c_qty)-parseInt(w_qty);
+			//console.log('w_qty',w_qty);
+		}else{
+			w_qty=parseInt(original_w_qty)-parseInt(new_w_qty);
+			var new_c_qty=parseInt(original_c_qty)+parseInt(w_qty);
+		}
+	}else{
+		//console.log('tttt');
+		var w_qty=$(this).val();
+		var new_c_qty=parseInt(original_c_qty)-parseInt(w_qty);
+	}
+	
+	$('#c_qty-input').val(new_c_qty);
+});
 
-    var new_w_qty = 0;
-    if (original_w_qty > 0) {
-        if (original_w_qty < total_qty) {
-            toastr.error("Entered Qty should not be greater than Stock");
-        } else {
-            new_w_qty = parseInt(original_w_qty) - parseInt(total_qty);
-        }
-    }
-
-    $('#prev_w_qty_label').text(new_w_qty);
-    $('#w_qty-input').val(new_w_qty);
+$(document).on('keyup', '#c_qty-input', function() {
+	var original_w_qty	= $('#original_w_qty').val();
+	var original_c_qty	= $('#original_c_qty').val();
+	
+	var new_c_qty=$(this).val();
+	
+	if (Number(new_c_qty) <= 0) {
+		$('#c_qty-input').val(0);
+		toastr.error("Entered Qty should not be greater than Stock");
+		return false;
+	}
+	
+	
+	
+	var c_qty=0;
+	if(original_c_qty>0){
+		if(parseInt(original_c_qty) < parseInt(new_c_qty) ){
+			c_qty=parseInt(new_c_qty)-parseInt(original_c_qty);
+			var new_w_qty=parseInt(original_w_qty)-parseInt(c_qty);
+		}else{
+			c_qty=parseInt(original_c_qty)-parseInt(new_c_qty);
+			var new_w_qty=parseInt(original_w_qty)+parseInt(c_qty);
+		}
+	}else{
+		var c_qty=$(this).val();
+		var new_w_qty=parseInt(original_w_qty)-parseInt(c_qty);
+	}
+	//var new_w_qty=parseInt(original_w_qty)-parseInt(c_qty);
+	$('#w_qty-input').val(new_w_qty);
 });
 
 
@@ -235,7 +263,7 @@ $(document).on('click','.exchange_btn',function(){
 	$('#original_w_qty').val(w_qty);
 	$('#original_c_qty').val(c_qty);
 	$('#w_qty-input').val(w_qty);
-	//$('#c_qty-input').val(c_qty);
+	$('#c_qty-input').val(c_qty);
 	
 	var total_qty=0;
 	total_qty += parseInt(w_qty);
@@ -251,8 +279,13 @@ $(document).on('click','.exchange_btn',function(){
 
 $(document).ready(function() {
     $("#applyExchange-form").validate({
-        rules: {},
-        messages: {},
+        rules: {
+            w_qty: "required",
+			c_qty: "required",
+        },
+        messages: {
+            //promo: "Required",
+        },
         errorElement: "em",
         errorPlacement: function(error, element) {
             // Add the `help-block` class to the error element
@@ -266,65 +299,68 @@ $(document).ready(function() {
             $(element).addClass("has-success").removeClass("has-error");
         },
         submitHandler: function(form) {
-
-            var original_w_qty = $('#original_w_qty').val();
-            var original_c_qty = $('#original_c_qty').val();
-
-            var total_qty = 0;
-
-            $(".update_c_qty").each(function() {
-                var c_qty = $(this).val();
-                if (c_qty != '') {
-                    total_qty += parseInt(c_qty);
-                }
-            });
-
-            if (total_qty > 0) {
-                if (original_w_qty < total_qty) {
-                    toastr.error("Entered Qty should not be greater than Stock");
-                } else {
-                    var title = 'Do you want to  Transfer ' + total_qty + ' Qty  From Warehouse?';
-                    Swal.fire({
-                        title: title,
-                        showDenyButton: true,
+            var gross_total_amount = $('#gross_total_amount-input').val();
+            var charge_amt = $('#charge_amt').val();
+			
+			var original_w_qty	= $('#original_w_qty').val();
+			var original_c_qty	= $('#original_c_qty').val();
+			
+			var prev_total_qty=0;
+			prev_total_qty += parseInt(original_w_qty);
+			prev_total_qty += parseInt(original_c_qty);
+			
+			var new_w_qty		= $('#w_qty-input').val();
+			var new_c_qty		= $('#c_qty-input').val();
+			
+			var new_total_qty=0;
+			new_total_qty += parseInt(new_w_qty);
+			new_total_qty += parseInt(new_c_qty);
+			
+			if(new_total_qty==prev_total_qty){
+				var stock_id	= $('#stock_id').val();
+				var price_id	= $('#price_id').val();
+				var transfer_to	= $('#transfer_to').val();
+				
+				$.ajax({
+				url: prop.ajaxurl,
+				type: 'post',
+				data: {
+					prev_w_qty: original_w_qty,
+					prev_c_qty: original_c_qty,
+					new_w_qty: new_w_qty,
+					new_c_qty: new_c_qty,
+					stock_id: stock_id,
+					price_id: price_id,
+					transfer_to: transfer_to,
+					action: 'set_update_stock',
+					_token: prop.csrf_token
+				},
+				dataType: 'json',
+				success: function(response) {
+					$('#modal-applyExchange').modal('hide');
+					Swal.fire({
+                        title: 'Stock Tranfer successfully submitted.',
+                        icon: 'success',
+                        showDenyButton: false,
                         showCancelButton: false,
-                        confirmButtonText: 'Save',
-                        denyButtonText: 'Don\'t save',
+                        allowOutsideClick: false
                     }).then((result) => {
 
                         if (result.isConfirmed) {
-                            var action_url = document.getElementById("applyExchange-form").action;
-                            $.ajax({
-                                url: action_url,
-                                type: 'post',
-                                data: $(form).serializeArray(),
-                                dataType: 'json',
-                                success: function(response) {
-                                    $('#modal-applyExchange').modal('hide');
-                                    Swal.fire({
-                                        title: 'Stock Tranfer successfully submitted.',
-                                        icon: 'success',
-                                        showDenyButton: false,
-                                        showCancelButton: false,
-                                        allowOutsideClick: false
-                                    }).then((result) => {
+                            
+                            location.reload();
 
-                                        if (result.isConfirmed) {
-
-                                            location.reload();
-
-                                        } else if (result.isDenied) {}
-                                    });
-                                }
-                            });
-                        } else if (result.isDenied) {
-                            Swal.fire('Changes are not saved', '', 'info')
-                        }
+                        } else if (result.isDenied) {}
                     });
-                }
-            } else {
-                toastr.error("Enter Stock!");
-            }
+				}
+			});
+				
+			}else{
+				toastr.error("Something Error Occurs!");
+			}
+
+            
+
         }
     });
 });
