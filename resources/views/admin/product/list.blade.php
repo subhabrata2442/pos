@@ -4,7 +4,7 @@
   <div class="col-12">
     <div class="card">
       <x-alert />
-      <!--<form method="post" action="{{ route('admin.product.product_upload') }}" class="needs-validation" id="product_upload-form" novalidate enctype="multipart/form-data">
+      <form method="post" action="{{ route('admin.product.product_upload') }}" class="needs-validation" id="product_upload-form" novalidate enctype="multipart/form-data">
         @csrf
         <div class="col-md-6">
           <div class="form-group">
@@ -14,7 +14,7 @@
             </div>
           </div>
         </div>
-      </form>-->
+      </form>
       
       
       <!--<form method="post" action="{{ route('admin.product.bar_product_price_upload') }}" class="needs-validation" id="bar_product_price_upload-form" novalidate enctype="multipart/form-data">
