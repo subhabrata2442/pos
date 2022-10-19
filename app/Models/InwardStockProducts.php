@@ -19,4 +19,7 @@ class InwardStockProducts extends Model
     public function size(){
         return $this->hasOne(Size::class,'id','size_id');
     }
+	public function invoice(){
+        return $this->hasOne(PurchaseInwardStock::class,'id','inward_stock_id');
+    }
 }

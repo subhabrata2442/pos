@@ -11,6 +11,7 @@ use App\Http\Controllers\AjaxController;
 use App\Http\Controllers\WaiterController;
 use App\Http\Controllers\ManageTableController;
 use App\Http\Controllers\PosController;
+use App\Http\Controllers\CronController;
 
 
 use Illuminate\Support\Facades\Auth;
@@ -36,6 +37,10 @@ Route::match(['POST'], '/registration', [Authenticate::class, 'verifyAndRegister
 Route::match(['GET', 'POST'], '/forget-password', [Authenticate::class, 'forget_password'])->name('auth.fogetPass');
 // end Route
 
+
+//Route::match(['GET'], '/daily-product-sell-history', [CronController::class, 'daily_product_sell_history'])->name('daily_product_sell_history');
+Route::match(['GET', 'POST'], '/daily_product_sell_history/{id}', [CronController::class, 'daily_product_sell_history'])->name('daily_product_sell_history');
+Route::match(['GET', 'POST'], '/daily_product_purchase_history/{id}', [CronController::class, 'daily_product_purchase_history'])->name('daily_product_purchase_history');
 
 
 Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
@@ -157,7 +162,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 			Route::match(['GET'], '/report', [ReportController::class, 'invoice_report'])->name('invoice_report');
 			
 			Route::match(['GET'], '/test_report', [ReportController::class, 'test_report'])->name('test_report');
-			Route::match(['GET'], '/brand_report', [ReportController::class, 'brand_report'])->name('brand_report');
+			
 			
 		});
 		
@@ -185,6 +190,7 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
 		Route::match(['GET'],'/stock-transfer-report', [ReportController::class, 'stockTransferReport'])->name('sales.report.stock_transfer');
 
         Route::match(['GET'],'/month-wise-pdf', [ReportController::class, 'monthWiseReportPdf'])->name('product.month_wise');
+		Route::match(['GET'], '/brand_report', [ReportController::class, 'brand_report'])->name('sales.product.product_wise');
 
 		
         //Route::match(['GET', 'POST'], '/list', [ProductController::class, 'list'])->name('list');
