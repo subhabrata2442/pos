@@ -48,17 +48,22 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         return view('admin/dashboard', compact('data'));
     })->name('dashboard')->middleware('role:all,normal_user');
 
-    // user route
+   /* // user route
     Route::match(['GET'], '/users', [UserController::class, 'list'])->name('users.list')->middleware('role:admin');
     Route::match(['GET'], '/users/manage-role/{id}', [UserController::class, 'manage_role'])->name('users.manageRole')->middleware('role:admin');
     Route::match(['GET'], '/users/set-role/{id}/{role_id}', [UserController::class, 'set_role'])->name('users.setRole')->middleware('role:admin');
     Route::match(['GET', 'POST'], '/users/edit/{id}', [UserController::class, 'edit'])->name('users.edit')->middleware('role:admin');
     Route::match(['GET'], '/users/delete/{id}', [UserController::class, 'delete'])->name('users.delete')->middleware('role:admin');
-    Route::match(['GET'], '/users/change-status/{id}/{status}', [UserController::class, 'change_status'])->name('users.changeStatus')->middleware('role:admin');
+    Route::match(['GET'], '/users/change-status/{id}/{status}', [UserController::class, 'change_status'])->name('users.changeStatus')->middleware('role:admin');*/
     // end user route
 	Route::match(['GET'], '/setting', [UserController::class, 'profile'])->name('setting')->middleware('role:all,normal_user');
     Route::match(['GET'], '/profile', [UserController::class, 'profile'])->name('profile')->middleware('role:all,normal_user');
     Route::match(['GET', 'POST'], '/profile/edit', [UserController::class, 'profile_edit'])->name('profile.edit')->middleware('role:all,normal_user');
+	
+	
+	Route::match(['GET'], '/check_counter_sell', [ReportController::class, 'check_counter_sell'])->name('ReportController');
+	
+	
 	
 	Route::prefix('pos')->name('pos.')->group(function () {
 		Route::match(['GET'], '/pos_type', [PurchaseOrderController::class, 'pos_type'])->name('pos_type');
@@ -105,6 +110,28 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET', 'POST'], '/list', [CustomerController::class, 'list'])->name('list');
         Route::match(['GET', 'POST'], '/edit/{id}', [CustomerController::class, 'edit'])->name('edit');
         Route::match(['GET', 'POST'], '/delete/{id}', [CustomerController::class, 'delete'])->name('delete');
+	});
+	
+	Route::prefix('user')->name('user.')->group(function () {
+		Route::match(['GET', 'POST'], '/add', [UserController::class, 'add'])->name('add');
+        Route::match(['GET', 'POST'], '/list', [UserController::class, 'list'])->name('list');
+        Route::match(['GET', 'POST'], '/edit/{id}', [UserController::class, 'edit'])->name('edit');
+        Route::match(['GET', 'POST'], '/delete/{id}', [UserController::class, 'delete'])->name('delete');
+		
+		Route::match(['GET'], '/manage-user-role/{id}', [UserController::class, 'manage_user_role'])->name('manageUserRole');
+		Route::match(['GET'], '/set-role/{id}/{role_id}', [UserController::class, 'set_role'])->name('setRole');
+		Route::match(['GET'], '/users/change-status/{id}/{status}', [UserController::class, 'change_status'])->name('changeStatus');
+		
+		
+		
+		Route::match(['GET'], '/manage-role', [UserController::class, 'manage_role'])->name('manageRole');
+		Route::match(['GET'], '/role_update/{id}', [UserController::class, 'role_update'])->name('roleUpdate');
+		
+		//Route::match(['GET'], '/users/change-status/{id}/{status}', [UserController::class, 'change_status'])->name('users.changeStatus')->middleware('role:admin');
+		
+		//Route::match(['GET'], '/manage-role/{id}', [UserController::class, 'manage_role'])->name('users.manageRole')->middleware('role:admin');
+        //Route::match(['GET'], '/set-role/{id}/{role_id}', [UserController::class, 'set_role'])->name('users.setRole')->middleware('role:admin');
+		
 	});
 	
 	Route::prefix('supplier')->name('supplier.')->group(function () {
@@ -178,6 +205,9 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET'], '/ajax-get', [PurchaseOrderController::class, 'ajaxPurchaseById'])->name('list.ajax');
 
         Route::match(['GET', 'POST'], '/stock-transfer', [PurchaseOrderController::class, 'stockTranfer'])->name('stock.transfer');
+		Route::match(['GET', 'POST'], '/opening-stock', [PurchaseOrderController::class, 'setOpeningStock'])->name('opening_stock');
+		
+		Route::match(['GET', 'POST'], '/product_stock_upload', [PurchaseOrderController::class, 'product_stock_upload'])->name('product_stock_upload');
         
 	});
 	

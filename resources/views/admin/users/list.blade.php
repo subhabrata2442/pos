@@ -7,7 +7,7 @@
                 <div class="table-responsive dataTable-design">
                     <table id="user-table" class="table table-bordered">
                         <thead>
-                            <th>Image</th>
+                            
                             <th>Name</th>
                             <th>Email</th>
                             <th>Phone No.</th>
@@ -33,13 +33,8 @@
                 processing: true,
                 serverSide: true,
                 searchDelay: 350,
-                ajax: "{{ route('admin.users.list') }}",
-                columns: [{
-                        data: 'image',
-                        name: 'image',
-                        orderable: false,
-                        searchable: false
-                    },
+                ajax: "{{ route('admin.user.list') }}",
+                columns: [
                     {
                         data: 'name',
                         name: 'name'

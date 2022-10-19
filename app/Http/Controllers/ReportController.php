@@ -31,6 +31,8 @@ use App\Models\Counter;
 use App\Models\StockTransferHistory;
 use App\Models\StockTransferCounterHistory;
 use App\Models\CounterWiseStock;
+use App\Models\DailyProductSellHistory;
+use App\Models\OpeningStockProducts;
 
 
 use Carbon\Carbon;
@@ -38,8 +40,210 @@ Use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Session;
 Use Illuminate\Support\Str;
 
+
+
 class ReportController extends Controller
 {
+	
+	public function check_counter_sell(Request $request){
+		$branch_id	= Session::get('branch_id');
+		//$start_date = date('Y-m-d',strtotime('2021-09-01'));
+		
+		//http://127.0.0.1:8000/admin/check_counter_sell
+		
+		$sell_result 	= SellStockProducts::where('branch_id',$branch_id)->orderBy('id', 'asc')->first();
+		$start_date		= isset($sell_result->created_at)?date('Y-m-d',strtotime($sell_result->created_at)):'';
+		
+		$size_cost_data_show=[];
+		if($start_date!=''){
+			$current_date=date('Y-m-d');
+			$diff 		= strtotime($current_date) - strtotime($start_date);
+			$total_day	= round($diff / 86400);
+			
+			for($i=0;$total_day>$i;$i++){
+				$sell_date				= date('Y-m-d', strtotime("+".$i." day", strtotime($start_date)));
+				
+				
+				//print_r($prev_sell_date);exit;
+				
+				
+				
+				$category_result 		= SellStockProducts::select('category_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->distinct()->get();
+				$sub_category_result 	= SellStockProducts::select('subcategory_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->distinct()->get();
+				$size_result 			= SellStockProducts::select('size_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->distinct()->get();
+				$product_result 		= SellStockProducts::select('product_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->distinct()->get();
+				
+				//echo '<pre>';print_r($product_result);exit;
+				
+				foreach($category_result as $cat_row){
+					$category_id=$cat_row->category_id;
+					foreach($sub_category_result as $sub_cat_row){
+						$subcategory_id=$sub_cat_row->subcategory_id;
+						foreach($size_result as $size_row){
+							$size_id=$size_row->size_id;
+							
+							foreach($product_result as $product_row){
+								$product_id=$product_row->product_id;
+								
+								$dateWise_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml,sum(product_qty) as total_qty,barcode')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->get();
+								
+								$total_sell_ml = isset($dateWise_sell_result[0]->total_ml)?$dateWise_sell_result[0]->total_ml:'0';
+								
+								//print_r($total_sell_ml);exit;
+								
+								if($total_sell_ml>0){
+									$openingStockProductResult = OpeningStockProducts::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+									$start_opening_stock_ml	= isset($openingStockProductResult->total_ml)?$openingStockProductResult->total_ml:'0';
+									$start_opening_stock	= isset($openingStockProductResult->product_qty)?$openingStockProductResult->product_qty:'0';
+									
+									$all_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml,sum(product_qty) as total_qty,barcode')->whereBetween('created_at', [$start_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->get();
+								
+									$end_total_sell		= isset($all_sell_result[0]->total_ml)?$all_sell_result[0]->total_ml:'0';
+									$end_total_qty_sell	= isset($all_sell_result[0]->total_qty)?$all_sell_result[0]->total_qty:'0';
+									
+									$prev_sell_date			= date('Y-m-d', strtotime("-1 day", strtotime($sell_date)));
+									
+									$prev_datewise_sell_result = DailyProductSellHistory::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+									//echo $prev_sell_date.'--'.$sell_date.'</br>';
+									//print_r($check_datewise_sell_result);exit;
+									
+									
+									$prev_closing_stock	  = isset($prev_datewise_sell_result->closing_stock)?$prev_datewise_sell_result->closing_stock:'';
+									$prev_closing_stock_ml= isset($prev_datewise_sell_result->closing_stock_ml)?$prev_datewise_sell_result->closing_stock_ml:'';
+									
+									$check_datewise_sell_result = DailyProductSellHistory::whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+									
+									//print_r($check_datewise_sell_result);exit;
+									
+									
+									$check_sell_id		  = isset($check_datewise_sell_result->id)?$check_datewise_sell_result->id:'';
+								
+									$opening_stock 		= $start_opening_stock;
+									$opening_stock_ml	= $start_opening_stock_ml;
+									
+									if($prev_closing_stock_ml!=''){
+										//echo 'test';exit;
+										$opening_stock 		= $start_opening_stock-$prev_closing_stock;
+										$opening_stock_ml 	= $start_opening_stock_ml-$prev_closing_stock_ml;
+									}
+									$barcode		= isset($dateWise_sell_result[0]->barcode)?$dateWise_sell_result[0]->barcode:'0';
+									$total_sell		= isset($dateWise_sell_result[0]->total_ml)?$dateWise_sell_result[0]->total_ml:'0';
+									$total_qty_sell	= isset($dateWise_sell_result[0]->total_qty)?$dateWise_sell_result[0]->total_qty:'0';
+								
+									$closing_stock		= $opening_stock-$total_qty_sell;
+									$closing_stock_ml	= $opening_stock_ml-$total_sell;
+									
+									if($check_sell_id!=''){
+										$size_cost_data=array(
+											'branch_id'  		=> $branch_id,
+											'category_id'		=> $category_id,
+											'subcategory_id'	=> $subcategory_id,
+											'product_barcode'	=> $barcode,
+											'product_id'  		=> $product_id,
+											'size_id'  			=> $size_id,
+											'total_ml'  		=> $total_sell,
+											'total_qty'  		=> $total_qty_sell,
+											'opening_stock'  	=> $opening_stock,
+											'closing_stock'  	=> $closing_stock,
+											'opening_stock_ml'  => $opening_stock_ml,
+											'closing_stock_ml' 	=> $closing_stock_ml,
+											'created_at' 		=> $sell_date." 18:25:26",
+											'updated_at' 		=> $sell_date." 18:25:26"
+										);
+										
+										//echo '<pre>';print_r($size_cost_data);exit;
+									}else{
+										
+										$size_cost_data=array(
+											'branch_id'  		=> $branch_id,
+											'category_id'		=> $category_id,
+											'subcategory_id'	=> $subcategory_id,
+											'product_barcode'	=> $barcode,
+											'product_id'  		=> $product_id,
+											'size_id'  			=> $size_id,
+											'total_ml'  		=> $total_sell,
+											'total_qty'  		=> $total_qty_sell,
+											'opening_stock'  	=> $opening_stock,
+											'closing_stock'  	=> $closing_stock,
+											'opening_stock_ml'  => $opening_stock_ml,
+											'closing_stock_ml' 	=> $closing_stock_ml,
+											'created_at' 		=> $sell_date." 18:25:26",
+											'updated_at' 		=> $sell_date." 18:25:26"
+										);
+										
+										
+										
+										DailyProductSellHistory::create($size_cost_data);
+										//echo '<pre>';print_r($size_cost_data);exit;
+										
+										
+										
+										
+										
+										
+										$size_cost_data_show[]=array(
+											'sell_date'  		=> $sell_date,
+											'branch_id'  		=> $branch_id,
+											'category_id'		=> $category_id,
+											'subcategory_id'	=> $subcategory_id,
+											'product_barcode'	=> $barcode,
+											'product_id'  		=> $product_id,
+											'size_id'  			=> $size_id,
+											'total_ml'  		=> $total_sell,
+											'total_qty'  		=> $total_qty_sell,
+											'opening_stock'  	=> $opening_stock,
+											'closing_stock'  	=> $closing_stock,
+											'opening_stock_ml'  => $opening_stock_ml,
+											'closing_stock_ml' 	=> $closing_stock_ml,
+											'created_at' 		=> $sell_date." 18:25:26",
+											'updated_at' 		=> $sell_date." 18:25:26"
+										);
+										
+										//DailyProductSellHistory::create($size_cost_data);
+									}
+								}
+							}	
+						}
+					}
+				}
+			}
+		}
+		
+		echo '<pre>';print_r($size_cost_data_show);exit;
+		
+		
+		
+		
+		
+		echo '<pre>';print_r($start_date.'--'.$current_date.'-'.$total_day);exit;
+		
+		
+		
+		
+		
+		
+		
+		
+		$prevYear_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $prevYeardateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+		
+		echo '<pre>';print_r();exit;
+		
+		
+		
+		$prevYear_total_sell=isset($prevYear_sell_result[0]->total_ml)?$prevYear_sell_result[0]->total_ml:'0';
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+	
+	
     public function sales(Request $request)
     {
 		

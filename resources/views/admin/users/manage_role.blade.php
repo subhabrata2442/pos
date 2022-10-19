@@ -1,28 +1,24 @@
 @extends('layouts.admin')
 @section('admin-content')
-    <div class="row">
-
-        <div class="col-12">
-            <div class="manage-role-type">
-                <x-alert />
-                <h3>Manage Role</h3>
-                <ul class="d-flex justify-content-center">
-                    @foreach ($data['role'] as $value)
-                        <li class="@if ($value->id == $data['users']->role) active @endif">
-                            <button type="button" class="manage-role-btn manage-role"
-                                data-url="{{ route('admin.users.setRole', [$data['users']->id, $value->id]) }}">
-                                <span class="manage-role-icon"><i class="{{ $value->icon }}"></i></span>{{ $value->name }}
-                            </button>
-                        </li>
-                    @endforeach
-                </ul>
-            </div>
-        </div>
+<div class="row">
+  <div class="col-12">
+    <div class="manage-role-type">
+      <x-alert />
+      <h3>Manage Role</h3>
+      <ul class="d-flex justify-content-center">
+        @foreach ($data['role'] as $value)
+        <li class="@if ($value->id == $data['users']->role) active @endif">
+          <button type="button" class="manage-role-btn manage-role" data-url="{{ route('admin.user.setRole', [$data['users']->id, $value->id]) }}"> <span class="manage-role-icon"><i class="{{ $value->icon }}"></i></span>{{ $value->name }} </button>
+        </li>
+        @endforeach
+      </ul>
     </div>
+  </div>
+</div>
 @endsection
 
-@section('scripts')
-    <script>
+@section('scripts') 
+<script>
         $(document).on('click', '.manage-role', function() {
             var url = $(this).data('url');
             Swal.fire({
@@ -39,5 +35,5 @@
                 }
             })
         })
-    </script>
-@endsection
+    </script> 
+@endsection 

@@ -530,7 +530,9 @@ hr {
 	box-shadow: rgba(0, 0, 0, 0.1) 0 10px 15px -5px;
 	position: relative;
 }
-
+.commonBox .table {
+	margin-bottom: 0 !important;
+}
 .grossQty {
 	padding: .5rem 1rem;
 	background: #203966;
@@ -706,10 +708,17 @@ hr {
 
 .inwardStockBtm {
 	position: fixed;
-	bottom: 10px;
-	right: 3px;
-	width: auto;
+	bottom: 0;
+	right: 0;
+	width: calc(100% - 73px);
+	background: #fff;
+	text-align: center;
+	padding: 5px 0;
 }
+.inwardStockBtm .formBox {
+	display: inline-block;
+	width: auto;
+  }
 
 .isbInner textarea {
 	resize: none;
@@ -727,6 +736,9 @@ hr {
 	padding: 0 1.25rem;
 	display: block;
 	font-size: .8em;
+}
+.saveBtnMd{
+	padding: 0 2.25rem;
 }
 
 /* .inwardStockBtm .saveBtn {
@@ -777,12 +789,12 @@ hr {
 }
 
 .forTableHeight {
-	max-height: 40vh;
+	max-height: 43vh;
 }
 
 .inwordTableWrap th,
 .inwordTableWrap td {
-	font-size: .8rem;
+	font-size: .6rem;
 }
 
 .noteAreaInner:not(:last-child) {
@@ -818,6 +830,7 @@ hr {
 .invArea ul:not(:last-child) {
 	margin-bottom: .9rem;
 }
+
 
 .noteAreaInner ul li:not(:last-child) {
 	margin-right: .5rem;
@@ -865,8 +878,8 @@ hr {
 	font-weight: normal;
 	color: #3c3a3a;
 	text-align: center;
-	margin-top: 10px;
 	display: block;
+	font-size: .8rem;
 }
 
 .noteAreaInner .btn {
@@ -2103,7 +2116,7 @@ a.downloadBtn {
 }
 
 .customPb {
-	padding-bottom: 118px;
+	padding-bottom: 110px;
 }
 
 .btnArea {
@@ -2117,7 +2130,7 @@ a.downloadBtn {
 	display: block;
 	text-align: center;
 	border: #acacac 1px dashed;
-	padding: 15px;
+	padding: 10px 15px;
 	background: #fff;
 	color: #333;
 	text-transform: uppercase;
@@ -2132,7 +2145,7 @@ a.downloadBtn {
 
 .table.tableBorderless td {
 	border: none !important;
-	padding: 5px 15px !important;
+	padding: 2px 15px !important;
 	color: #333;
 	font-size: 14px;
 	font-weight: normal;
@@ -2154,8 +2167,10 @@ a.downloadBtn {
 .vTop .table tr td h5 {
 	background: #eaeaea;
 	text-align: center;
-	padding: 10px 10px;
+	padding: 5px 10px;
 	color: #1e1e1e;
+	font-size: .8rem;
+	margin: 0;
 }
 
 .swal2-container {
@@ -2381,3 +2396,4 @@ a.downloadBtn {
 	}
 
 }
+

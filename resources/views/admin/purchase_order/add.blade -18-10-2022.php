@@ -50,7 +50,7 @@
               <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Warehouse</li>
                 <li class="invAreaVal">
-                  <div class="mb-0 form-group relative formBox">
+                  <div class="mb-3 form-group relative formBox">
                     <div class="upplierBox d-flex">
                       <input type="text" name="warehouse" id="warehouse" class="form-control input-1" placeholder="Warehouse" required="required">
                       <ul id="warehouse_search_result">
@@ -77,7 +77,7 @@
                     <select class="form-control custom-select form-control-select" id="invoice_stock" required="required">
                      <option value="">Select Stock</option>
                       <option value="counter" selected="selected">Counter Stock</option>
-                      <!--<option value="bar">Bar Stock</option>-->
+                      <option value="bar">Bar Stock</option>
                     </select>
                   </div>
                 </div>
@@ -95,7 +95,7 @@
           </div>
         </div>
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
-          <div class="supplierDetails relative">
+          <div class="supplierDetails relative pb-54">
             <h4>Payment Details</h4>
             
             <!--<div class="noteAreaInner">
@@ -135,7 +135,12 @@
             
             @else
             <div class="noteAreaInner">
-              <button type="submit" class="btn btn-primary w-100">Submit <i class="fas fa-paper-plane"></i></button>
+              <ul class="d-flex flex-wrap justify-content-between">
+                <!--<li><a href="javascript:;" class="btn btn-info" id="upload_invoice"><i class="fas fa-upload"></i> Upload Products</a></li>-->
+                <li>
+                  <button type="submit" class="btn btn-primary">Submit <i class="fas fa-paper-plane"></i></button>
+                </li>
+              </ul>
             </div>
             @endif </div>
         </div>
@@ -276,16 +281,20 @@
   @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
   {{--
   <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+    <div class="commonBox">
       <div class="form-group relative formBox m-0">
-        <button type="button" class="saveBtn saveBtnMd" id="inwardStockSubmitBtm">Update <i class="fas fa-paper-plane ml-2"></i></button>
+        <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Update <i class="fas fa-paper-plane ml-2"></i></button>
       </div>
+    </div>
   </div>
   --}}
   @else
   <div class="inwardStockBtm" id="inwardStockSubmitBtmSec" style="display:none">
+    <div class="commonBox">
       <div class="form-group relative formBox m-0">
-        <button type="button" class="saveBtn saveBtnMd" id="inwardStockSubmitBtm">Save <i class="fas fa-paper-plane ml-2"></i></button>
+        <button type="button" class="saveBtn" id="inwardStockSubmitBtm">Save <i class="fas fa-paper-plane ml-2"></i></button>
       </div>
+    </div>
   </div>
   @endif
 </form>

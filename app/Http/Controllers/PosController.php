@@ -221,7 +221,7 @@ class PosController extends Controller
 			 
 			 $company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
 			 $company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
-			 $address2	= Common::get_user_settings($where=['option_name'=>'address2'],$branch_id);
+			 $address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
 			 $phone				= Common::get_user_settings($where=['option_name'=>'phone'],$branch_id);
 			 
 			 $supplier_id	= Session::get('adminId');

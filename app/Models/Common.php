@@ -90,6 +90,18 @@ class Common extends Model{
         }
     }
 	
+	public static function updateSiteSettingData($table="",$company_id = "", $option_name="", $data = []) {
+        //Update slngle data
+        $updateData = DB::table($table)->where('company_id', $company_id)->where('option_name', $option_name)->update($data);
+        if(!empty($updateData)){
+        	return $updateData;
+        }else{
+        	return false;
+        }
+    }
+	
+	
+	
 	 public static function updateMultiData($table="",$where = "", $data = []) {
         //Update slngle data
         $updateData = DB::table($table)->where($where)->update($data);

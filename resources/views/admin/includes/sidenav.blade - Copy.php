@@ -107,13 +107,6 @@ $is_branch 			= Session::get('is_branch');
                 <p>Stock Transfer</p>
                 </a> 
             </li>
-            
-            <li class="nav-item"> <a href="{{ route('admin.purchase.opening_stock') }}" class="nav-link @if (\Route::currentRouteName() == 'admin.purchase.opening_stock') active @endif"> <i class="fas fa-list nav-icon"></i>
-                <p>Opening Stock Submit</p>
-                </a> 
-            </li>
-            
-            
           </ul>
         </li>
 
