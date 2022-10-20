@@ -165,6 +165,7 @@
 								<option value="item_wise_sales_report"> Item Wise sales report</option>
 								<option value="month_wise_report"> Month Wise report</option>
                                 <option value="brand_wise_report"> Brand Wise report</option>
+                                <!--<option value="e_report"> E-Report</option>-->
 								<option value="text_download"> Text Download</option>
 							</select>
 						</div>
@@ -283,6 +284,10 @@ $(function() {
 				var href = url+'?start_date='+start_date+'&end_date='+end_date;
 			}else if(report_type == 'text_download'){
 				var url = "{{route('admin.report.sales.product.download')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+				//$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
+			}else if(report_type == 'e_report'){
+				var url = "{{route('admin.report.sales.product.e_report')}}";
 				var href = url+'?start_date='+start_date+'&end_date='+end_date;
 				//$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
 			}else if(report_type == 'brand_wise_report'){

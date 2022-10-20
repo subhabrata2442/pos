@@ -130,20 +130,20 @@ td {
     <td class="text-left"><p style="font-weight:bold;">{{$row['stock_result'][0]['batch_no']}}</p></td>
     <td class="p0"><table border="0" cellspacing="0" cellpadding="0" style="width:100%">
         <tr> @foreach ($row['stock_result'] as $srow)
-          <td class="noBdr">{{$srow['size_name']}}</td>
+          <td class="noBdr">{{$srow['purchase_stock']}}</td>
           @endforeach </tr>
       </table></td>
     <td class="p0"><table border="0" cellspacing="0" cellpadding="0" style="width:100%">
         <tr>
           @foreach ($row['stock_result'] as $srow)
-          <td class="noBdr">{{$srow['purchase_stock']}}</td>
+          <td class="noBdr">{{$srow['total_stock']}}</td>
           @endforeach
         </tr>
       </table></td>
     <td class="p0"><table border="0" cellspacing="0" cellpadding="0" style="width:100%">
         <tr>
           @foreach ($row['stock_result'] as $srow)
-          <td class="noBdr">{{$srow['total_stock']}}</td>
+          <td class="noBdr">{{$srow['total_sale']}}</td>
           @endforeach
         </tr>
       </table></td>

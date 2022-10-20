@@ -38,6 +38,8 @@ use App\Models\TableBookingHistory;
 use App\Models\BarProductSizePrice;
 use App\Models\Customer;
 
+use App\Models\DailyProductPurchaseHistory;
+
 use Illuminate\Http\Request;
 use DataTables;
 use Illuminate\Support\Facades\Validator;
@@ -977,7 +979,9 @@ class AjaxController extends Controller {
 			$counter_id=$counter_result[0]->id;
 		}
 		
-		//print_r($_POST);exit;
+		
+		
+		
 
 		$purchaseStockData=array(
 		
@@ -1496,12 +1500,137 @@ class AjaxController extends Controller {
 							}
 						}
 					}
+					$this->daily_product_purchase_history();
 				}
 			}
 		}
+		
 		$return_data['msg']		= 'Successfully added';
 		$return_data['status']	= 1;
 		echo json_encode($return_data);
+	}
+	
+	
+	public function daily_product_purchase_history(){
+		$branch_id				= Session::get('branch_id');
+		$purchase_date_result 	= InwardStockProducts::where('branch_id',$branch_id)->where('is_new','Y')->orderBy('id', 'asc')->first();
+		$purchase_start_date	= isset($purchase_date_result->created_at)?date('Y-m-d',strtotime($purchase_date_result->created_at)):'';
+		
+		//print_r($branch_id);exit;
+		
+		$items=[];
+		
+		if($purchase_start_date!=''){
+			$current_date=date('Y-m-d');
+			
+			$category_result		= InwardStockProducts::select('category_id')->whereBetween('created_at', [$current_date." 00:00:00", $current_date." 23:59:59"])->distinct()->get();
+			$sub_category_result 	= InwardStockProducts::select('subcategory_id')->whereBetween('created_at', [$current_date." 00:00:00", $current_date." 23:59:59"])->distinct()->get();
+			$size_result 			= InwardStockProducts::select('size_id')->whereBetween('created_at', [$current_date." 00:00:00", $current_date." 23:59:59"])->distinct()->get();
+			$product_result 		= InwardStockProducts::select('product_id')->whereBetween('created_at', [$current_date." 00:00:00", $current_date." 23:59:59"])->distinct()->get();
+			
+			//echo '<pre>';print_r($category_result);exit;
+			
+			foreach($category_result as $cat_row){
+				$category_id=$cat_row->category_id;
+				
+				foreach($sub_category_result as $sub_cat_row){
+					$subcategory_id=$sub_cat_row->subcategory_id;
+					foreach($size_result as $size_row){
+						$size_id=$size_row->size_id;
+						foreach($product_result as $product_row){
+							$product_id=$product_row->product_id;
+							
+							$purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml,sum(product_qty) as product_qty,product_mrp')->whereBetween('created_at', [$current_date." 00:00:00", $current_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->where('is_new','Y')->get();
+							
+							$date_wise_total_ml	  	= isset($purchase_result[0]->total_ml)?$purchase_result[0]->total_ml:0;
+							
+							//echo '<pre>';print_r($purchase_result);exit;
+							//echo $product_id.'-'.$date_wise_total_ml.'</br>';
+							
+							//$purchase_result=[];
+							
+							if($date_wise_total_ml>0){
+								$date_wise_total_ml	  	= isset($purchase_result[0]->total_ml)?$purchase_result[0]->total_ml:0;
+								$date_wise_total_qty	= isset($purchase_result[0]->product_qty)?$purchase_result[0]->product_qty:0;
+								$product_mrp			= isset($purchase_result[0]->product_mrp)?$purchase_result[0]->product_mrp:0;
+									
+								$closing_stock 		= $date_wise_total_qty;
+								$closing_stock_ml 	= $date_wise_total_ml;
+									
+								$last_purchase_history_result = DailyProductPurchaseHistory::select('closing_stock', 'closing_stock_ml')->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+								$last_purchase_total_ml	  	= isset($last_purchase_history_result->closing_stock_ml)?$last_purchase_history_result->closing_stock_ml:'';
+								$last_purchase_total_qty	= isset($last_purchase_history_result->closing_stock)?$last_purchase_history_result->closing_stock:'';
+								if($last_purchase_total_qty!=''){
+									$closing_stock 		= $last_purchase_total_qty+$date_wise_total_qty;
+									$closing_stock_ml 	= $last_purchase_total_ml+$date_wise_total_ml;
+								}
+								$check_purchase_history_result = DailyProductPurchaseHistory::select('id', 'total_qty', 'total_ml', 'closing_stock', 'closing_stock_ml')->whereBetween('created_at', [$current_date." 00:00:00", $current_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->get();
+								
+								//echo '<pre>';print_r($check_purchase_history_result);exit;
+								
+								if(count($check_purchase_history_result)>0){
+									$total_qty	= $date_wise_total_qty+$check_purchase_history_result[0]->total_qty;
+									$total_ml	= $date_wise_total_ml+$check_purchase_history_result[0]->total_ml;
+									
+									/*$items[]=array(
+										'is_new'			=>'update',
+										'branch_id'  		=> $branch_id,
+										'category_id'		=> $category_id,
+										'subcategory_id'	=> $subcategory_id,
+										'product_id'  		=> $product_id,
+										'size_id'  			=> $size_id,
+										'total_qty' 		=> $total_qty,
+										'total_ml' 			=> $total_ml,
+										'closing_stock' 	=> $closing_stock,
+										'closing_stock_ml' 	=> $closing_stock_ml
+									);*/
+									
+									DailyProductPurchaseHistory::where('id',$check_purchase_history_result[0]->id)->update(['total_qty' => $total_qty,'total_ml' => $total_ml,'closing_stock' => $closing_stock,'closing_stock_ml' => $closing_stock_ml]);
+										
+									InwardStockProducts::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->update(['is_new' => 'N']);
+								}else{
+									$purchase_data=array(
+										'branch_id'  		=> $branch_id,
+										'category_id'		=> $category_id,
+										'subcategory_id'	=> $subcategory_id,
+										'product_id'  		=> $product_id,
+										'size_id'  			=> $size_id,
+										'total_qty'  		=> $date_wise_total_qty,
+										'total_ml'  		=> $date_wise_total_ml,
+										'closing_stock'  	=> $closing_stock,
+										'closing_stock_ml'  => $closing_stock_ml,
+										'product_mrp'		=> $product_mrp
+									);
+									DailyProductPurchaseHistory::create($purchase_data);
+									InwardStockProducts::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->update(['is_new' => 'N']);
+									
+									
+									/*$items[]=array(
+										'is_new'			=>'new',
+										'branch_id'  		=> $branch_id,
+										'category_id'		=> $category_id,
+										'subcategory_id'	=> $subcategory_id,
+										'product_id'  		=> $product_id,
+										'size_id'  			=> $size_id,
+										'total_qty'  		=> $date_wise_total_qty,
+										'total_ml'  		=> $date_wise_total_ml,
+										'closing_stock'  	=> $closing_stock,
+										'closing_stock_ml'  => $closing_stock_ml,
+										'product_mrp'		=> $product_mrp
+									);*/
+									
+								}
+							}
+						}
+					}
+				}
+			}
+			
+			//echo '<pre>';print_r($items);exit;	
+			//echo 'success';exit;	
+		}else{
+			//echo 'Not data found';exit;
+		}	
 	}
 
 

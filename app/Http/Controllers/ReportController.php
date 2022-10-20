@@ -37,7 +37,7 @@ use App\Models\OpeningStockProducts;
 use App\Models\ProductRelationshipSize;
 use App\Models\DailyProductPurchaseHistory;
 use App\Models\Warehouse;
-
+use App\Models\Common;
 
 
 
@@ -247,6 +247,172 @@ class ReportController extends Controller
         }
     }
 	
+	public function e_report(Request $request){
+		$result=[];
+		$categories 	= Category::where('food_type',1)->get();
+		$branch_id		= Session::get('branch_id');
+		if(count($categories)>0){
+			foreach($categories as $row){
+				$category_id=$row->id;
+				$sub_cat_result=[];
+				
+				
+				$cat_opening_balance = 0;
+				$cat_receipt_balance = 0;
+				$cat_sales			 = 0;
+				$cat_closing_balance = 0;
+				$cat_prevYear_closing_balance=0;
+				
+				$catehoty_wise_subcategory=Product::select('subcategory_id')->distinct()->where('category_id',$row->id)->get();
+				if(count($catehoty_wise_subcategory)>0){
+					foreach($catehoty_wise_subcategory as $sub_row){
+						
+						$subcategory_id	 = $sub_row->subcategory_id;
+						$opening_balance = 0;
+						$receipt_balance = 0;
+						$sales			 = 0;
+						$closing_balance = 0;
+						$prevYear_closing_balance=0;
+						
+						
+						$first_day_this_month = date('Y-m-01',strtotime($request->start_date));
+						$last_day_this_month  = date('Y-m-t',strtotime($request->start_date));
+						
+						$dateS = date('Y-m-d',strtotime($first_day_this_month));
+						$dateE = date('Y-m-d',strtotime($last_day_this_month));
+						
+						
+						$datewise_sell_result = DailyProductSellHistory::where('branch_id',$branch_id)->orderBy('id', 'asc')->first();
+						
+						$start_date = isset($datewise_sell_result->created_at)?date('Y-m-d',strtotime($datewise_sell_result->created_at)):'';
+						
+						if($start_date!=''){
+							$dateP = date('Y-m-t', strtotime('last month'));
+							$prevYeardateS = date('Y-m-01',strtotime('-1 year'));
+							$prevYeardateE = date('Y-m-t',strtotime('-1 year'));
+							
+							$prevYear_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $prevYeardateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+							$prevYear_total_sell=isset($prevYear_sell_result[0]->total_ml)?$prevYear_sell_result[0]->total_ml:'0';
+							
+							$prevYear_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $prevYeardateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+							$prevYear_receipt_balance=isset($prevYear_purchase_result[0]->total_ml)?$prevYear_purchase_result[0]->total_ml:'0';
+						
+							if($prevYear_total_sell=0 && $prevYear_receipt_balance!=0){
+								$prevYear_closing_balance=$prevYear_receipt_balance-$prevYear_total_sell;
+							}
+							
+							$prev_purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+							$prev_receipt_balance=isset($prev_purchase_result[0]->total_ml)?$prev_purchase_result[0]->total_ml:'0';
+							
+							$prev_sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateP." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+							$prev_total_sell=isset($prev_sell_result[0]->total_ml)?$prev_sell_result[0]->total_ml:'0';
+							
+							$sell_result = SellStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+						$total_sell=isset($sell_result[0]->total_ml)?$sell_result[0]->total_ml:'0';
+						
+							$purchase_result = InwardStockProducts::selectRaw('sum(total_ml) as total_ml')->whereBetween('created_at', [$start_date." 00:00:00", $dateE." 23:59:59"])->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->get();
+							$receipt_balance=isset($purchase_result[0]->total_ml)?$purchase_result[0]->total_ml:'0';
+							
+							if($prev_receipt_balance==0){
+								$opening_balance=$receipt_balance;
+							}
+							if($opening_balance!=0 && $total_sell!=0){
+								$closing_balance=$opening_balance-$total_sell;
+							}
+						
+							if($opening_balance!=0){
+								$opening_balance=$opening_balance/1000;
+							}
+							if($receipt_balance!=0){
+								$receipt_balance=$receipt_balance/1000;
+							}
+							if($total_sell!=0){
+								$total_sell=$total_sell/1000;
+							}
+							if($closing_balance!=0){
+								$closing_balance=$closing_balance/1000;
+							}
+							if($prevYear_closing_balance!=0){
+								$prevYear_closing_balance=$prevYear_closing_balance/1000;
+							}
+							
+							$cat_opening_balance += $opening_balance;
+							$cat_receipt_balance += $receipt_balance;
+							$cat_sales			 += $total_sell;
+							$cat_closing_balance += $closing_balance;
+							$cat_prevYear_closing_balance +=$prevYear_closing_balance;
+							
+							$sub_cat_result[]=array(
+							'category_id'		=> $sub_row->subcategory_id,
+							'category_name'		=> $sub_row->subcategory->name,
+							'opening_balance'	=> $opening_balance,
+							'receipt_balance'	=> $receipt_balance,
+							'total_sell'		=> $total_sell,
+							'closing_balance'	=> $closing_balance,
+							'prevYear_closing_balance'=> $prevYear_closing_balance
+						);
+							
+							
+						}
+					}
+				}
+				
+				
+				//echo '<pre>';print_r($sub_cat_result);exit;
+				
+				 //Subcategory::all();
+				 
+				 $category_img='';
+				 if($row->id==1){
+					 $category_img=url('images/imfl.png');
+				 }else if($row->id==2){
+					 $category_img=url('images/os.png');
+				 }else if($row->id==3){
+					 $category_img=url('images/cs.png');
+				 }else if($row->id==4){
+					 $category_img=url('images/osbl.png');
+				 }
+				 
+				 
+				$result[]=array(
+					'category_id'	=> $row->id,
+					'category_name'	=> $row->name,
+					'opening_balance'=>$cat_opening_balance,
+					'receipt_balance'	=> $cat_receipt_balance,
+					'total_sell'		=> $cat_sales,
+					'closing_balance'	=> $cat_closing_balance,
+					'prevYear_closing_balance'=> $cat_prevYear_closing_balance,
+					'category_img'	=> $category_img,
+					'sub_category'	=> $sub_cat_result
+				);
+			}
+		}
+		
+		$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+		$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+		$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+		$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);
+			 
+		
+		$data['result'] 			= $result;
+        $data['trader_id_no'] 		= '';
+		$data['licensee_no'] 		= $company_licensee;
+        $data['shop_address'] 		= $company_address;
+		$data['shop_address2'] 		= $address2;
+		$data['shop_name'] 			= $company_name;
+		$data['month'] 				= date('F Y',strtotime($request->start_date));
+		
+		
+		
+		//echo '<pre>';print_r($data);exit;
+		
+		$pdf = PDF::loadView('admin.pdf.e-report', compact('data'));
+		return $pdf->stream(now().'-e-report.pdf');
+		
+		
+		
+	}
+	
 	public function brand_report(Request $request)
 	{
 		$branch_id		= Session::get('branch_id');
@@ -343,7 +509,7 @@ class ReportController extends Controller
         	$data['shop_address'] 	= 'West Chowbaga Kolkata - 700105 West Bengal';
 			$data['month'] 			= date('F Y',strtotime($request->start_date));
 			
-			//echo '<pre>';print_r($data);exit;
+			//echo '<pre>';print_r($result);exit;
 			
 			$pdf = PDF::loadView('admin.pdf.brand-register', compact('data'));
 			return $pdf->stream(now().'-brand.pdf');
@@ -351,7 +517,7 @@ class ReportController extends Controller
 			
 			
 			
-			echo '<pre>';print_r($result);exit;
+			//echo '<pre>';print_r($result);exit;
 			
 			
 			

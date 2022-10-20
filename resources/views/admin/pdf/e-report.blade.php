@@ -40,11 +40,11 @@ th, td {
 </head>
 
 <body>
-<p style="margin:0;">Trader Id No.:</p>
-<p style="margin:0;">Licensee Id No. : 31/2008/0004</p>
-<p style="margin:0;">Statement month (mm/yyyy) : <?php echo date('F, Y') ?> <span class="h1">Government of West Bengal </span>Licensee Name        : Bazimat F.L. Off Shop <span class="h1">Excise Department </span>District Name : Alipur Excise District</p>
-<h2 style="font-size:16px;margin:0;">Range : Kasba <span class="s1">e-Report Return : Retail</span></h2>
-<p style="margin-bottom:15px;">Circle : Tiljala</p>
+<p style="margin:0;">Trader Id No.:{{$data['trader_id_no']}}</p>
+<p style="margin:0;">Licensee Id No. : {{$data['licensee_no']}}</p>
+<p style="margin:0;">Statement month (mm/yyyy) : {{$data['month']}} <span class="h1">Government of West Bengal </span>Licensee Name        : {{$data['shop_name']}} <span class="h1">Excise Department </span></p>
+<!--<h2 style="font-size:16px;margin:0;">Range : {{$data['month']}} <span class="s1">e-Report Return : Retail</span></h2>-->
+<p style="margin-bottom:15px;">Circle : {{$data['shop_address']}}, {{$data['shop_address2']}}</p>
 <table width="1000" border="0" cellspacing="0" cellpadding="0">
   <tr>
     <td width="292" class="noBdr" style="background:#444; color:#fff;">&nbsp;</td>
@@ -58,8 +58,8 @@ th, td {
         </tr>
       </table></td>
   </tr>
-  <?php if(count($result)>0){ ?>
-  <?php foreach($result as $row){?>
+  <?php if(count($data['result'])>0){ ?>
+  <?php foreach($data['result'] as $row){?>
   <tr>
     <td colspan="2" class="no-padding noBdr"><table border="0" cellspacing="0" cellpadding="0" class="noBdr">
         <tr>
@@ -92,8 +92,8 @@ th, td {
         <tr>
           <td width="59" class="bdr-l-none bdr-r-none" style="background:#444; color:#fff; font-weight:bold;text-align:center;">TOTAL</td>
           <td width="936" class="no-padding noBdr bdr-r-none"><table width="937" border="0" cellpadding="0" cellspacing="0" class="noBdr">
-         <?php if(count($result)>0){ ?>
-  		 <?php $i=1;foreach($result as $row){?>
+         <?php if(count($data['result'])>0){ ?>
+  		 <?php $i=1;foreach($data['result'] as $row){?>
               <tr>
                 <td width="135" class="">0<?=$i;?></td>
                 <td width="98" class=""><?=$row['category_name'];?></td>
