@@ -147,7 +147,7 @@
 <form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
 @else 
 <!--style="display:none"-->
-<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
+<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data" style="display:none">
   @endif
   <input type="hidden" name="supplier_id" id="supplier_id" value="{{$data['supplier']->id ?? ''}}">
   <input type="hidden" name="warehouse_id" id="warehouse_id">
@@ -187,9 +187,9 @@
                     <td><strong>Total Cost</strong></td>
                     <td class="text-right"><span id="sub_total" class="rightSpan">0.00</span> <a href="javascript:;" class="plusModal" id="add_purchase_final_cost"><i class="fas fa-plus"></i></a></td>
                   </tr>
-                  <tr id="purchase_final_cost_sec">
+                  <tr id="purchase_final_cost_sec" style="display:none">
                     <td><strong>Final Cost</strong></td>
-                    <td class="text-right"><span  id="purchase_final_cost_val" class="rightSpan">0.00</span> <span  contenteditable="true" style="color: black;padding: 2px 6px;" id="purchase_final_cost_input" onkeypress="return check_character(event);" class="rightSpan m-0 number greenBg purchase_final_cost">0.00</span></td>
+                    <td class="text-right"><span  id="purchase_final_cost_val" class="rightSpan">0.00</span> <span  contenteditable="true" style="color: black;padding: 2px 6px; width:60px;" id="purchase_final_cost_input" onkeypress="return check_character(event);" class="rightSpan m-0 number greenBg purchase_final_cost">0.00</span></td>
                   </tr>
                   <tr>
                     <td><strong>T.C.S (1%) :</strong></td>
