@@ -34,6 +34,8 @@ $(document).on('keyup', '#purchase_final_cost_input', function() {
 		total_cost=Number(sub_total);
 	}
 	
+	$('#input-extra_cost').val(add_cost);
+	
 	var tcs_amt = (total_cost / 100) * 1;
 	tcs_amt=naiveRound(tcs_amt, 2);
 	$('#tcs_amt').html('₹'+tcs_amt.toFixed(decimalpoints)); 
@@ -1005,6 +1007,7 @@ $(document).on('click', '#inwardStockSubmitBtm', function() {
 	inward_stock_info['special_purpose_fee_amt'] = $("#input-special_purpose_fee_amt").val();
 	inward_stock_info['round_off_value_amt'] = $("#input-round_off_value_amt").val();
 	inward_stock_info['total_amount'] = $("#input-gross_total_amount").val();
+	inward_stock_info['extra_cost'] = $("#input-extra_cost").val();
 
 
 

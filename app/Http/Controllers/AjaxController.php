@@ -1004,6 +1004,7 @@ class AjaxController extends Controller {
 			'gross_amount'  	=> $inward_stock['sub_total'],
 			'tax_amount'  		=> $inward_stock['tax_amount'],
 			'sub_total'  		=> $inward_stock['sub_total'],
+			'extra_cost'  		=> $inward_stock['extra_cost'],
 			'shipping_note'  	=> $inward_stock['shipping_note'],
 			'additional_note'  	=> $inward_stock['additional_note'],
 			'tcs_amt'  			=> $inward_stock['tcs_amt'],

@@ -166,6 +166,7 @@
   <input type="hidden" name="special_purpose_fee_amt" id="input-special_purpose_fee_amt" />
   <input type="hidden" name="round_off_value_amt" id="input-round_off_value_amt" />
   <input type="hidden" name="gross_total_amount" id="input-gross_total_amount" />
+  <input type="hidden" name="extra_cost" id="input-extra_cost" value="0" />
   <div class="col-12 mb-3">
     <div class="commonBox purcheseDetails vTop"> @if (isset($data['inward_stock_type']) && $data['inward_stock_type'] == 'edit')
       
