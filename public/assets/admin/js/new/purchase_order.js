@@ -3,6 +3,62 @@ $(document).on('change', '#invoice_stock', function() {
 	$('#upload_invoice_stock_type').val(stock_type);
 });
 
+$(document).on('click', '#add_purchase_final_cost', function() {
+	$(this).hide();
+	var sub_total=$('#input-supplier_sub_total').val();
+	$('#purchase_final_cost_val').html(sub_total);
+	$('#purchase_final_cost_sec').show();
+});
+
+function naiveRound(num, decimalPlaces) {
+    var p = Math.pow(10, decimalPlaces);
+    return Math.round(num * p) / p;
+}
+
+
+$(document).on('keyup', '#purchase_final_cost_input', function() {
+	var final_cost 	= $(this).html();
+	var add_cost	= 0;
+	
+	var sub_total=$('#input-supplier_sub_total').val();
+	if(final_cost!=''){
+		if(final_cost>0){
+			add_cost=final_cost;
+		}
+	}
+	
+	var total_cost=0;
+	if(add_cost>0){
+		total_cost=((Number(sub_total)) + (Number(add_cost)));
+	}else{
+		total_cost=Number(sub_total);
+	}
+	
+	var tcs_amt = (total_cost / 100) * 1;
+	tcs_amt=naiveRound(tcs_amt, 2);
+	$('#tcs_amt').html('₹'+tcs_amt.toFixed(decimalpoints)); 
+	$('#input-tcs_amt').val(tcs_amt);
+	
+	$('#purchase_final_cost_val').html('₹'+total_cost.toFixed(decimalpoints));
+	
+	var special_purpose_fee_amt	= $('#input-special_purpose_fee_amt').val();
+	var round_off_value_amt		= $('#input-round_off_value_amt').val();
+	
+	var total_amount=((Number(total_cost)) + (Number(tcs_amt)) + (Number(special_purpose_fee_amt)) + (Number(round_off_value_amt)));
+	
+	$('#input-gross_total_amount').val(total_amount);
+	$('#gross_total_amount').html('₹'+total_amount.toFixed(decimalpoints));
+	
+	
+	
+	console.log(total_amount);
+	//tcs_amt=(tcs_amt.toFixed(decimalpoints));
+
+	//console.log(tcs_amt);
+	
+	
+});
+
 
 
 

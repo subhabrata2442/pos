@@ -17,37 +17,37 @@
         <div class="col-lg-4 col-md-4 col-sm-12 col-12">
           <div class="supplierWrap">
             <div class="invArea">
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Supplier</li>
                 <li class="invAreaVal">
                   <input type="text" name="supplier" id="supplier" class="form-control input-1" required="required" readonly="readonly" value="{{$data['supplier']->company_name ?? ''}}">
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Transport Pass No.</li>
                 <li class="invAreaVal">
                   <input type="text" name="tp_no" id="tp_no" class="form-control input-1" required="required">
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Invoice Number</li>
                 <li class="invAreaVal">
                   <input type="text" name="invoice_no" id="invoice_no" class="form-control input-1" required="required">
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Purchase Date</li>
                 <li class="invAreaVal">
                   <input type="date" name="purchase_date" id="purchase_date" class="form-control input-1" required="required">
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Inward Date</li>
                 <li class="invAreaVal">
                   <input type="date" name="inward_date" id="inward_date" class=" form-control input-1" required="required">
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Warehouse</li>
                 <li class="invAreaVal">
                   <div class="mb-0 form-group relative formBox">
@@ -102,7 +102,7 @@
               <textarea name="additional_note" id="additional_note" cols="30" rows="10" placeholder="Additional Note"></textarea>
             </div>-->
             <div class="invArea mb-3">
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Payment Mode</li>
                 <li class="invAreaVal">
                   <select class="form-control custom-select form-control-select" id="payment_method" name="payment_method" required="required">
@@ -115,13 +115,13 @@
                   </select>
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Payment Date</li>
                 <li class="invAreaVal">
                   <input type="date" name="payment_date" id="payment_date" class="form-control input-1" required="required">
                 </li>
               </ul>
-              <ul class="d-flex flex-wrap align-items-center">
+              <ul class="d-flex align-items-center">
                 <li class="invAreaInf">Reference No</li>
                 <li class="invAreaVal">
                   <input type="text" name="payment_ref_no" id="payment_ref_no" class="form-control input-1" placeholder="Ref No">
@@ -147,7 +147,7 @@
 <form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
 @else 
 <!--style="display:none"-->
-<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data">
+<form method="post" action="" class="needs-validation" id="supplier-inward_stock-product-form" novalidate enctype="multipart/form-data" style="display:none">
   @endif
   <input type="hidden" name="supplier_id" id="supplier_id" value="{{$data['supplier']->id ?? ''}}">
   <input type="hidden" name="warehouse_id" id="warehouse_id">
@@ -185,24 +185,19 @@
               <td rowspan="2" class="p-0"><table class="table mb-0 tableBorderless">
                   <tr>
                     <td><strong>Total Cost</strong></td>
-                    <td class="text-right"><span id="sub_total" class="rightSpan">0.00</span> <a href="javascript:;" class="plusModal" id="add_purchase_final_cost"><i class="fas fa-plus"></i></a></td>
-                  </tr>
-                  <tr id="purchase_final_cost_sec">
-                    <td><strong>Final Cost</strong></td>
-                    <td class="text-right"><span  id="purchase_final_cost_val" class="rightSpan">0.00</span> <span  contenteditable="true" style="color: black;padding: 2px 6px;" id="purchase_final_cost_input" onkeypress="return check_character(event);" class="rightSpan m-0 number greenBg purchase_final_cost">0.00</span></td>
+                    <td class="text-right"><span id="sub_total">0.00</span></td>
                   </tr>
                   <tr>
                     <td><strong>T.C.S (1%) :</strong></td>
-                    <td class="text-right"><span id="tcs_amt" class="text-right">0.00</span></td>
+                    <td class="text-right"><span id="tcs_amt">0.00</span></td>
                   </tr>
-                  
                   <tr>
                     <td><strong>Special Purpose Fee :</strong></td>
-                    <td class="text-right"><span id="special_purpose_fee_amt" class="text-right">0.00</span></td>
+                    <td class="text-right"><span id="special_purpose_fee_amt">0.00</span></td>
                   </tr>
                   <tr>
                     <td><strong>Round off Value :</strong><span class="d-block text-left mt-0"><small>(To be remitted by Govermemt)</small></span></td>
-                    <td class="text-right"><span id="round_off_value_amt" class="text-right">0.00</span></td>
+                    <td class="text-right"><span id="round_off_value_amt">0.00</span></td>
                   </tr>
                   <!--<tr>
                     <td><strong>Round off :</strong></td>
@@ -210,7 +205,7 @@
                   </tr>-->
                   <tr>
                     <td class="font-18"><strong>Total</strong></td>
-                    <td class="text-right font-18"><strong id="gross_total_amount" class="text-right">0.00</strong></td>
+                    <td class="text-right font-18"><strong id="gross_total_amount">0.00</strong></td>
                   </tr>
                 </table></td>
             </tr>
@@ -248,25 +243,25 @@
               <tr>
                 <th><i class="fas fa-times"></i></th>
                 <th>Barcode</th>
-                <th>Case</th>
-                <th>B/case</th>
-                <th>Loose</th>
+                <th>Case Qty</th>
+                <th>Bottle/case</th>
+                <th>Loose Qty</th>
                 <th>Total Qty</th>
-                <th>Free</th>
+                <th>Free Qty</th>
                 <th>Category</th>
                 <th>Sub Category</th>
                 <th>Brand Name</th>
                 <th>Batch No</th>
                 <th>Measure</th>
-                <th>Strng.</th>
-                <th>B.L</th>
-                <th>LPL</th>
+                <th>Strength</th>
+                <th>In B.L</th>
+                <th>In LPL</th>
                 <th>Unit Cost</th>
-                <th>Unit Cost <i class="fas fa-info-circle"></i></th>
-                <th>R margin</th>
+                <th>Unit Cost(Exc.SP+RO)</th>
+                <th>Retailer margin</th>
                 <th>Round Off</th>
                 <th>SP Fee</th>
-                <th>Offer</th>
+                <th>Offer Price</th>
                 <th>MRP</th>
                 <th>Total Cost</th>
               </tr>
@@ -383,33 +378,7 @@
     <input name="upload_invoice_pdf" id="upload_invoice_pdf" style="display:none" type="file">
   </form>
 </div>
-
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-      <form>
-          <div class="mb-3">
-            <input type="text" class="form-control" placeholder="hjghjgj fhfhfh">
-          </div>
-          <div class="mb-3">
-            <button class="submitBtn">Submit</button>
-          </div>
-         
-        </form>
-      </div>
-      
-    </div>
-  </div>
-</div>
 @endsection
-
-
-
 
 @section('scripts') 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script> 

@@ -789,7 +789,7 @@ hr {
 }
 
 .forTableHeight {
-	max-height: 43vh;
+	max-height: 47vh;
 }
 
 .inwordTableWrap th,
@@ -2170,7 +2170,7 @@ a.downloadBtn {
 	padding: 5px 10px;
 	color: #1e1e1e;
 	font-size: .8rem;
-	margin: 0;
+	margin: 0 0 10px;
 }
 
 .swal2-container {
@@ -2247,6 +2247,9 @@ a.downloadBtn {
 }
 
 @media only screen and (max-width: 1366px) {
+	.forTableHeight {
+		max-height: 27vh;
+	}
 	.ftBox-col {
 		-ms-flex: 0 0 33.333333%;
 		flex: 0 0 33.333333%;
@@ -2379,6 +2382,18 @@ a.downloadBtn {
 }
 
 @media only screen and (max-width: 991px) {
+	.forTableHeight {
+		max-height: 60vh;
+	}
+	.inwardStockBtm {
+		width: 100%;
+	}
+	.purcheseDetails table tr td span {
+		font-size: .6rem;
+	}
+	.table.tableBorderless td {
+		font-size: 10px;
+	}
 
 	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .content-wrapper,
 	body:not(.sidebar-mini-md):not(.sidebar-mini-xs):not(.layout-top-nav) .main-footer,
@@ -2397,3 +2412,53 @@ a.downloadBtn {
 
 }
 
+.inwordTableWrap .table > thead {
+	position: sticky;
+	top: 0;
+}
+
+.rightSpan {
+	display: inline-block !important;
+	margin-right: 5px;
+	vertical-align: middle;
+}
+.plusModal {
+	line-height: 16px;
+	width: 16px;
+	border-radius: 50%;
+	background: #3b60a5;
+	color: #fff;
+	font-size: 10px;
+	text-align: center;
+	display: inline-block;
+	height: 16px;
+	vertical-align: middle;
+}
+.plusModal:hover{
+	background: #3d9fee;
+}
+.submitBtn  {
+	background: #3b60a5;
+	color: #fff;
+	border: none;
+	line-height: 34px;
+	font-weight: bold;
+	text-transform: uppercase;
+	border-radius: 4px;
+	padding: 0 1.25rem;
+	display: block;
+	font-size: .9em;
+	width: 100%;
+}
+.plusModal svg {
+	margin-top: 3px;
+  }
+
+@media only screen and (max-width: 810px){
+	.forTableHeight {
+		max-height: 56vh;
+	}
+	.supplierDetails h4 {
+		font-size: 16px;
+	}
+}

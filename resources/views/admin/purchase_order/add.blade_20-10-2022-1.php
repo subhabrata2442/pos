@@ -189,7 +189,7 @@
                   </tr>
                   <tr id="purchase_final_cost_sec">
                     <td><strong>Final Cost</strong></td>
-                    <td class="text-right"><span  id="purchase_final_cost_val" class="rightSpan">0.00</span> <span  contenteditable="true" style="color: black;padding: 2px 6px;" id="purchase_final_cost_input" onkeypress="return check_character(event);" class="rightSpan m-0 number greenBg purchase_final_cost">0.00</span></td>
+                    <td class="text-right"><span  id="purchase_final_cost_val">0.00</span> <span  contenteditable="true" style="color: black;" id="purchase_final_cost_input" onkeypress="return check_character(event);" class="text-right number greenBg purchase_final_cost"></span></td>
                   </tr>
                   <tr>
                     <td><strong>T.C.S (1%) :</strong></td>

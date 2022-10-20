@@ -44,12 +44,127 @@
   <div class="card">
     <div class="row align-items-center justify-content-between">
       <div class="col-auto">
-        <h4>Stock Transfer</h4>
+        <h4>{{$data['heading']}}</h4>
       </div>
+      <div class="col d-flex invoiceAmout justify-content-center">
+        <ul class="d-flex">
+          <li>Total Qty : <span>{{$data['total_qty']}}</span></li>
+          <li>Total Amount : <span>{{number_format($data['total_cost'],2)}}</span></li>
+        </ul>
+      </div>
+      <div class="col-auto"> <a href="javascript:;" class="searchDropBtn">Advance Search <i class="fas fa-chevron-circle-down"></i></a> </div>
     </div>
   </div>
 </div>
-<div class="card toggleCard"> </div>
+<div class="card toggleCard">
+  <form action="" method="get" id="filter">
+    <div class="row">
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="date_search" class="mr-3">Date Filter</label>
+          <input type="text" class="form-control" name="datefilter" id="reportrange" placeholder="Select Date" autocomplete="off" value="{{request()->input('datefilter')}}">
+          <input type="hidden" name="start_date" id="start_date" value="{{request()->input('start_date')}}">
+          <input type="hidden" name="end_date" id="end_date" value="{{request()->input('end_date')}}">
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="customer_last_name" class="form-label">Product Name / Barcode</label>
+          <div class="position-relative">
+            <input type="text" class="form-control" id="search_product" name="product" value="{{request()->input('product')}}" autocomplete="off">
+            <ul id="search_product_list" class="auto_search_result">
+            </ul>
+          </div>
+          <input type="hidden" id="product_id" name="product_id" value="{{request()->input('product_id')}}">
+        </div>
+      </div>
+      <div class="col-lg-3 col-md-3 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="" class="form-label">Select Category</label>
+          <select class="form-control custom-select form-control-select" id="" name="category">
+            <option value="">Select Category</option>
+            
+            
+						@forelse ($data['categories'] as $category)
+							
+            
+            <option value="{{$category->id}}" {{request()->input('category') == $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+            
+            
+						@empty
+							
+						@endforelse
+					
+          
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="" class="form-label">Select Subcategory</label>
+          <select class="form-control custom-select form-control-select" id="" name="sub_category">
+            <option value="">Select Subcategory</option>
+            
+            
+						@forelse ($data['sub_categories'] as $sub_category)
+							
+            
+            <option value="{{$sub_category->id}}" {{request()->input('sub_category') == $sub_category->id ? 'selected' : ''}}>{{$sub_category->name}}</option>
+            
+            
+						@empty
+							
+						@endforelse
+					
+          
+          </select>
+        </div>
+      </div>
+      <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+        <div class="form-group">
+          <label for="" class="form-label">Select Size</label>
+          <select class="form-control custom-select form-control-select" id="" name="size">
+            <option value="">Select Size</option>
+            
+            
+						@forelse ($data['sizes'] as $size)
+							
+            
+            <option value="{{$size->id}}" {{request()->input('size') == $size->id ? 'selected' : ''}}>{{$size->name}}</option>
+            
+            
+						@empty
+							
+						@endforelse
+					
+          
+          </select>
+        </div>
+      </div>
+      <div class="col-12">
+        <ul class="saveSrcArea d-flex align-items-center justify-content-center mb-2">
+          <li> <a href="javascript:?" class="saveBtn-2 reset-btn" id="reset">Reset</i></a> </li>
+          <li>
+            <button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
+          </li>
+          <li class="d-flex align-items-center">
+            <div>
+              <select class="form-control custom-select form-control-select" id="report_type">
+                <option value=""> Select Report Type</option>
+                <option value="item_wise_sales_report"> Item Wise sales report</option>
+                <!--<option value="month_wise_report"> Month Wise report</option>
+                <option value="brand_wise_report"> Brand Wise report</option>-->
+              </select>
+            </div>
+            <div>
+              <button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </form>
+</div>
 <div class="row">
   <div class="col-12">
     <div class="card">
@@ -58,28 +173,35 @@
         <table id="" class="table table-bordered text-nowrap">
           <thead>
           <th scope="col">Invoice No</th>
-            <th scope="col">Date</th>
             <th scope="col">Barcode</th>
+            <th scope="col">Category</th>
+            <th scope="col">Sub Category</th>
             <th scope="col">Product Name</th>
-            <th scope="col">Qty</th>
             <th scope="col">Size</th>
+            <th scope="col">Qty</th>
+            <th scope="col">Date</th>
               </thead>
-              <tbody>
-			@forelse ($data['products'] as $product)
-			<tr>
-				<th>{{$product->invoice_no}}</th>
-                <th>{{$product->created_at}}</th>
-                <td>{{$product->product_barcode}}</td>
-                <td>{{$product->product->product_name}}</td>
-                <td>{{$product->c_qty}}</td>
-                <td>{{$product->size->name}}</td>
-				
-			</tr>
-			@empty
-				<tr ><td colspan="11"> No data found </td></tr>
-			@endforelse
-			
-          </tbody>
+          <tbody>
+          
+          @forelse ($data['products'] as $product)
+          <tr>
+            <th>{{$product->invoice_no}}</th>
+            <td>{{$product->product_barcode}}</td>
+            <td>{{$product->category->name}}</td>
+            <td>{{$product->subcategory->name}}</td>
+            <td>{{$product->product->product_name}}</td>
+            
+            <td>{{$product->c_qty}}</td>
+            <td>{{$product->size->name}}</td>
+            <th>{{$product->created_at}}</th>
+          </tr>
+          @empty
+          <tr >
+            <td colspan="11"> No data found </td>
+          </tr>
+          @endforelse
+            </tbody>
+          
         </table>
         {{ $data['products']->appends($_GET)->links() }} </div>
     </div>

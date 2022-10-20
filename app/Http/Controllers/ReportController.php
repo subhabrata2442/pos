@@ -1787,6 +1787,63 @@ class ReportController extends Controller
         }
     }
 	
+	public function itemWiseSaleStockTransferReportPdf(Request $request){
+        try {
+            //echo $request->get('start_date');die;
+            //dd($request);
+            $data = [];
+            $queryProduct = SellStockProducts::query();
+            //Add sorting
+            $queryProduct->orderBy('id', 'desc');
+            if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
+                if($request->get('start_date') == $request->get('end_date')){
+                    $queryProduct->whereDate('created_at', $request->get('start_date'));
+                }else{
+                    $queryProduct->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
+                }    
+            }
+            if(!is_null($request['customer_id'])) {
+                $queryProduct->whereHas('sellInwardStock',function($q) use ($request){
+                    return $q->where('customer_id',$request['customer_id']);
+                });
+            }
+            if(!is_null($request['invoice_id'])) {
+                $queryProduct->whereHas('sellInwardStock',function($q) use ($request){
+                    return $q->where('id',$request['invoice_id']);
+                });
+            }
+            if(!is_null($request['product_id'])) {
+                $queryProduct->where('product_id',$request['product_id']);
+            }
+            if(!is_null($request['category'])) {
+                $queryProduct->where('category_id',$request['category']);
+            }
+            if(!is_null($request['sub_category'])) {
+                $queryProduct->where('subcategory_id',$request['sub_category']);
+            }
+            if(!is_null($request['size'])) {
+                $queryProduct->where('size_id',$request['size']);
+            }
+            $total_qty =  $queryProduct->sum('product_qty');
+            $total_cost =  $queryProduct->sum('total_cost');
+            $all_product = $queryProduct->get();
+            $products = $queryProduct->paginate(10);
+            $data['heading']    = 'Sales List';
+            $data['breadcrumb'] = ['Sales', '', 'List'];
+            $data['products']   = $products;
+            $data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
+            $data['total_qty']  = $total_qty;
+            $data['total_cost'] = $total_cost;
+            $data['categories'] = Category::all();
+            $data['sizes']      = Size::all();
+            $data['sub_categories']      = Subcategory::all();
+            //$data['request'] = $request;
+            return view('admin.report.product_wise_sales_report', compact('data'));
+        } catch (\Exception $e) {
+            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+        }
+    }
+	
 	public function stockTransferReport(Request $request){
         try {
             //echo $request->get('start_date');die;
@@ -1794,23 +1851,47 @@ class ReportController extends Controller
             $data = [];
 			$branch_id		= Session::get('branch_id');
             $branch_id		= Session::get('branch_id');
-			$queryProduct = StockTransferHistory::leftJoin('branch_stock_products', function($join) {
+			$queryProduct = StockTransferHistory::select('stock_transfer_history.*','branch_stock_products.product_id','branch_stock_products.size_id','branch_stock_products.product_barcode','products.category_id','products.subcategory_id')->leftJoin('branch_stock_products', function($join) {
 						$join->on('stock_transfer_history.stock_id', '=', 'branch_stock_products.id');
+					})->leftJoin('products', function($join) {
+						$join->on('branch_stock_products.product_id', '=', 'products.id');
 					})->where('stock_transfer_history.branch_id', $branch_id)->where('branch_stock_products.stock_type', 'counter');
+			if(!is_null($request['product_id'])) {
+                $queryProduct->where('branch_stock_products.product_id',$request['product_id']);
+            }
+			if(!is_null($request['category'])) {
+                $queryProduct->where('products.category_id',$request['category']);
+            }
+            if(!is_null($request['sub_category'])) {
+                $queryProduct->where('products.subcategory_id',$request['sub_category']);
+            }
+            if(!is_null($request['size'])) {
+                $queryProduct->where('branch_stock_products.size_id',$request['size']);
+            }
+			if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
+                if($request->get('start_date') == $request->get('end_date')){
+                    $queryProduct->whereDate('stock_transfer_history.created_at', $request->get('start_date'));
+                }else{
+                    $queryProduct->whereBetween('stock_transfer_history.created_at', [$request->get('start_date'), $request->get('end_date')]);
+                }    
+            }
             $all_product 	= $queryProduct->get();
             $products 		= $queryProduct->paginate(10);
 			
 			
 			//echo '<pre>';print_r($products);exit;
 			
+			$total_qty	= 0;
+			$total_cost	= 0;
+			
 			
             $data['heading']    = 'Stock Transfer List';
             $data['breadcrumb'] = ['Stock Transfer', '', 'List'];
             $data['products']   = $products;
             $data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
-           // $data['total_qty']  = $total_qty;
-           // $data['total_cost'] = $total_cost;
-            $data['categories'] = Category::all();
+            $data['total_qty']  = $total_qty;
+            $data['total_cost'] = $total_cost;
+            $data['categories'] = Category::where('food_type',1)->get();
             $data['sizes']      = Size::all();
             $data['sub_categories']      = Subcategory::all();
             //$data['request'] = $request;

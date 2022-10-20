@@ -192,6 +192,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth')->group(function () {
         Route::match(['GET'],'/month-wise-pdf', [ReportController::class, 'monthWiseReportPdf'])->name('product.month_wise');
 		Route::match(['GET'], '/brand_report', [ReportController::class, 'brand_report'])->name('sales.product.product_wise');
 		Route::match(['GET'], '/e-report', [ReportController::class, 'e_report'])->name('sales.product.e_report');
+		
+		Route::match(['GET'],'/item-wise-sales-stock-transfer-report', [ReportController::class, 'itemWiseSaleStockTransferReportPdf'])->name('sales.product.item_wise_stock-transfer');
+		
+		
+		
 
 		
         //Route::match(['GET', 'POST'], '/list', [ProductController::class, 'list'])->name('list');

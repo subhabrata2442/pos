@@ -165,7 +165,7 @@
 								<option value="item_wise_sales_report"> Item Wise sales report</option>
 								<option value="month_wise_report"> Month Wise report</option>
                                 <option value="brand_wise_report"> Brand Wise report</option>
-                                <!--<option value="e_report"> E-Report</option>-->
+                                <option value="e_report"> E-Report</option>
 								<option value="text_download"> Text Download</option>
 							</select>
 						</div>
@@ -178,6 +178,10 @@
 		</div>
 	</form>
 </div>
+
+
+
+
 <div class="row">
   <div class="col-12">
     <div class="card">

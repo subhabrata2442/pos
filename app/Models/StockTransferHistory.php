@@ -18,7 +18,14 @@ class StockTransferHistory extends Model
 	}
 	
 	public function product(){
-    	return $this->hasOne(Product::class,'id','product_id');
-  }
+		return $this->hasOne(Product::class,'id','product_id');
+	}
+	
+	public function category(){
+		return $this->hasOne(Category::class,'id', 'category_id'); 
+    }
+	public function subcategory(){
+		return $this->hasOne(Subcategory::class,'id', 'subcategory_id'); 
+    }
 
 }
