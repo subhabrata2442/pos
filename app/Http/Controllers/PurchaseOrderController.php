@@ -1581,6 +1581,13 @@ class PurchaseOrderController extends Controller
 							$brand_name	= str_replace("[Pet Bottle]", "", $brand_name);
 							$brand_name	= str_replace("[Can]", "", $brand_name);
 						}
+						if($brand_name!=''){
+							$brand_name = rtrim($brand_name, " .");
+						}
+						
+						//print_r($brand_name);exit;
+						
+						
 						$category_title2='';
 						if (stripos($brand_name, "Spirit") !== false) {
 							$brand_name	= str_replace("Spirit", "", $brand_name);
@@ -1740,6 +1747,7 @@ class PurchaseOrderController extends Controller
 								$in_cases	= $total_qty/$total_cases;
 								
 								$new_product_result[]=array(
+									//'brand_slug'		=> $brand_slug,
 									'category'			=> $category_title,
 									'sub_category'		=> $sub_category_title,
 									'brand_name'		=> trim($brand_name),	 
@@ -2117,6 +2125,17 @@ class PurchaseOrderController extends Controller
 				$branchStockProductResult=BranchStockProducts::where('id',$stock_id)->first();
 				$size_ml=isset($branchStockProductResult->size->ml)?$branchStockProductResult->size->ml:0;
 				
+				$product_id=isset($branchStockProductResult->product_id)?$branchStockProductResult->product_id:0;
+				$size_id=isset($branchStockProductResult->size_id)?$branchStockProductResult->size_id:0;
+				
+				$category_id=isset($branchStockProductResult->product->category_id)?$branchStockProductResult->product->category_id:0;
+				$subcategory_id=isset($branchStockProductResult->product->subcategory_id)?$branchStockProductResult->product->subcategory_id:0;
+				
+				
+				
+				
+				
+				
 				$total_c_qty=0;
 				if($prev_c_qty>0){
 					$total_c_qty +=$prev_c_qty;
@@ -2145,7 +2164,7 @@ class PurchaseOrderController extends Controller
 				$invoice_no .='/'.str_pad($n + 1, 4, 0, STR_PAD_LEFT);
 				$invoice_no .='|'.date('d/m/Y');
 				
-				
+				$total_ml=$size_ml*$trans_c_qty;
 				
 				$stocktransferData=array(
 					'invoice_no'	=> $invoice_no,
@@ -2153,11 +2172,17 @@ class PurchaseOrderController extends Controller
 					'branch_id'		=> $branch_id,
 					'price_id'  	=> $price_id,
 					'prev_w_qty'  	=> $prev_w_qty,
+					'category_id'	=> $category_id,
+					'subcategory_id'=> $subcategory_id,
+					'product_id'  	=> $product_id,
+					'size_id'  		=> $size_id,
 					'prev_c_qty'	=> $prev_c_qty,
 					'new_w_qty'  	=> $new_w_qty,
 					'new_c_qty'  	=> $total_c_qty,
 					'transfer_to'  	=> $transfer_to,
 					'c_qty'  		=> $trans_c_qty,
+					'total_ml'  	=> $total_ml,
+					
 					
 				);
 				

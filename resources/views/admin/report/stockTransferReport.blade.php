@@ -147,19 +147,19 @@
           <li>
             <button class="saveBtn-2" type="submit">Search <i class="fas fa-arrow-circle-right"></i></button>
           </li>
-          <!--<li class="d-flex align-items-center">
+          <li class="d-flex align-items-center">
             <div>
               <select class="form-control custom-select form-control-select" id="report_type">
                 <option value=""> Select Report Type</option>
                 <option value="item_wise_sales_report"> Item Wise sales report</option>
-                <option value="month_wise_report"> Month Wise report</option>
-                <option value="brand_wise_report"> Brand Wise report</option>
+                <!--<option value="month_wise_report"> Month Wise report</option>
+                <option value="brand_wise_report"> Brand Wise report</option>-->
               </select>
             </div>
             <div>
               <button type="button" id="download_report" class="srcBtnWrapGo"><i class="fas fa-download"></i></button>
             </div>
-          </li>-->
+          </li>
         </ul>
       </div>
     </div>
