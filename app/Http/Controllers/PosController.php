@@ -692,7 +692,7 @@ class PosController extends Controller
 								$total_datewise_sell_count = DailyProductSellHistory::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->count();
 									
 								if($prev_closing_stock_ml!=''){
-									if($total_datewise_sell_count>1){
+									if($total_datewise_sell_count>=1){
 										$opening_stock_ml 	= $prev_closing_stock_ml;
 										$opening_stock 		= $prev_closing_stock;
 									}	
