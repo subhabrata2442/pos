@@ -39,6 +39,10 @@ use App\Models\DailyProductPurchaseHistory;
 use App\Models\Warehouse;
 use App\Models\Common;
 
+use App\Models\DailyStockTransferHistory;
+
+
+
 
 
 
@@ -1788,61 +1792,76 @@ class ReportController extends Controller
     }
 	
 	public function itemWiseSaleStockTransferReportPdf(Request $request){
-        try {
-            //echo $request->get('start_date');die;
-            //dd($request);
-            $data = [];
-            $queryProduct = SellStockProducts::query();
-            //Add sorting
-            $queryProduct->orderBy('id', 'desc');
-            if(!empty($request->get('start_date')) && !empty($request->get('end_date'))){
-                if($request->get('start_date') == $request->get('end_date')){
-                    $queryProduct->whereDate('created_at', $request->get('start_date'));
-                }else{
-                    $queryProduct->whereBetween('created_at', [$request->get('start_date'), $request->get('end_date')]);
-                }    
-            }
-            if(!is_null($request['customer_id'])) {
-                $queryProduct->whereHas('sellInwardStock',function($q) use ($request){
-                    return $q->where('customer_id',$request['customer_id']);
-                });
-            }
-            if(!is_null($request['invoice_id'])) {
-                $queryProduct->whereHas('sellInwardStock',function($q) use ($request){
-                    return $q->where('id',$request['invoice_id']);
-                });
-            }
-            if(!is_null($request['product_id'])) {
-                $queryProduct->where('product_id',$request['product_id']);
-            }
-            if(!is_null($request['category'])) {
-                $queryProduct->where('category_id',$request['category']);
-            }
-            if(!is_null($request['sub_category'])) {
-                $queryProduct->where('subcategory_id',$request['sub_category']);
-            }
-            if(!is_null($request['size'])) {
-                $queryProduct->where('size_id',$request['size']);
-            }
-            $total_qty =  $queryProduct->sum('product_qty');
-            $total_cost =  $queryProduct->sum('total_cost');
-            $all_product = $queryProduct->get();
-            $products = $queryProduct->paginate(10);
-            $data['heading']    = 'Sales List';
-            $data['breadcrumb'] = ['Sales', '', 'List'];
-            $data['products']   = $products;
-            $data['total_invoice']  = count(array_unique(array_column($all_product->toArray(), 'inward_stock_id')));
-            $data['total_qty']  = $total_qty;
-            $data['total_cost'] = $total_cost;
-            $data['categories'] = Category::all();
-            $data['sizes']      = Size::all();
-            $data['sub_categories']      = Subcategory::all();
-            //$data['request'] = $request;
-            return view('admin.report.product_wise_sales_report', compact('data'));
-        } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
+		$branch_id		= Session::get('branch_id');
+		$satrt_date 	= $request->start_date.' 00:00:00';
+		$end_date 		= $request->end_date.' 23:59:00';
+        $items = [];
+		
+		
+		//echo '<pre>';print_r($branch_id);exit;
+		
+		
+        $group_cat_products = DailyStockTransferHistory::with('category')->groupBy(['category_id'])->whereBetween('created_at', [$satrt_date, $end_date])->get();
+		//echo '<pre>';print_r($group_cat_products);exit;
+		
+        foreach($group_cat_products as $group_cat_product){
+            //$items['category'][] =  $group_cat_product->category->name;
+			
+            $group_sub_cat_products = DailyStockTransferHistory::
+                        where('category_id',$group_cat_product->category->id)
+                        ->whereBetween('created_at', [$satrt_date, $end_date])
+                        ->groupBy(['subcategory_id'])
+                        ->get();
+			
+			
+            foreach($group_sub_cat_products as $group_sub_cat_product){
+                //$items['category'][$group_cat_product->category->name][] = $group_sub_cat_product->subCategory->name;
+				//echo '<pre>';print_r($group_sub_cat_product->category_id);exit;
+                $sales_products = DailyStockTransferHistory::where('subcategory_id',$group_sub_cat_product->subCategory->id)
+                    ->where('category_id',$group_sub_cat_product->category_id)
+                    ->whereBetween('created_at', [$satrt_date, $end_date])
+                    ->groupBy(['product_id','size_id'])
+                    ->selectRaw('product_id,product_mrp,sum(total_qty) as total_bottles,sum(total_ml) as total_ml,sum(product_mrp * total_qty) as total_ammount')
+					// ->select(DB::raw('sum(product_mrp * total_qty) as total_ammount'))
+					//->selectRaw('product_name,product_mrp,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')
+                    ->get();
+			    //echo '<pre>';print_r($sales_products);exit;
+                $items[$group_cat_product->category->name][$group_sub_cat_product->subCategory->name]    = $sales_products;
+				
+				//echo '<pre>';print_r($items);exit;
+            }           
         }
+        /*$payment_type_ammount = SellInwardStock::whereBetween('payment_date', [$satrt_date, $end_date])
+                        ->groupBy(['payment_method'])
+                        ->selectRaw('payment_method,sum(pay_amount) as total_payment')
+                        ->get();*/
+						
+		$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+		$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+		$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+		$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);	
+		
+		$payment_type_ammount=0;			
+        
+        $data = [];
+        $data['items'] = $items;
+        $data['shop_name'] = $company_name;
+        $data['shop_address'] = $address2;
+        $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
+        $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
+        $data['payment_type_ammount'] = $payment_type_ammount;
+		
+		//echo '<pre>';print_r($data);exit;
+		
+		
+
+        $pdf = PDF::loadView('admin.pdf.stock-transfer.item-wise-sales-report', $data);
+         //echo "<pre>";print_r($items);die;
+		return $pdf->stream(now().'-invoice.pdf');
+       
     }
+	
+	
 	
 	public function stockTransferReport(Request $request){
         try {
@@ -1875,7 +1894,7 @@ class ReportController extends Controller
                     $queryProduct->whereBetween('stock_transfer_history.created_at', [$request->get('start_date'), $request->get('end_date')]);
                 }    
             }
-            $all_product 	= $queryProduct->get();
+            $all_product 	= $queryProduct->orderBy('id', 'DESC')->get();
             $products 		= $queryProduct->paginate(10);
 			
 			

@@ -24,8 +24,16 @@ class StockTransferHistory extends Model
 	public function category(){
 		return $this->hasOne(Category::class,'id', 'category_id'); 
     }
+	
 	public function subcategory(){
 		return $this->hasOne(Subcategory::class,'id', 'subcategory_id'); 
+    }
+	
+	public function price(){
+		return $this->hasOne(BranchStockProductSellPrice::class,'id', 'price_id'); 
+    }
+	public function stock_info(){
+		return $this->hasOne(BranchStockProducts::class,'id', 'stock_id'); 
     }
 
 }

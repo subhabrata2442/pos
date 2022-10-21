@@ -190,9 +190,9 @@
             <td>{{$product->category->name}}</td>
             <td>{{$product->subcategory->name}}</td>
             <td>{{$product->product->product_name}}</td>
-            
-            <td>{{$product->c_qty}}</td>
             <td>{{$product->size->name}}</td>
+            <td>{{$product->c_qty}}</td>
+            
             <th>{{$product->created_at}}</th>
           </tr>
           @empty
@@ -246,7 +246,7 @@ $(function() {
         }else{
 			//console.log('sdfd');
 			if(report_type == 'item_wise_sales_report'){
-				var url = "{{route('admin.report.sales.product.item_wise')}}";
+				var url = "{{route('admin.report.sales.product.item_wise_stock-transfer')}}";
 				var href = url+'?start_date='+start_date+'&end_date='+end_date;
 			}else if(report_type == 'month_wise_report'){
 				var url = "{{route('admin.report.product.month_wise')}}";

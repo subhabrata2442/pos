@@ -46,6 +46,8 @@ use App\Models\StockTransferHistory;
 use App\Models\StockTransferCounterHistory;
 use App\Models\CounterWiseStock;
 use App\Models\OpeningStockProducts;
+use App\Models\DailyStockTransferHistory;
+use App\Models\DailyProductPurchaseHistory;
 
 
 use App\Models\Warehouse;
@@ -55,6 +57,8 @@ use App\Models\FloorWiseTable;
 use App\Models\Waiter;
 use App\Models\TableBookingKoPrintInvoice;
 use App\Models\TableBookingKoPrintItems;
+
+
 
 use App\Models\BarInwardStock;
 use App\Models\BarInwardStockProducts;
@@ -2237,6 +2241,8 @@ class PurchaseOrderController extends Controller
 					}
 				}
 				
+				$this->daily_stock_transfer_sell_history();
+				
 				$return_data['status']	= 1;
 				echo json_encode($return_data);exit;
 			}
@@ -2259,12 +2265,6 @@ class PurchaseOrderController extends Controller
 			
 			$data['counter'] = Counter::where('branch_id',$branch_id)->get();
 			
-			
-			
-			
-			
-			
-			
 			//dd($data);
 			return view('admin.stock_transfer.list', compact('data'));				
 		} catch (\Exception $e) {
@@ -2272,6 +2272,154 @@ class PurchaseOrderController extends Controller
             return redirect()->back()->with('error', 'Something went wrong. Please try later. ' . $e->getMessage());
         }
 	}
+	
+	
+	public function daily_stock_transfer_sell_history(){
+		$branch_id				= Session::get('branch_id');
+		$sell_date_result 	= StockTransferHistory::where('branch_id',$branch_id)->where('is_new','Y')->orderBy('id', 'asc')->first();
+		$start_date			= isset($sell_date_result->created_at)?date('Y-m-d',strtotime($sell_date_result->created_at)):'';
+		
+		if($start_date!=''){
+			$current_date=date('Y-m-d');
+			$diff 		= strtotime($current_date) - strtotime($start_date);
+			$total_day	= round($diff / 86400);
+			
+			for($i=0;$total_day>=$i;$i++){
+				$sell_date	= date('Y-m-d', strtotime("+".$i." day", strtotime($start_date)));
+				//echo $sell_date.'</br>';exit;
+				
+				$category_result 		= StockTransferHistory::select('category_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('is_new','Y')->distinct()->get();
+				$sub_category_result 	= StockTransferHistory::select('subcategory_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('is_new','Y')->distinct()->get();
+				$size_result 			= StockTransferHistory::select('size_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->distinct()->where('is_new','Y')->get();
+				$product_result 		= StockTransferHistory::select('product_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('is_new','Y')->distinct()->get();
+				//echo '<pre>';print_r($product_result);exit;
+				
+				foreach($category_result as $cat_row){
+					$category_id=$cat_row->category_id;
+					foreach($sub_category_result as $sub_cat_row){
+						$subcategory_id=$sub_cat_row->subcategory_id;
+						foreach($size_result as $size_row){
+							$size_id=$size_row->size_id;
+							foreach($product_result as $product_row){
+								$product_id=$product_row->product_id;
+								//echo $category_id.'-'.$subcategory_id.'-'.$size_id.'-'.$product_id;exit;
+								
+								$dateWise_sell_result = StockTransferHistory::selectRaw('sum(total_ml) as total_ml,sum(c_qty) as total_qty,price_id,stock_id')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->where('is_new','Y')->get();
+								$total_total_qty = isset($dateWise_sell_result[0]->total_qty)?$dateWise_sell_result[0]->total_qty:'0';
+								$product_mrp = isset($dateWise_sell_result[0]->price->selling_price)?$dateWise_sell_result[0]->price->selling_price:'0';
+								$product_barcode = isset($dateWise_sell_result[0]->stock_info->product_barcode)?$dateWise_sell_result[0]->stock_info->product_barcode:'0';
+								
+								//echo '<pre>';print_r($total_total_qty);exit;
+								
+								if($total_total_qty>0){
+									$openingStockProductResult = OpeningStockProducts::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+									$start_opening_stock_ml	= isset($openingStockProductResult->total_ml)?$openingStockProductResult->total_ml:'0';
+									$start_opening_stock	= isset($openingStockProductResult->product_qty)?$openingStockProductResult->product_qty:'0';
+									
+									$purchase_history_result 	= DailyProductPurchaseHistory::select('id', 'total_qty', 'total_ml', 'closing_stock', 'closing_stock_ml')->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+									
+									$purchase_stock_ml = isset($purchase_history_result->closing_stock_ml)?$purchase_history_result->closing_stock_ml:'0';
+									$purchase_stock	   = isset($purchase_history_result->closing_stock)?$purchase_history_result->closing_stock:'0';
+									
+									$gross_opening_stock_ml	= $start_opening_stock_ml+$purchase_stock_ml;
+									$gross_opening_stock	= $start_opening_stock+$purchase_stock;
+									
+									
+									$prev_sell_date		= date('Y-m-d', strtotime("-1 day", strtotime($sell_date)));
+									
+									$prev_datewise_sell_result = DailyStockTransferHistory::whereBetween('created_at', [$prev_sell_date." 00:00:00", $prev_sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+									$prev_closing_stock	  =isset($prev_datewise_sell_result->closing_stock)?$prev_datewise_sell_result->closing_stock:'';
+									$prev_closing_stock_ml=isset($prev_datewise_sell_result->closing_stock_ml)?$prev_datewise_sell_result->closing_stock_ml:'';
+								
+									$prev_opening_stock	  =isset($prev_datewise_sell_result->opening_stock)?$prev_datewise_sell_result->opening_stock:'';
+									$prev_opening_stock_ml=isset($prev_datewise_sell_result->opening_stock_ml)?$prev_datewise_sell_result->opening_stock_ml:'';
+									
+									$opening_stock_ml	= $gross_opening_stock_ml;
+									$opening_stock 		= $gross_opening_stock;
+									
+									$total_datewise_sell_count = DailyStockTransferHistory::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->count();
+									
+									
+									
+									if($prev_closing_stock_ml!=''){
+										if($total_datewise_sell_count>=1){
+											$today_purchase_history_result 	= DailyStockTransferHistory::whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->select('id', 'total_qty', 'total_ml', 'closing_stock', 'closing_stock_ml')->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+										
+										$today_purchase_stock_ml	= isset($today_purchase_history_result->total_ml)?$today_purchase_history_result->total_ml:'0';
+										$today_purchase_stock		= isset($today_purchase_history_result->total_qty)?$today_purchase_history_result->total_qty:'0';
+										$opening_stock_ml 			= $prev_closing_stock_ml+$today_purchase_stock_ml;
+										$opening_stock 				= $prev_closing_stock+$today_purchase_stock;	
+									}	
+								}
+								
+								
+								
+								
+								
+								$total_sell		= isset($dateWise_sell_result[0]->total_ml)?$dateWise_sell_result[0]->total_ml:'0';
+								$total_qty_sell	= isset($dateWise_sell_result[0]->total_qty)?$dateWise_sell_result[0]->total_qty:'0';
+								
+								$closing_stock_ml	= $opening_stock_ml-$total_sell;
+								$closing_stock		= $opening_stock-$total_qty_sell;
+								
+								$date_wise_total_sell_ml	= $total_sell;
+								$date_wise_total_sell_qty	= $total_qty_sell;
+								
+								
+								//echo '<pre>';print_r($date_wise_total_sell_ml);exit;
+								
+								$check_datewise_sell_result = DailyStockTransferHistory::whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+								$check_sell_id		  = isset($check_datewise_sell_result->id)?$check_datewise_sell_result->id:'';
+								
+								
+								
+								if($check_sell_id!=''){
+									//echo '<pre>';print_r($date_wise_total_sell_ml);exit;
+									$total_qty	= $date_wise_total_sell_qty+$check_datewise_sell_result->total_qty;
+									$total_ml	= $date_wise_total_sell_ml+$check_datewise_sell_result->total_ml;
+									
+									$closing_stock		= $opening_stock-$total_qty;
+									$closing_stock_ml	= $opening_stock_ml-$total_ml;
+									
+									//print_r($closing_stock_ml);exit;
+									
+									
+									
+									DailyStockTransferHistory::where('id',$check_sell_id)->update(['total_ml' => $total_ml,'total_qty' => $total_qty,'opening_stock' => $opening_stock,'closing_stock' => $closing_stock,'opening_stock_ml' => $opening_stock_ml,'closing_stock_ml' => $closing_stock_ml]);
+									
+									StockTransferHistory::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->update(['is_new' => 'N']);
+									
+								}else{
+									$size_cost_data=array(
+										'branch_id'  		=> $branch_id,
+										'category_id'		=> $category_id,
+										'subcategory_id'	=> $subcategory_id,
+										'product_barcode'	=> $product_barcode,
+										'product_id'  		=> $product_id,
+										'size_id'  			=> $size_id,
+										'total_ml'  		=> $total_sell,
+										'total_qty'  		=> $total_qty_sell,
+										'opening_stock'  	=> $opening_stock,
+										'closing_stock'  	=> $closing_stock,
+										'opening_stock_ml'  => $opening_stock_ml,
+										'closing_stock_ml' 	=> $closing_stock_ml,
+										'product_mrp'		=> $product_mrp,
+										'created_at' 		=> $sell_date." ".date('H:i:s'),
+										'updated_at' 		=> $sell_date." ".date('H:i:s'),
+									);
+									
+									//echo '<pre>';print_r($size_cost_data);exit;
+									DailyStockTransferHistory::create($size_cost_data);
+									StockTransferHistory::where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->where('size_id',$size_id)->where('product_id',$product_id)->update(['is_new' => 'N']);
+								}
+							}
+						}
+					}
+				}
+			}	
+		}
+	}
+}
 	
 	public function product_stock_upload(Request $request){
 		$file = $request->file('product_upload_file');
