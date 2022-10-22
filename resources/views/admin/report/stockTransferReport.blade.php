@@ -154,7 +154,7 @@
                 <option value="item_wise_sales_report"> Item Wise sales report</option>
                 <option value="month_wise_report"> Month Wise report</option>
                 <option value="brand_wise_report"> Brand Wise report</option>
-                <option value="e_report"> E-Report</option>
+                <!--<option value="e_report"> E-Report</option>-->
               </select>
             </div>
             <div>
