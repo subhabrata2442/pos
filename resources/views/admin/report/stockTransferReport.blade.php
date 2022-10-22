@@ -47,10 +47,10 @@
         <h4>{{$data['heading']}}</h4>
       </div>
       <div class="col d-flex invoiceAmout justify-content-center">
-        <ul class="d-flex">
+        <!--<ul class="d-flex">
           <li>Total Qty : <span>{{$data['total_qty']}}</span></li>
           <li>Total Amount : <span>{{number_format($data['total_cost'],2)}}</span></li>
-        </ul>
+        </ul>-->
       </div>
       <div class="col-auto"> <a href="javascript:;" class="searchDropBtn">Advance Search <i class="fas fa-chevron-circle-down"></i></a> </div>
     </div>
