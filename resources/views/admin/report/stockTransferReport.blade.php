@@ -152,8 +152,9 @@
               <select class="form-control custom-select form-control-select" id="report_type">
                 <option value=""> Select Report Type</option>
                 <option value="item_wise_sales_report"> Item Wise sales report</option>
-                <!--<option value="month_wise_report"> Month Wise report</option>
-                <option value="brand_wise_report"> Brand Wise report</option>-->
+                <option value="month_wise_report"> Month Wise report</option>
+                <option value="brand_wise_report"> Brand Wise report</option>
+                <option value="e_report"> E-Report</option>
               </select>
             </div>
             <div>
@@ -228,9 +229,12 @@ $(function() {
 	}) */
 
 	$('#download_report').on("click",function(){
-		var report_type = $('#report_type').val();
-		var start_date = $('input[name=start_date]').val();
-		var end_date = $('input[name=end_date]').val();
+		var report_type 	= $('#report_type').val();
+		var start_date 		= $('input[name=start_date]').val();
+		var end_date 		= $('input[name=end_date]').val();
+		var category 		= $('select[name=category]').val();
+		var subcategory_id 	= $('select[name=sub_category]').val();
+		
 		if(report_type == ''){
 			Swal.fire({
                 icon: 'error',
@@ -247,14 +251,34 @@ $(function() {
 			//console.log('sdfd');
 			if(report_type == 'item_wise_sales_report'){
 				var url = "{{route('admin.report.sales.product.item_wise_stock-transfer')}}";
-				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+				var href = url+'?start_date='+start_date+'&end_date='+end_date+'&category='+category+'&subcategory_id='+subcategory_id;
+			}else if(report_type == 'e_report'){
+				var url = "{{route('admin.report.sales.product.stock_transfer_e_report')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date+'&category='+category+'&subcategory_id='+subcategory_id;
 			}else if(report_type == 'month_wise_report'){
-				var url = "{{route('admin.report.product.month_wise')}}";
-				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+				var url = "{{route('admin.report.product.month_wise_stock_transfer')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date+'&category='+category+'&subcategory_id='+subcategory_id;
 			}else if(report_type == 'text_download'){
 				var url = "{{route('admin.report.sales.product.download')}}";
-				var href = url+'?start_date='+start_date+'&end_date='+end_date;
+				var href = url+'?start_date='+start_date+'&end_date='+end_date+'&category='+category+'&subcategory_id='+subcategory_id;
 				//$(this).attr('href',url+'?start_date='+start_date+'&end_date='+end_date);
+			}else if(report_type == 'brand_wise_report'){
+				var product_id = $('input[name=product_id]').val();
+				
+				if(product_id == ''){
+					Swal.fire({
+						icon: 'error',
+						title: 'Oops...',
+						text: 'Please select Product!',
+					});
+					return false;	
+				}
+				
+				var url = "{{route('admin.report.sales.product.brand_wise_stock-transfer')}}";
+				var href = url+'?start_date='+start_date+'&end_date='+end_date+'&product_id='+product_id+'&category='+category+'&subcategory_id='+subcategory_id;
+				
+				
+			
 			}
 			window.open(href);
 		    

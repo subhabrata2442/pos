@@ -57,6 +57,108 @@ Use Illuminate\Support\Str;
 class ReportController extends Controller
 {
 	
+	
+	
+	/*Stock Transfer Report Pdf*/
+	public function itemWiseSaleStockTransferReportPdf(Request $request){
+		$branch_id		= Session::get('branch_id');
+		$satrt_date 	= $request->start_date.' 00:00:00';
+		$end_date 		= $request->end_date.' 23:59:00';
+        $items = [];
+		
+		
+		//echo '<pre>';print_r($branch_id);exit;
+		
+		
+        $queryProduct = DailyStockTransferHistory::with('category')->groupBy(['category_id'])->whereBetween('created_at', [$satrt_date, $end_date]);
+		if(isset($request->category) && !empty($request->category)){
+			$queryProduct->where('category_id',$request->category);
+		}
+		$group_cat_products=$queryProduct->get();
+		
+		
+		//echo '<pre>';print_r($group_cat_products);exit;
+		
+        foreach($group_cat_products as $group_cat_product){
+            //$items['category'][] =  $group_cat_product->category->name;
+			
+            $query_sub_cat_products = DailyStockTransferHistory::
+                        where('category_id',$group_cat_product->category->id)
+                        ->whereBetween('created_at', [$satrt_date, $end_date])
+                        ->groupBy(['subcategory_id']);
+			if(isset($request->subcategory_id) && !empty($request->subcategory_id)){
+					$query_sub_cat_products->where('subcategory_id',$request->subcategory_id);
+			}			
+			$group_sub_cat_products =	$query_sub_cat_products->get();	
+		
+                        
+			
+			
+            foreach($group_sub_cat_products as $group_sub_cat_product){
+                //$items['category'][$group_cat_product->category->name][] = $group_sub_cat_product->subCategory->name;
+				//echo '<pre>';print_r($group_sub_cat_product->category_id);exit;
+                $sales_products = DailyStockTransferHistory::where('subcategory_id',$group_sub_cat_product->subCategory->id)
+                    ->where('category_id',$group_sub_cat_product->category_id)
+                    ->whereBetween('created_at', [$satrt_date, $end_date])
+                    ->groupBy(['product_id','size_id'])
+                    ->selectRaw('product_id,product_mrp,sum(total_qty) as total_bottles,sum(total_ml) as total_ml,sum(product_mrp * total_qty) as total_ammount')
+					// ->select(DB::raw('sum(product_mrp * total_qty) as total_ammount'))
+					//->selectRaw('product_name,product_mrp,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')
+                    ->get();
+			    //echo '<pre>';print_r($sales_products);exit;
+                $items[$group_cat_product->category->name][$group_sub_cat_product->subCategory->name]    = $sales_products;
+				
+				//echo '<pre>';print_r($items);exit;
+            }           
+        }
+        /*$payment_type_ammount = SellInwardStock::whereBetween('payment_date', [$satrt_date, $end_date])
+                        ->groupBy(['payment_method'])
+                        ->selectRaw('payment_method,sum(pay_amount) as total_payment')
+                        ->get();*/
+						
+		$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+		$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+		$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+		$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);	
+		
+		$payment_type_ammount=0;			
+        
+        $data = [];
+        $data['items'] = $items;
+        $data['shop_name'] = $company_name;
+        $data['shop_address'] = $address2;
+        $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
+        $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
+        $data['payment_type_ammount'] = $payment_type_ammount;
+		
+		//echo '<pre>';print_r($data);exit;
+		
+		
+
+        $pdf = PDF::loadView('admin.pdf.stock-transfer.item-wise-sales-report', $data);
+         //echo "<pre>";print_r($items);die;
+		return $pdf->stream(now().'-invoice.pdf');
+       
+    }
+	
+	/*Stock Transfer Report Pdf*/
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	public function check_counter_sell(Request $request){
 		$branch_id	= Session::get('branch_id');
 		//$start_date = date('Y-m-d',strtotime('2021-09-01'));
@@ -412,6 +514,398 @@ class ReportController extends Controller
 		
 		$pdf = PDF::loadView('admin.pdf.e-report', compact('data'));
 		return $pdf->stream(now().'-e-report.pdf');
+	}
+	public function stock_transfer_e_report(Request $request){
+		$result=[];
+		
+		$queryProduct 	= Category::where('food_type',1);
+		if(isset($request->category) && !empty($request->category)){
+			$category_id = $request->category;
+			$queryProduct->where('id',$category_id);
+        }
+		$categories 		= $queryProduct->get();
+		
+		
+		//echo '<pre>';print_r($categories);exit;
+		
+		
+		
+		$branch_id		= Session::get('branch_id');
+		if(count($categories)>0){
+			foreach($categories as $row){
+				$category_id=$row->id;
+				$sub_cat_result=[];
+				
+				
+				$cat_opening_balance = 0;
+				$cat_receipt_balance = 0;
+				$cat_sales			 = 0;
+				$cat_closing_balance = 0;
+				$cat_prevYear_closing_balance=0;
+				
+				//$catehoty_wise_subcategory=Product::select('subcategory_id')->distinct()->where('category_id',$row->id)->get();
+				
+				
+				$queryProduct=Product::select('subcategory_id')->distinct()->where('category_id',$row->id);
+				if(isset($request->subcategory_id) && !empty($request->subcategory_id)){
+					$queryProduct->where('subcategory_id',$request->subcategory_id);
+				}
+				
+				$catehoty_wise_subcategory=$queryProduct->get();
+				
+				//print_r($catehoty_wise_subcategory);exit;
+				
+				
+				
+				
+				if(count($catehoty_wise_subcategory)>0){
+					foreach($catehoty_wise_subcategory as $sub_row){
+						
+						$subcategory_id	 = $sub_row->subcategory_id;
+						$opening_balance = 0;
+						$receipt_balance = 0;
+						$sales			 = 0;
+						$closing_balance = 0;
+						$prevYear_closing_balance=0;
+						
+						
+						$first_day_this_month = date('Y-m-01',strtotime($request->start_date));
+						$last_day_this_month  = date('Y-m-t',strtotime($request->start_date));
+						
+						$start_date = date('Y-m-d',strtotime($first_day_this_month));
+						$end_date 	= date('Y-m-d',strtotime($last_day_this_month));
+						
+						if($start_date!=''){
+							//$dateP = date('Y-m-t', strtotime('last month'));
+							//$prevYeardateS = date('Y-m-01',strtotime('-1 year'));
+							//$prevYeardateE = date('Y-m-t',strtotime('-1 year'));
+							
+							$openingStockProductResult = OpeningStockProducts::selectRaw('sum(total_ml) as total_opening_ml')->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();
+							$total_opening_stock	= isset($openingStockProductResult->total_opening_ml)?$openingStockProductResult->total_opening_ml:'0';
+							//echo '<pre>';print_r($datewise_start_opening_stock);exit;
+							
+							$start_sell_result 	= DailyStockTransferHistory::where('branch_id',$branch_id)->orderBy('id', 'asc')->first();
+							$sell_start_date 	= isset($start_sell_result->created_at)?date('Y-m-d',strtotime($start_sell_result->created_at)):'';
+							
+							$start_sell_result 		= DailyProductPurchaseHistory::where('branch_id',$branch_id)->orderBy('id', 'asc')->first();
+							$purchase_start_date	= isset($start_sell_result->created_at)?date('Y-m-d',strtotime($start_sell_result->created_at)):'';
+							
+							
+							
+							$sell_result = DailyStockTransferHistory::selectRaw('sum(total_ml) as total_sell_ml')->whereBetween('created_at', [$sell_start_date." 00:00:00", $end_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();
+							$total_sell_stock		= isset($sell_result->total_sell_ml)?$sell_result->total_sell_ml:0;
+							
+							$sell_result = DailyStockTransferHistory::selectRaw('sum(total_ml) as total_sell_ml')->whereBetween('created_at', [$start_date." 00:00:00", $end_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->first();
+							$month_wise_total_sell_stock	= isset($sell_result->total_sell_ml)?$sell_result->total_sell_ml:0;
+							
+							
+							$purchase_history_result 	= DailyProductPurchaseHistory::selectRaw('sum(total_ml) as total_purchase_ml')->whereBetween('created_at', [$purchase_start_date." 00:00:00", $end_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->orderBy('id', 'DESC')->first();
+							$total_purchase_stock =isset($purchase_history_result->total_purchase_ml)?$purchase_history_result->total_purchase_ml:'0';
+							
+							$month_purchase_history_result 	= DailyProductPurchaseHistory::selectRaw('sum(total_ml) as total_purchase_ml')->whereBetween('created_at', [$start_date." 00:00:00", $end_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->where('subcategory_id',$subcategory_id)->orderBy('id', 'DESC')->first();
+							$month_wise_total_purchase_stock =isset($month_purchase_history_result->total_purchase_ml)?$month_purchase_history_result->total_purchase_ml:'0';
+							
+							//echo '<pre>';print_r($total_purchase_stock);exit;
+							
+							
+							
+							
+							
+							$opening_balance			= 0;
+							$receipt_balance			= 0;
+							$total_sell					= $total_sell_stock;
+							$closing_stock				= (($total_purchase_stock+$total_opening_stock)-$total_sell);
+							$opening_stock				= ($closing_stock-$month_wise_total_purchase_stock)+$total_sell;
+							$receipt_balance			= $month_wise_total_purchase_stock;
+							
+							if($total_sell>0){
+								$closing_stock				= (($total_purchase_stock+$total_opening_stock)-$total_sell);
+								$opening_stock				= ($closing_stock-$month_wise_total_purchase_stock)+$total_sell;
+							}
+							
+							if($total_sell_stock>0){
+								if($month_wise_total_purchase_stock==0){
+									$opening_stock				= (($total_purchase_stock+$total_opening_stock)-$total_sell);
+								}
+								
+							}
+							//DONT-DELETE_THIS__FOLDER
+							
+							//echo '<pre>';print_r($closing_stock);exit;
+							
+							$prevYear_closing_balance	=0;
+							
+							
+							
+							$cat_opening_balance += $opening_stock;
+							$cat_receipt_balance += $receipt_balance;
+							$cat_sales			 += $month_wise_total_sell_stock;
+							$cat_closing_balance += $closing_stock;
+							//$cat_prevYear_closing_balance +=$prevYear_closing_balance;
+							
+							$sub_cat_result[]=array(
+								'category_id'		=> $sub_row->subcategory_id,
+								'category_name'		=> $sub_row->subcategory->name,
+								'opening_balance'	=> $opening_stock,
+								'receipt_balance'	=> $receipt_balance,
+								'total_sell'		=> $month_wise_total_sell_stock,
+								'closing_balance'	=> $closing_stock,
+								'prevYear_closing_balance'=> $prevYear_closing_balance,
+								
+								/*'test_total_sell'		=> $total_sell_stock,
+								'total_opening_stock'	=> $total_opening_stock,
+								'total_purchase_stock'	=> $total_purchase_stock,
+								'month_wise_total_purchase_stock'	=> $month_wise_total_purchase_stock,*/
+								
+							);
+							
+							//echo '<pre>';print_r($sub_cat_result);exit;
+							
+							
+						}
+					}
+				}
+				$result[]=array(
+					'category_id'	=> $row->id,
+					'category_name'	=> $row->name,
+					'opening_balance'	=>$cat_opening_balance,
+					'receipt_balance'	=> $cat_receipt_balance,
+					'total_sell'		=> $cat_sales,
+					'closing_balance'	=> $cat_closing_balance,
+					'prevYear_closing_balance'=> $cat_prevYear_closing_balance,
+					//'category_img'	=> $category_img,
+					'sub_category'	=> $sub_cat_result
+				);
+			}
+		}
+		
+		$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+		$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+		$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+		$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);
+			 
+		
+		$data['result'] 			= $result;
+        $data['trader_id_no'] 		= '';
+		$data['licensee_no'] 		= $company_licensee;
+        $data['shop_address'] 		= $company_address;
+		$data['shop_address2'] 		= $address2;
+		$data['shop_name'] 			= $company_name;
+		$data['month'] 				= date('F Y',strtotime($request->start_date));
+		
+		
+		
+		//echo '<pre>';print_r($result);exit;
+		
+		$pdf = PDF::loadView('admin.pdf.stock-transfer.e-report', compact('data'));
+		return $pdf->stream(now().'-e-report.pdf');
+	}
+	
+	public function stockTransferbrandReport(Request $request)
+	{
+		$branch_id		= Session::get('branch_id');
+		$first_day_this_month = date('Y-m-01',strtotime($request->start_date));
+		$last_day_this_month  = date('Y-m-t',strtotime($request->start_date));
+		
+		$product_id  = $request->product_id;
+		
+		$product_info = Product::select('product_name')->where('id',$product_id)->first();
+		
+		if($product_id!=''){
+			$dateS	= date('Y-m-d',strtotime($first_day_this_month));
+			$dateE	= date('Y-m-d',strtotime($last_day_this_month));
+			
+			$diff	= strtotime($dateE) - strtotime($dateS);
+			$total_day	= round($diff / 86400);
+			
+			$product_size_result = ProductRelationshipSize::select('size_id')->where('product_id',$product_id)->distinct()->get();
+			
+			//echo '<pre>';print_r($product_size_result);exit;
+			
+			$result=[];
+			
+			for($i=0;$total_day>=$i;$i++){
+				$sell_date = date('Y-m-d', strtotime("+".$i." day", strtotime($dateS)));
+				$sell_date_slug = date('Ymd', strtotime("+".$i." day", strtotime($dateS)));
+				$currentdayslug	= date('Ymd', strtotime("+1 day"));
+				
+				if($sell_date_slug==$currentdayslug){
+					break;
+				}
+				
+				
+				$stock_result=[];
+				foreach($product_size_result as $size_row){
+					$size_id=$size_row->size_id;
+					
+					$datewise_sell_result = DailyStockTransferHistory::whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+					
+					
+					//$openingStockProductResultTillDate = OpeningStockProducts::whereBetween('created_at', [$dateS." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+					//$start_opening_stock_tillDate	= isset($openingStockProductResult->product_qty)?$openingStockProductResult->product_qty:'0';
+					
+					$openingStockProductResult = OpeningStockProducts::whereBetween('created_at', [$dateS." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->first();
+					
+					//$start_opening_stock_ml	= isset($openingStockProductResult->total_ml)?$openingStockProductResult->total_ml:'0';
+					$start_opening_stock	= isset($openingStockProductResult->product_qty)?$openingStockProductResult->product_qty:'0';
+					
+					
+					
+					$opening_stock	= isset($datewise_sell_result->opening_stock)?$datewise_sell_result->opening_stock:0;
+					$total_stock	= $opening_stock;
+					$total_sale		= isset($datewise_sell_result->total_qty)?$datewise_sell_result->total_qty:0;
+					$closing_stock	= isset($datewise_sell_result->closing_stock)?$datewise_sell_result->closing_stock:0;
+					
+					
+					$prev_datewise_sell_result = DailyStockTransferHistory::whereBetween('created_at', [$dateS." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+					
+					$prev_sell_stock =isset($prev_datewise_sell_result->closing_stock)?$prev_datewise_sell_result->closing_stock:'';
+					
+					$purchase_history_result 	= DailyProductPurchaseHistory::select('id', 'total_qty', 'total_ml', 'closing_stock', 'closing_stock_ml')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+					
+					$purchase_stock =isset($purchase_history_result->total_qty)?$purchase_history_result->total_qty:'0';
+					
+					
+					
+					
+					
+					if($purchase_stock>0){
+						//echo 'ddd-'.$sell_date.'--'.$purchase_stock.'-'.$opening_stock.'-';
+						if($opening_stock>0){
+							$opening_stock=$opening_stock-$purchase_stock;
+						}
+						if($closing_stock==0){
+							$opening_stock=$start_opening_stock;
+							$total_stock=$purchase_stock+$start_opening_stock;
+							$closing_stock=$purchase_stock+$start_opening_stock;
+						}
+						
+					}
+					
+					$purchase_history_last_result 	= DailyProductPurchaseHistory::select('id', 'total_qty', 'total_ml', 'closing_stock', 'closing_stock_ml')->whereBetween('created_at', [$dateS." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->first();
+					
+					$last_purchase_stock =isset($purchase_history_last_result->total_qty)?$purchase_history_last_result->total_qty:'0';
+					
+					//echo $sell_date.'-'.$last_purchase_stock.'</br>';
+					//$start_opening_stock=0;
+					
+					if($prev_sell_stock!=''){
+						//echo 'ddd-'.$sell_date.'--'.$prev_sell_stock.'-'.$opening_stock.'</br>';
+						if($opening_stock==0 && $closing_stock==0){
+							$opening_stock	= $prev_sell_stock;
+							$total_stock	= $prev_sell_stock+$purchase_stock;
+							$closing_stock	= $prev_sell_stock+$purchase_stock;
+						}
+					}else{
+						if($start_opening_stock>0){
+							if($opening_stock==0 && $closing_stock==0){
+								$opening_stock	= $start_opening_stock;
+								if($purchase_stock>0){
+									$total_stock	= $start_opening_stock+$purchase_stock;
+									$closing_stock	= $start_opening_stock+$purchase_stock;
+								}else{
+									$opening_stock	= $start_opening_stock+$last_purchase_stock;
+									$total_stock	= $start_opening_stock+$last_purchase_stock;
+									$closing_stock	= $start_opening_stock+$last_purchase_stock;
+								}
+							}
+						}else{
+							if($opening_stock==0 && $closing_stock==0){
+								$opening_stock	= $start_opening_stock;
+								if($purchase_stock>0){
+									$total_stock	= $purchase_stock;
+									$closing_stock	= $purchase_stock;
+								}else{
+									$opening_stock	= $last_purchase_stock;
+									$total_stock	= $last_purchase_stock;
+									$closing_stock	= $last_purchase_stock;
+								}
+							}
+						}
+					}
+					
+					/*if($opening_stock>0){
+						echo 'iii-'.$sell_date.'--';
+						if($closing_stock==0){
+							$closing_stock=$opening_stock;
+						}
+					}*/
+					
+					
+					
+					$inwardStockProductResult = InwardStockProducts::whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('size_id',$size_id)->where('product_id',$product_id)->orderBy('id', 'DESC')->get();
+					
+					
+					$source_info='';
+					$warehouse_info='';
+					$batch_no='';
+					if(count($inwardStockProductResult)>0){
+						foreach($inwardStockProductResult as $inwardPRow){
+							if($inwardPRow->invoice->warehouse_id!=''){
+								$warehouse_result=Warehouse::where('id',$inwardPRow->invoice->warehouse_id)->first();
+								$warehouse_info	.= isset($warehouse_result->company_name)?$warehouse_result->company_name:0;
+							}
+							
+							$source_info .=$inwardPRow->invoice->tp_no;
+							$batch_no .=$inwardPRow->batch_no;
+						}
+					}
+					
+					//echo '<pre>';print_r($);exit;
+					
+					$stock_result[]=array(
+						'size_id'			=> $size_row->size_id,
+						'size_name'			=> $size_row->size->ml,
+						'opening_stock'		=> $opening_stock,
+						'purchase_stock'	=> $purchase_stock,
+						'total_stock'		=> $total_stock,
+						'total_sale'		=> $total_sale,
+						'closing_stock'		=> $closing_stock,
+						'source_info'		=> $source_info,
+						'warehouse_info'	=> $warehouse_info,
+						'batch_no'			=> $batch_no,
+					);
+				}
+				$result[]=array(
+					'sell_date'		=> $sell_date,
+					'stock_result'	=> $stock_result
+				);
+			}
+			
+			
+			$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+			$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+			$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+			$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);
+			
+        	$data['result'] 		= $result;
+        	$data['shop_name'] 		= $company_name;
+			$data['brand_name'] 	= isset($product_info->product_name)?$product_info->product_name:'';
+        	$data['shop_address'] 	= $address2;
+			$data['month'] 			= date('F Y',strtotime($request->start_date));
+			
+			//echo '<pre>';print_r($result);exit;
+			
+			$pdf = PDF::loadView('admin.pdf.stock-transfer.brand-register', compact('data'));
+			return $pdf->stream(now().'-brand.pdf');
+			
+			
+			
+			
+			//echo '<pre>';print_r($result);exit;
+			
+			
+			
+			
+			
+			
+			//$product_result=Product::where('id',$product_id)->first();
+			
+			//echo '<pre>';print_r($dateS);exit;
+			
+			
+			
+		}
 		
 		
 		
@@ -507,10 +1001,15 @@ class ReportController extends Controller
 			}
 			
 			
+			$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+			$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+			$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+			$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);
+			
         	$data['result'] 		= $result;
-        	$data['shop_name'] 		= 'BAZIMAT';
+        	$data['shop_name'] 		= $company_name;
 			$data['brand_name'] 	= isset($product_info->product_name)?$product_info->product_name:'';
-        	$data['shop_address'] 	= 'West Chowbaga Kolkata - 700105 West Bengal';
+        	$data['shop_address'] 	= $address2;
 			$data['month'] 			= date('F Y',strtotime($request->start_date));
 			
 			//echo '<pre>';print_r($result);exit;
@@ -530,7 +1029,7 @@ class ReportController extends Controller
 			
 			//$product_result=Product::where('id',$product_id)->first();
 			
-			echo '<pre>';print_r($dateS);exit;
+			//echo '<pre>';print_r($dateS);exit;
 			
 			
 			
@@ -540,7 +1039,7 @@ class ReportController extends Controller
 		
 		
 		
-		print_r($product_id);exit;
+		//print_r($product_id);exit;
 		
 		
 		
@@ -1791,75 +2290,7 @@ class ReportController extends Controller
         }
     }
 	
-	public function itemWiseSaleStockTransferReportPdf(Request $request){
-		$branch_id		= Session::get('branch_id');
-		$satrt_date 	= $request->start_date.' 00:00:00';
-		$end_date 		= $request->end_date.' 23:59:00';
-        $items = [];
-		
-		
-		//echo '<pre>';print_r($branch_id);exit;
-		
-		
-        $group_cat_products = DailyStockTransferHistory::with('category')->groupBy(['category_id'])->whereBetween('created_at', [$satrt_date, $end_date])->get();
-		//echo '<pre>';print_r($group_cat_products);exit;
-		
-        foreach($group_cat_products as $group_cat_product){
-            //$items['category'][] =  $group_cat_product->category->name;
-			
-            $group_sub_cat_products = DailyStockTransferHistory::
-                        where('category_id',$group_cat_product->category->id)
-                        ->whereBetween('created_at', [$satrt_date, $end_date])
-                        ->groupBy(['subcategory_id'])
-                        ->get();
-			
-			
-            foreach($group_sub_cat_products as $group_sub_cat_product){
-                //$items['category'][$group_cat_product->category->name][] = $group_sub_cat_product->subCategory->name;
-				//echo '<pre>';print_r($group_sub_cat_product->category_id);exit;
-                $sales_products = DailyStockTransferHistory::where('subcategory_id',$group_sub_cat_product->subCategory->id)
-                    ->where('category_id',$group_sub_cat_product->category_id)
-                    ->whereBetween('created_at', [$satrt_date, $end_date])
-                    ->groupBy(['product_id','size_id'])
-                    ->selectRaw('product_id,product_mrp,sum(total_qty) as total_bottles,sum(total_ml) as total_ml,sum(product_mrp * total_qty) as total_ammount')
-					// ->select(DB::raw('sum(product_mrp * total_qty) as total_ammount'))
-					//->selectRaw('product_name,product_mrp,sum(product_qty) as total_bottles,sum(total_cost) as total_ammount,sum(size_ml) as total_ml')
-                    ->get();
-			    //echo '<pre>';print_r($sales_products);exit;
-                $items[$group_cat_product->category->name][$group_sub_cat_product->subCategory->name]    = $sales_products;
-				
-				//echo '<pre>';print_r($items);exit;
-            }           
-        }
-        /*$payment_type_ammount = SellInwardStock::whereBetween('payment_date', [$satrt_date, $end_date])
-                        ->groupBy(['payment_method'])
-                        ->selectRaw('payment_method,sum(pay_amount) as total_payment')
-                        ->get();*/
-						
-		$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
-		$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
-		$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
-		$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);	
-		
-		$payment_type_ammount=0;			
-        
-        $data = [];
-        $data['items'] = $items;
-        $data['shop_name'] = $company_name;
-        $data['shop_address'] = $address2;
-        $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
-        $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
-        $data['payment_type_ammount'] = $payment_type_ammount;
-		
-		//echo '<pre>';print_r($data);exit;
-		
-		
-
-        $pdf = PDF::loadView('admin.pdf.stock-transfer.item-wise-sales-report', $data);
-         //echo "<pre>";print_r($items);die;
-		return $pdf->stream(now().'-invoice.pdf');
-       
-    }
+	
 	
 	
 	
@@ -1870,7 +2301,7 @@ class ReportController extends Controller
             $data = [];
 			$branch_id		= Session::get('branch_id');
             $branch_id		= Session::get('branch_id');
-			$queryProduct = StockTransferHistory::select('stock_transfer_history.*','branch_stock_products.product_id','branch_stock_products.size_id','branch_stock_products.product_barcode','products.category_id','products.subcategory_id')->leftJoin('branch_stock_products', function($join) {
+			$queryProduct = StockTransferHistory::select('stock_transfer_history.*','branch_stock_products.product_barcode')->leftJoin('branch_stock_products', function($join) {
 						$join->on('stock_transfer_history.stock_id', '=', 'branch_stock_products.id');
 					})->leftJoin('products', function($join) {
 						$join->on('branch_stock_products.product_id', '=', 'products.id');
@@ -2095,6 +2526,169 @@ class ReportController extends Controller
                 'orientation' => 'L'
             ]); */
         $pdf = PDF::loadView('admin.pdf.month-wise-report', 
+        $data, 
+        [], 
+        [ 
+          //'title' => 'Certificate', 
+          //'format' => 'A4-L',
+          'mode' => 'utf-8',
+          'format' => [190, 380],
+          'orientation' => 'L'
+        ]);   
+         //echo "<pre>";print_r($items);die;
+		return $pdf->stream(now().'-invoice.pdf');
+    }
+	
+	public function monthWiseStockTransferReportPdf(Request $request){
+		$branch_id		= Session::get('branch_id');
+		$first_day_this_month = date('Y-m-01',strtotime($request->start_date));
+		$last_day_this_month  = date('Y-m-t',strtotime($request->start_date));
+		
+		$items=[];
+		if($request->start_date!=''){
+			$dateS	= date('Y-m-d',strtotime($first_day_this_month));
+			$dateE	= date('Y-m-d',strtotime($last_day_this_month));
+			$diff	= strtotime($dateE) - strtotime($dateS);
+			$total_day	= round($diff / 86400);
+			
+			//$categories = Category::where('food_type',1)->where('id',3)->get();
+			$categories = Category::where('food_type',1)->get();
+			
+			//echo '<pre>';print_r($categories);exit;
+			
+			for($i=0;$total_day>=$i;$i++){
+				$sell_date = date('Y-m-d', strtotime("+".$i." day", strtotime($dateS)));
+				$sell_date_slug = date('Ymd', strtotime("+".$i." day", strtotime($dateS)));
+				$currentdayslug	= date('Ymd', strtotime("+1 day"));
+				//echo $sell_date.'</br>';
+				$categorie_data=[];
+				foreach($categories as $category){
+					$category_id = $category->id;
+					
+					$openingStockProductResult = OpeningStockProducts::selectRaw('sum(total_ml) as total_opening_ml')->whereBetween('created_at', [$dateS." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->first();
+					$datewise_start_opening_stock	= isset($openingStockProductResult->total_opening_ml)?$openingStockProductResult->total_opening_ml:'0';
+					
+					
+					
+					
+					$datewise_sell_result = DailyStockTransferHistory::selectRaw('sum(opening_stock_ml) as total_opening_stock_ml,sum(total_ml) as total_sell_ml,sum(closing_stock_ml) as total_closing_stock_ml')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->first();
+					
+					//echo '<pre>';print_r($datewise_sell_result);exit;
+					
+					$datewise_opening_stock		= isset($datewise_sell_result->total_opening_stock_ml)?$datewise_sell_result->total_opening_stock_ml:0;	
+					$datewise_total_sale		= isset($datewise_sell_result->total_sell_ml)?$datewise_sell_result->total_sell_ml:0;
+					$datewise_closing_stock		= isset($datewise_sell_result->total_closing_stock_ml)?$datewise_sell_result->total_closing_stock_ml:0;
+					
+					$opening_stock	= $datewise_opening_stock;
+					
+					$purchase_history_result 	= DailyProductPurchaseHistory::selectRaw('sum(total_ml) as total_purchase_ml,sum(closing_stock_ml) as total_closing_stock_ml')->whereBetween('created_at', [$sell_date." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->orderBy('id', 'DESC')->first();
+					
+					//echo '<pre>';print_r($purchase_history_result);exit;
+					
+					$datewise_total_purchase =isset($purchase_history_result->total_purchase_ml)?$purchase_history_result->total_purchase_ml:'0';
+					$purchase_stock	= $datewise_total_purchase;
+					
+					
+					$prev_datewise_sell_result = DailyProductPurchaseHistory::selectRaw('sum(total_ml) as total_purchase_ml')->whereBetween('created_at', [$dateS." 00:00:00", $sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->orderBy('id', 'DESC')->first();
+					
+					$prev_datewise_total_purchase =isset($prev_datewise_sell_result->total_purchase_ml)?$prev_datewise_sell_result->total_purchase_ml:'0';
+					$prev_purchase_stock	= $prev_datewise_total_purchase;
+					
+					
+					$prev_sell_date				= date('Y-m-d', strtotime("-1 day", strtotime($sell_date)));
+					$prev_datewise_sell_result 	= DailyStockTransferHistory::selectRaw('sum(total_ml) as total_sell_ml')->whereBetween('created_at', [$dateS." 00:00:00", $prev_sell_date." 23:59:59"])->where('branch_id',$branch_id)->where('category_id',$category_id)->first();
+					$prev_datewise_total_sale	= isset($prev_datewise_sell_result->total_sell_ml)?$prev_datewise_sell_result->total_sell_ml:0;
+					
+					
+					
+					
+					//echo '<pre>';print_r($datewise_total_purchase);exit;
+					$total_sale		= $datewise_total_sale;
+					$closing_stock	= (($datewise_start_opening_stock+$prev_purchase_stock)-$total_sale);
+					$opening_stock	= ($closing_stock-$purchase_stock)+$total_sale;
+					if($total_sale>0){
+						$closing_stock	= (($datewise_start_opening_stock+$prev_purchase_stock)-$total_sale);
+						$opening_stock	= ($closing_stock-$purchase_stock)+$total_sale;
+					}
+					
+					if($prev_datewise_total_sale>0){
+						$check_opening_stock=$datewise_start_opening_stock+$prev_purchase_stock;
+						$opening_stock=$check_opening_stock-$prev_datewise_total_sale;
+					}
+					
+					$test_opening_stock=$datewise_start_opening_stock+$prev_purchase_stock;
+					
+					if($prev_datewise_total_sale>0){
+						$test_opening_stock=$test_opening_stock-$prev_datewise_total_sale;
+					}
+					
+					
+					
+					
+					$test_closing_stock=$test_opening_stock-$total_sale;
+					
+					
+					
+					$categorie_data[]=array(
+						'category_id'	=> $category->id,
+						'category_name'	=> $category->name,
+						'opening_stock'	=> $opening_stock/1000,
+						'purchase_stock'=> $purchase_stock/1000,		
+						'total_sale'	=> $total_sale/1000,
+						'closing_stock'	=> $closing_stock/1000,
+						
+						/*'datewise_start_opening_stock'=>$datewise_start_opening_stock,
+						'prev_purchase_stock'=> $prev_purchase_stock,
+						
+						'test_opening_stock'=>$test_opening_stock,
+						'test_closing_stock'=>$test_closing_stock,
+						'prev_datewise_total_sale'=>$prev_datewise_total_sale,*/
+						
+						
+						
+						
+					);
+				}
+				
+				$items[]=array(
+					'sell_date'			=>date('d-M-Y',strtotime($sell_date)),
+					'categorie_data'	=>$categorie_data
+				);
+								
+				if($sell_date == Carbon::now()->format('Y-m-d')){
+					break ;
+				}	
+			}	
+		}
+		
+		
+		//echo '<pre>';print_r($items);exit;
+		
+		$company_name		= Common::get_user_settings($where=['option_name'=>'company_name'],$branch_id);
+		$company_address	= Common::get_user_settings($where=['option_name'=>'company_address'],$branch_id);
+		$address2			= Common::get_user_settings($where=['option_name'=>'company_address2'],$branch_id);
+		$company_licensee	= Common::get_user_settings($where=['option_name'=>'company_licensee'],$branch_id);
+		
+        $data = [];
+        $date = Carbon::createFromDate($dateS);
+        $data['month'] = $date->format('F Y');
+        $data['items'] = $items;
+        //$data['categories'] = $categories;
+        $data['shop_name'] = $company_name;
+        $data['shop_address'] = $address2;
+        $data['from_date'] = Carbon::create($request->start_date)->format('d-M-Y');
+        $data['to_date'] = Carbon::create($request->end_date)->format('d-M-Y');
+		
+		
+		//echo '<pre>';print_r($data);exit;
+
+       /*  $pdf = PDF::loadView('admin.pdf.month-wise-report', $data,
+            [ 
+                //'title' => 'Certificate', 
+                'format' => 'A4-L',
+                'orientation' => 'L'
+            ]); */
+        $pdf = PDF::loadView('admin.pdf.stock-transfer.month-wise-report', 
         $data, 
         [], 
         [ 

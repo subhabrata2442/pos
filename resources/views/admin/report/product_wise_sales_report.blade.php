@@ -301,7 +301,7 @@ $(function() {
 					Swal.fire({
 						icon: 'error',
 						title: 'Oops...',
-						text: 'Please select Produt!',
+						text: 'Please select Product!',
 					});
 					return false;	
 				}
